@@ -2,7 +2,6 @@
 import { StrictMode } from "react"; // StrictMode helps catch common bugs during development
 import { createRoot } from "react-dom/client"; // createRoot is the new way to render React apps
 import "./index.css"; // Import global CSS styles
-import App from "./App.tsx"; // Import our main App component
 import { RouterProvider } from "react-router-dom";
 import { router } from "./app/router.tsx";
 

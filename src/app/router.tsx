@@ -2,7 +2,7 @@
 // Routing allows us to show different pages/components based on the URL path.
 
 import { createBrowserRouter } from "react-router-dom";
-import { QuestionnairesPage } from "@/pages/questionnaires";
+import { QuestionnairesPage } from "@/pages/questionnaires/index.tsx";
 import { KoosPage } from "@/pages/questionnaires/koos.tsx";
 import App from "@/App";
 import { HomePage } from "@/pages/home";
