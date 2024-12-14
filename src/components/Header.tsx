@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "./ui/button";
 import { Menu } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export function Header() {
   return (
@@ -21,12 +22,12 @@ export function Header() {
             >
               Features
             </a>
-            <a
-              href="#questionnaires"
+            <Link
+              to="/questionnaires"
               className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
             >
               Questionnaires
-            </a>
+            </Link>
             <a
               href="#contact"
               className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
