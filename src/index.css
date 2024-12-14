@@ -1,3 +1,13 @@
+/* This file imports Tailwind CSS's core styles and utilities.
+ * It's needed because Tailwind CSS works by scanning your code and generating
+ * the necessary CSS classes on-demand. These directives tell Tailwind what to include.
+ *
+ * @tailwind base - Adds base styles and resets (like margins, padding, typography)
+ * @tailwind components - Adds component classes for building reusable UI components
+ * @tailwind utilities - Adds utility classes for styling (like flex, p-4, text-center)
+ *
+ * Without this file, Tailwind's classes won't be available in your application.
+ */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
