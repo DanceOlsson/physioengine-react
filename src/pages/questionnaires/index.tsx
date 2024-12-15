@@ -1,5 +1,6 @@
-import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
+import { QuestionnaireActionDialog } from "@/components/QuestionnaireActionDialog";
+import { useState } from "react";
 
 interface Questionnaire {
   id: string;
@@ -19,15 +20,19 @@ const questionnaires: Questionnaire[] = [
 ];
 
 export function QuestionnairesPage() {
+  const [selectedQuestionnaire, setSelectedQuestionnaire] =
+    useState<Questionnaire | null>(null);
+
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-3xl font-bold">Questionnaires</h1>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mt-6">
         {questionnaires.map((questionnaire) => (
-          <Link
+          <div
             key={questionnaire.id}
-            to={`/questionnaires/${questionnaire.id}`}
+            onClick={() => setSelectedQuestionnaire(questionnaire)}
+            className="cursor-pointer"
           >
             <Card className="p-6 hover:shadow-lg transition-shadow">
               <h2 className="text-xl font-semibold">{questionnaire.title}</h2>
@@ -38,9 +43,16 @@ export function QuestionnairesPage() {
                 </span>
               </div>
             </Card>
-          </Link>
+          </div>
         ))}
       </div>
+
+      <QuestionnaireActionDialog
+        open={selectedQuestionnaire !== null}
+        onOpenChange={(open) => !open && setSelectedQuestionnaire(null)}
+        questionnaireName={selectedQuestionnaire?.title ?? ""}
+        questionnaireId={selectedQuestionnaire?.id ?? ""}
+      />
     </div>
   );
 }
