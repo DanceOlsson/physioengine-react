@@ -3,7 +3,8 @@
 
 import { createBrowserRouter } from "react-router-dom";
 import { QuestionnairesPage } from "@/pages/questionnaires/index.tsx";
-import { KoosPage } from "@/pages/questionnaires/koos.tsx";
+import { KoosQuestionnairePage } from "@/pages/questionnaires/koos/index.tsx";
+import { KoosResultsPage } from "@/pages/questionnaires/koos/results.tsx";
 import App from "@/App";
 import { HomePage } from "@/pages/home";
 
@@ -30,7 +31,20 @@ export const router = createBrowserRouter([
           {
             // Route for the KOOS questionnaire
             path: "koos",
-            element: <KoosPage />,
+            children: [
+              {
+                index: true,
+                element: <KoosQuestionnairePage />,
+              },
+              {
+                path: "results",
+                element: <KoosResultsPage />,
+              },
+              {
+                path: "qr-generation",
+                element: <div>QR Generation Page (Coming Soon)</div>,
+              },
+            ],
           },
         ],
       },
