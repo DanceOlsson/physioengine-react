@@ -2,11 +2,11 @@
 // Routing allows us to show different pages/components based on the URL path.
 
 import { createBrowserRouter } from "react-router-dom";
-import { QuestionnairesPage } from "@/pages/questionnaires/index.tsx";
-import { KoosQuestionnairePage } from "@/pages/questionnaires/koos/index.tsx";
-import { KoosResultsPage } from "@/pages/questionnaires/koos/results.tsx";
+import { QuestionnaireHomePage } from "@/pages/questionnaires/QuestionnaireHomePage";
+import { KoosQuestionnairePage } from "@/pages/questionnaires/koos/KoosQuestionnairePage";
+import { KoosResultsPage } from "@/pages/questionnaires/koos/KoosResultsPage";
 import App from "@/App";
-import { HomePage } from "@/pages/home";
+import { HomePage } from "@/pages/home/HomePage";
 
 // Create and export our router configuration
 export const router = createBrowserRouter([
@@ -26,7 +26,7 @@ export const router = createBrowserRouter([
           {
             // The index route shows when we're at exactly "/questionnaires"
             index: true,
-            element: <QuestionnairesPage />,
+            element: <QuestionnaireHomePage />,
           },
           {
             // Route for the KOOS questionnaire

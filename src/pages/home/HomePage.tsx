@@ -1,5 +1,5 @@
 import { Hero } from "@/components/marketing/Hero";
-import { Features } from "@/components/Features";
+import { Features } from "@/components/marketing/Features";
 
 export function HomePage() {
   return (

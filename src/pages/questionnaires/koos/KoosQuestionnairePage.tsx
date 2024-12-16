@@ -13,6 +13,7 @@ import {
   QuestionnaireSection,
   Question,
   QuestionOption,
+  KoosQuestionnaire,
 } from "@/lib/types/koos";
 
 export function KoosQuestionnairePage() {

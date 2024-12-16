@@ -19,7 +19,7 @@ const questionnaires: Questionnaire[] = [
   // Add more questionnaires here
 ];
 
-export function QuestionnairesPage() {
+export function QuestionnaireHomePage() {
   const [selectedQuestionnaire, setSelectedQuestionnaire] =
     useState<Questionnaire | null>(null);
 

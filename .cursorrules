@@ -11,6 +11,10 @@ Key Principles:
 Project Structure:
 
 - Use /src/pages for route components
+  • Name page components with PascalCase and Page suffix (e.g., HomePage.tsx)
+  • Use folder structure for nested routes (e.g., questionnaires/[id]/index.tsx)
+  • Match file names to route structure (e.g., DashboardSettingsPage.tsx)
+  • Use index.tsx for main route components
 - Use /src/components for reusable UI components
 - Use /src/lib for utility functions
 - Use @/ alias for imports from src directory
