@@ -1,4 +1,4 @@
-import { Hero } from "@/components/Hero";
+import { Hero } from "@/components/marketing/Hero";
 import { Features } from "@/components/Features";
 
 export function HomePage() {

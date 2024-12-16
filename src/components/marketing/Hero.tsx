@@ -1,4 +1,4 @@
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { ArrowRight, ClipboardCheck } from "lucide-react";
 
 export function Hero() {

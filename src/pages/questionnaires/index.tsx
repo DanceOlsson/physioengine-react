@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { QuestionnaireActionDialog } from "@/components/QuestionnaireActionDialog";
+import { QuestionnaireActionDialog } from "@/components/features/questionnaires/QuestionnaireActionDialog";
 import { useState } from "react";
 
 interface Questionnaire {
