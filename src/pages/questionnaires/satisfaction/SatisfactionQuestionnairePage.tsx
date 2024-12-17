@@ -1,5 +1,5 @@
 import { QuestionnaireForm } from "@/components/questionnaires/QuestionnaireForm";
-import { questions } from "@/data/questionnaires/satisfaction_swedish.ts";
+import { questions } from "@/assets/questionnaires/satisfaction_swedish";
 
 export function SatisfactionQuestionnairePage() {
   return (

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui";
 import { Button } from "@/components/ui";
-import { calculateKoosScores } from "@/lib/calculators/koos";
+import { calculateKoosScores } from "@/lib/calculators/koosCalculator";
 import { KoosResult, KoosResponse } from "@/lib/types/koos";
 import {
   Chart as ChartJS,
