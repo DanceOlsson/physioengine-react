@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui";
 import { Button } from "@/components/ui";
-import { KoosResponse } from "@/lib/types/koos";
+import { KoosResponse } from "@/lib/types/koos.types";
 
 export function SatisfactionResultsPage() {
   const navigate = useNavigate();

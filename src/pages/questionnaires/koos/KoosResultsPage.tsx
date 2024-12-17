@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui";
 import { Button } from "@/components/ui";
 import { calculateKoosScores } from "@/lib/calculators/koosCalculator";
-import { KoosResult, KoosResponse } from "@/lib/types/koos";
+import { KoosResult, KoosResponse, SectionScore } from "@/lib/types/koos.types";
 import {
   Chart as ChartJS,
   CategoryScale,

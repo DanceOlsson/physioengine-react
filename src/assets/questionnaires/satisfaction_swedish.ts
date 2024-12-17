@@ -1,4 +1,4 @@
-import { KoosQuestionnaire } from "../../lib/types/koos";
+import { KoosQuestionnaire } from "../../lib/types/koos.types";
 
 export const questions: KoosQuestionnaire[] = [
   {

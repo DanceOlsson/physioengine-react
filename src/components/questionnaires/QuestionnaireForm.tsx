@@ -7,7 +7,7 @@ import {
   RadioGroup,
   RadioGroupItem,
 } from "@/components/ui";
-import { KoosQuestionnaire, KoosResponse } from "@/lib/types/koos";
+import { KoosQuestionnaire, KoosResponse } from "@/lib/types/koos.types";
 
 interface QuestionnaireFormProps {
   questionnaire: KoosQuestionnaire;
