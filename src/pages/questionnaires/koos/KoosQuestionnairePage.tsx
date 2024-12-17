@@ -1,10 +1,10 @@
 import { QuestionnaireForm } from "@/components/questionnaires/QuestionnaireForm";
-import koosQuestionnaire from "@/data/questionnaires/koos_swedish";
+import { questions } from "@/data/questionnaires/koos_swedish.ts";
 
 export function KoosQuestionnairePage() {
   return (
     <QuestionnaireForm
-      questionnaire={koosQuestionnaire[0]}
+      questionnaire={questions[0]}
       storageKey="koosResponses"
       resultsPath="results"
     />

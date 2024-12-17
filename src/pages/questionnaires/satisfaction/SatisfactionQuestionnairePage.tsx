@@ -1,10 +1,10 @@
 import { QuestionnaireForm } from "@/components/questionnaires/QuestionnaireForm";
-import satisfactionQuestionnaire from "@/data/questionnaires/satisfaction_swedish";
+import { questions } from "@/data/questionnaires/satisfaction_swedish.ts";
 
 export function SatisfactionQuestionnairePage() {
   return (
     <QuestionnaireForm
-      questionnaire={satisfactionQuestionnaire[0]}
+      questionnaire={questions[0]}
       storageKey="satisfactionResponses"
       resultsPath="results"
     />
