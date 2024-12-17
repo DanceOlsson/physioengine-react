@@ -1,5 +1,5 @@
 import { QuestionnaireForm } from "@/components/questionnaires/QuestionnaireForm";
-import koosQuestionnaire from "@/data/koos_swedish";
+import koosQuestionnaire from "@/data/questionnaires/koos_swedish";
 
 export function KoosQuestionnairePage() {
   return (

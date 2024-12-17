@@ -1,5 +1,5 @@
 import { QuestionnaireForm } from "@/components/questionnaires/QuestionnaireForm";
-import satisfactionQuestionnaire from "@/data/satisfaction_swedish";
+import satisfactionQuestionnaire from "@/data/questionnaires/satisfaction_swedish";
 
 export function SatisfactionQuestionnairePage() {
   return (

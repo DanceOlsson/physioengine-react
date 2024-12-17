@@ -1,5 +1,4 @@
 import { KoosResponse, KoosResult, SectionScore } from "../types/koos";
-import koosQuestionnaire from "@/data/koos_swedish.json";
 
 // Configuration for score interpretation
 const INTERPRETATION_RANGES = {
