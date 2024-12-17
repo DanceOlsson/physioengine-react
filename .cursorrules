@@ -18,6 +18,7 @@ Project Structure:
 - Use /src/components for reusable UI components
 - Use /src/lib for utility functions
 - Use @/ alias for imports from src directory
+- Keep configuration files in root (e.g., vite.config.ts, tailwind.config.js)
 
 TypeScript Usage:
 
@@ -25,6 +26,7 @@ TypeScript Usage:
 - Define interfaces for component props
 - Use type guards for runtime checks
 - Leverage TypeScript's strict mode
+- Use ES modules syntax consistently (import/export)
 
 React Router Patterns:
 
@@ -32,6 +34,7 @@ React Router Patterns:
 - Use nested routes for related views
 - Implement lazy loading for route components
 - Handle loading and error states
+- Use proper route types for type safety
 
 UI and Styling:
 
@@ -39,6 +42,7 @@ UI and Styling:
 - Implement Tailwind CSS with mobile-first approach
 - Follow consistent spacing and color patterns
 - Ensure accessibility standards
+- Use CSS variables for theme customization
 
 State Management:
 
@@ -46,6 +50,7 @@ State Management:
 - Implement local state with useState
 - Share state with context when needed
 - Handle form state effectively
+- Implement proper loading states
 
 Performance:
 
@@ -53,3 +58,15 @@ Performance:
 - Optimize bundle size
 - Use proper React hooks dependencies
 - Implement proper error boundaries
+- Use image optimization techniques
+- Implement proper caching strategies
+
+Deployment (Vercel):
+
+- Use ES modules syntax in configuration files
+- Implement proper environment variable handling
+- Add proper build outputs in package.json
+- Configure proper redirects for SPA routing
+- Use Vercel's edge functions when needed
+- Implement proper error handling for production
+- Add proper meta tags for SEO
