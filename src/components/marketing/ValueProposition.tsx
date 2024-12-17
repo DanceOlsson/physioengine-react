@@ -116,7 +116,7 @@ export function ValueProposition({ className }: ValuePropositionProps) {
         <Benefit
           imageUrl={showQrCodeImage}
           altText="Physical therapist showing QR code to patient for easy consultation"
-          description="Open and free—just show a QR code on your screen, and your patient scans it with their phone. No extra steps, no sign-ups."
+          description="Find relevant questionnaire, show a QR code on your screen, and your patient scans it with their phone. Patient can then easily fill in the questionnaire."
           imagePosition="left"
         />
         <Benefit
