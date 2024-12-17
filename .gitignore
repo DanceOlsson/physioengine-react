@@ -40,7 +40,8 @@ dist-ssr
 *.sw?
 
 # Data folder
-data/
+data/*
+!data/questionnaires/
 
 # Misc
 .cache
