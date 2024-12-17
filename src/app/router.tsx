@@ -7,6 +7,8 @@ import { KoosQuestionnairePage } from "@/pages/questionnaires/koos/KoosQuestionn
 import { KoosResultsPage } from "@/pages/questionnaires/koos/KoosResultsPage";
 import App from "@/App";
 import { HomePage } from "@/pages/home/HomePage";
+import { SatisfactionQuestionnairePage } from "@/pages/questionnaires/satisfaction/SatisfactionQuestionnairePage";
+import { SatisfactionResultsPage } from "@/pages/questionnaires/satisfaction/SatisfactionResultsPage";
 
 // Create and export our router configuration
 export const router = createBrowserRouter([
@@ -43,6 +45,19 @@ export const router = createBrowserRouter([
               {
                 path: "qr-generation",
                 element: <div>QR Generation Page (Coming Soon)</div>,
+              },
+            ],
+          },
+          {
+            path: "satisfaction",
+            children: [
+              {
+                index: true,
+                element: <SatisfactionQuestionnairePage />,
+              },
+              {
+                path: "results",
+                element: <SatisfactionResultsPage />,
               },
             ],
           },

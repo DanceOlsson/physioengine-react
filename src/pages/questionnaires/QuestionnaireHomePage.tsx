@@ -6,7 +6,7 @@ interface Questionnaire {
   id: string;
   title: string;
   description: string;
-  category: "knee" | "hip" | "ankle";
+  category: "knee" | "hip" | "ankle" | "general";
 }
 
 const questionnaires: Questionnaire[] = [
@@ -16,7 +16,12 @@ const questionnaires: Questionnaire[] = [
     description: "Knee injury and Osteoarthritis Outcome Score",
     category: "knee",
   },
-  // Add more questionnaires here
+  {
+    id: "satisfaction",
+    title: "Patientnöjdhet",
+    description: "Kort enkät om din upplevelse av vården",
+    category: "general",
+  },
 ];
 
 export function QuestionnaireHomePage() {
@@ -25,7 +30,7 @@ export function QuestionnaireHomePage() {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold">Questionnaires</h1>
+      <h1 className="text-3xl font-bold">Frågeformulär</h1>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mt-6">
         {questionnaires.map((questionnaire) => (
