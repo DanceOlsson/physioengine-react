@@ -41,7 +41,7 @@ dist-ssr
 
 # Data folder
 data/*
-!data/questionnaires/
+!data/questionnaires/ # exception to ignore all questionnaire files
 
 # Misc
 .cache
