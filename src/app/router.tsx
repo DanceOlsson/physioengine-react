@@ -5,6 +5,8 @@ import { createBrowserRouter } from "react-router-dom";
 import { QuestionnaireHomePage } from "@/pages/questionnaires/QuestionnaireHomePage";
 import { KoosQuestionnairePage } from "@/pages/questionnaires/koos/KoosQuestionnairePage";
 import { KoosResultsPage } from "@/pages/questionnaires/koos/KoosResultsPage";
+import { HoosQuestionnairePage } from "@/pages/questionnaires/hoos/HoosQuestionnairePage";
+import { HoosResultsPage } from "@/pages/questionnaires/hoos/HoosResultsPage";
 import App from "@/App";
 import { HomePage } from "@/pages/home/HomePage";
 import { SatisfactionQuestionnairePage } from "@/pages/questionnaires/satisfaction/SatisfactionQuestionnairePage";
@@ -41,6 +43,23 @@ export const router = createBrowserRouter([
               {
                 path: "results",
                 element: <KoosResultsPage />,
+              },
+              {
+                path: "qr-generation",
+                element: <div>QR Generation Page (Coming Soon)</div>,
+              },
+            ],
+          },
+          {
+            path: "hoos",
+            children: [
+              {
+                index: true,
+                element: <HoosQuestionnairePage />,
+              },
+              {
+                path: "results",
+                element: <HoosResultsPage />,
               },
               {
                 path: "qr-generation",

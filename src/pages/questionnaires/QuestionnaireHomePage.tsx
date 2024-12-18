@@ -24,6 +24,12 @@ const questionnaires: Questionnaire[] = [
     category: "knee",
   },
   {
+    id: "hoos",
+    title: "HOOS",
+    description: "Hip disability and Osteoarthritis Outcome Score",
+    category: "hip",
+  },
+  {
     id: "satisfaction",
     title: "Patient Satisfaction",
     description: "Brief survey about your healthcare experience",

@@ -46,19 +46,32 @@ export function QuestionnaireForm({
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="max-w-3xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">{questionnaire.title}</h1>
-        <h2 className="text-xl text-gray-600 mb-4">{questionnaire.subtitle}</h2>
-        <p className="text-gray-700 mb-8">{questionnaire.instructions}</p>
+        <h1 className="text-3xl font-bold mb-2 text-foreground">
+          {questionnaire.title}
+        </h1>
+        <h2 className="text-xl text-muted-foreground mb-4">
+          {questionnaire.subtitle}
+        </h2>
+        <p className="text-muted-foreground mb-8">
+          {questionnaire.instructions}
+        </p>
 
         {questionnaire.sections.map((section, sectionIndex) => (
           <Card key={sectionIndex} className="mb-8 p-6">
-            <h3 className="text-xl font-semibold mb-2">{section.title}</h3>
-            <p className="text-gray-600 mb-6">{section.instructions}</p>
+            <h3 className="text-xl font-semibold mb-2 text-foreground">
+              {section.title}
+            </h3>
+            <p className="text-muted-foreground mb-6">{section.instructions}</p>
 
             <div className="space-y-6">
               {section.questions.map((question) => (
-                <div key={question.id} className="border-b pb-4 last:border-0">
-                  <p className="mb-4 font-medium">{question.text}</p>
+                <div
+                  key={question.id}
+                  className="border-b border-border pb-4 last:border-0"
+                >
+                  <p className="mb-4 font-medium text-foreground">
+                    {question.text}
+                  </p>
                   <RadioGroup
                     value={responses[question.id]?.toString()}
                     onValueChange={(value: string) =>
@@ -75,7 +88,10 @@ export function QuestionnaireForm({
                             value={option.value.toString()}
                             id={`${question.id}-${optionIndex}`}
                           />
-                          <Label htmlFor={`${question.id}-${optionIndex}`}>
+                          <Label
+                            htmlFor={`${question.id}-${optionIndex}`}
+                            className="text-foreground"
+                          >
                             {option.text}
                           </Label>
                         </div>
