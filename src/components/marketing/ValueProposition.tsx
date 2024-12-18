@@ -74,21 +74,21 @@ const Benefit = ({
     imagePosition === "left"
       ? [
           {
-            icon: <QrCode className="w-6 h-6 text-blue-600" />,
+            icon: <QrCode className="w-6 h-6 text-primary" />,
             text: "Find relevant questionnaire, show a QR code on your screen",
           },
           {
-            icon: <Scan className="w-6 h-6 text-blue-600" />,
+            icon: <Scan className="w-6 h-6 text-primary" />,
             text: "Your patient scans it with their phone. Patient can then easily fill in the questionnaire",
           },
         ]
       : [
           {
-            icon: <ClipboardList className="w-6 h-6 text-blue-600" />,
+            icon: <ClipboardList className="w-6 h-6 text-primary" />,
             text: "As soon as they're done, you see their results right away",
           },
           {
-            icon: <LineChart className="w-6 h-6 text-blue-600" />,
+            icon: <LineChart className="w-6 h-6 text-primary" />,
             text: "Quickly understand their condition and plan treatment, all in one place",
           },
         ];
@@ -101,7 +101,7 @@ const Benefit = ({
           className="relative w-full md:w-3/4 transition-transform duration-300 ease-out h-[450px] -ml-32"
           style={{ transform: `translateX(${translateX}px)` }}
         >
-          <div className="absolute inset-0 bg-gradient-to-l from-white/100 via-white/25 to-transparent z-10" />
+          <div className="absolute inset-0 bg-gradient-to-l from-background via-background/25 to-transparent z-10" />
           <img
             src={imageUrl}
             alt={altText}
@@ -119,7 +119,7 @@ const Benefit = ({
             {steps.map((step, index) => (
               <div key={index} className="flex items-start gap-4 group">
                 <div className="pt-1">{step.icon}</div>
-                <p className="text-xl text-gray-800 leading-relaxed">
+                <p className="text-xl text-foreground leading-relaxed">
                   {step.text}
                 </p>
               </div>
@@ -142,7 +142,7 @@ const Benefit = ({
           className="relative w-full md:w-3/4 transition-transform duration-300 ease-out h-[450px] -mr-32"
           style={{ transform: `translateX(${translateX}px)` }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-white/100 via-white/25 to-transparent z-10" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/25 to-transparent z-10" />
           <img
             src={imageUrl}
             alt={altText}
