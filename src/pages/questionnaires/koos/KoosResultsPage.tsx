@@ -9,8 +9,12 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui";
 import { Button } from "@/components/ui";
-import { calculateKoosScores } from "@/lib/calculators/koosCalculator";
-import { KoosResult, KoosResponse } from "@/lib/types/koos.types";
+import { calculateKoosScores } from "@/lib/calculators/koos";
+import {
+  QuestionnaireResponse,
+  QuestionnaireResult,
+  SectionScore,
+} from "@/lib/types/questionnaire.types";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -34,7 +38,7 @@ ChartJS.register(
 
 export function KoosResultsPage() {
   const navigate = useNavigate();
-  const [results, setResults] = useState<KoosResult | null>(null);
+  const [results, setResults] = useState<QuestionnaireResult | null>(null);
 
   useEffect(() => {
     const storedResponses = localStorage.getItem("koosResponses");
@@ -44,7 +48,7 @@ export function KoosResultsPage() {
     }
 
     try {
-      const responses = JSON.parse(storedResponses) as KoosResponse;
+      const responses = JSON.parse(storedResponses) as QuestionnaireResponse;
       const calculatedResults = calculateKoosScores(responses);
       setResults(calculatedResults);
     } catch (error) {
@@ -58,11 +62,11 @@ export function KoosResultsPage() {
   }
 
   const chartData = {
-    labels: results.sections.map((s) => s.name),
+    labels: results.sections.map((section: SectionScore) => section.name),
     datasets: [
       {
         label: "Score",
-        data: results.sections.map((s) => s.score),
+        data: results.sections.map((section: SectionScore) => section.score),
         backgroundColor: "rgba(53, 162, 235, 0.5)",
         borderColor: "rgb(53, 162, 235)",
         borderWidth: 1,
@@ -118,7 +122,7 @@ export function KoosResultsPage() {
         <Card className="mb-8 p-6">
           <h2 className="text-xl font-semibold mb-4">Detailed Results</h2>
           <div className="space-y-4">
-            {results.sections.map((section, index) => (
+            {results.sections.map((section: SectionScore, index: number) => (
               <div key={index} className="border-b last:border-0 pb-4">
                 <h3 className="font-medium text-lg">{section.name}</h3>
                 <div className="flex justify-between items-center mt-2">

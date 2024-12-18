@@ -1,6 +1,6 @@
-import { DASHQuestionnaire } from "../../lib/types/dash.types.ts";
+import { Questionnaire } from "../../lib/types/questionnaire.types";
 
-export const questions: DASHQuestionnaire[] = [
+export const questions: Questionnaire[] = [
   {
     title: "Hälsoenkät (arm/axel/hand)",
     subtitle: "DASH (Disabilities of the Arm, Shoulder and Hand)", 

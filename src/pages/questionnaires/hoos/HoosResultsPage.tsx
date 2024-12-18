@@ -2,12 +2,16 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bar } from "react-chartjs-2";
 import { Card, Button } from "@/components/ui";
-import { HOOSResponse, HOOSResult } from "@/lib/types/hoos.types";
+import {
+  QuestionnaireResponse,
+  QuestionnaireResult,
+  SectionScore,
+} from "@/lib/types/questionnaire.types";
 import { calculateHoosScores } from "@/lib/calculators/hoos";
 
 export function HoosResultsPage() {
   const navigate = useNavigate();
-  const [results, setResults] = useState<HOOSResult | null>(null);
+  const [results, setResults] = useState<QuestionnaireResult | null>(null);
 
   useEffect(() => {
     const storedResponses = localStorage.getItem("hoosResponses");
@@ -17,7 +21,7 @@ export function HoosResultsPage() {
     }
 
     try {
-      const responses = JSON.parse(storedResponses) as HOOSResponse;
+      const responses = JSON.parse(storedResponses) as QuestionnaireResponse;
       const calculatedResults = calculateHoosScores(responses);
       setResults(calculatedResults);
     } catch (error) {
@@ -31,11 +35,11 @@ export function HoosResultsPage() {
   }
 
   const chartData = {
-    labels: results.sections.map((section) => section.name),
+    labels: results.sections.map((section: SectionScore) => section.name),
     datasets: [
       {
         label: "Score",
-        data: results.sections.map((section) => section.score),
+        data: results.sections.map((section: SectionScore) => section.score),
         backgroundColor: "hsl(var(--primary) / 0.5)",
         borderColor: "hsl(var(--primary))",
         borderWidth: 1,
@@ -110,7 +114,7 @@ export function HoosResultsPage() {
             Detailed Results
           </h2>
           <div className="space-y-4">
-            {results.sections.map((section, index) => (
+            {results.sections.map((section: SectionScore, index: number) => (
               <div
                 key={index}
                 className="border-b border-border last:border-0 pb-4"

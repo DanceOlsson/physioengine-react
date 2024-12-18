@@ -2,13 +2,19 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bar } from "react-chartjs-2";
 import { Card, Button } from "@/components/ui";
-import { DASHResponse, DASHResult } from "@/lib/types/dash.types";
+import {
+  QuestionnaireResponse,
+  QuestionnaireResult,
+  SectionScore,
+} from "@/lib/types/questionnaire.types";
 import { calculateDashScores } from "@/lib/calculators/dash";
 
 export function DashResultsPage() {
   const navigate = useNavigate();
-  const [results, setResults] = useState<DASHResult | null>(null);
-  const [responses, setResponses] = useState<DASHResponse | null>(null);
+  const [results, setResults] = useState<QuestionnaireResult | null>(null);
+  const [responses, setResponses] = useState<QuestionnaireResponse | null>(
+    null
+  );
 
   useEffect(() => {
     const storedResponses = localStorage.getItem("dashResponses");
@@ -18,7 +24,9 @@ export function DashResultsPage() {
     }
 
     try {
-      const parsedResponses = JSON.parse(storedResponses) as DASHResponse;
+      const parsedResponses = JSON.parse(
+        storedResponses
+      ) as QuestionnaireResponse;
       setResponses(parsedResponses);
       const calculatedResults = calculateDashScores(parsedResponses);
       setResults(calculatedResults);
@@ -33,11 +41,11 @@ export function DashResultsPage() {
   }
 
   const chartData = {
-    labels: results.sections.map((section) => section.name),
+    labels: results.sections.map((section: SectionScore) => section.name),
     datasets: [
       {
         label: "Score",
-        data: results.sections.map((section) => section.score),
+        data: results.sections.map((section: SectionScore) => section.score),
         backgroundColor: "hsl(var(--primary) / 0.5)",
         borderColor: "hsl(var(--primary))",
         borderWidth: 1,
@@ -115,7 +123,7 @@ export function DashResultsPage() {
             Detailed Results
           </h2>
           <div className="space-y-4">
-            {results.sections.map((section, index) => (
+            {results.sections.map((section: SectionScore, index: number) => (
               <div
                 key={index}
                 className="border-b border-border last:border-0 pb-4"
