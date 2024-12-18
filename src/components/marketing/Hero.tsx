@@ -3,10 +3,13 @@ import { ArrowRight, ClipboardList, Settings } from "lucide-react";
 
 export function Hero() {
   return (
-    <div className="relative overflow-hidden">
+    <div className="relative">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-grid-blue-500/[0.03] -z-10" />
-      <div className="absolute inset-0 bg-gradient-to-tr from-blue-50 via-transparent to-blue-50/50 dark:from-blue-950 dark:to-blue-950/50 -z-10" />
+      <div
+        className="absolute inset-0 bg-gradient-to-b from-blue-50 via-transparent to-background 
+                      dark:from-blue-950 dark:to-background -z-10"
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-40 pb-32">
         <div className="text-center space-y-12">
