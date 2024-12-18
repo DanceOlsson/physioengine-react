@@ -1,6 +1,6 @@
-import { KoosQuestionnaire } from "../../lib/types/koos.types";
+import { Questionnaire } from "../../lib/types/questionnaire.types";
 
-export const questions: KoosQuestionnaire[] = [
+export const questions: Questionnaire[] = [
   {
     title: "Patientnöjdhet",
     subtitle: "Kort enkät om din upplevelse",

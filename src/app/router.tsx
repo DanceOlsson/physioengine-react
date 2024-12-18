@@ -7,6 +7,8 @@ import { KoosQuestionnairePage } from "@/pages/questionnaires/koos/KoosQuestionn
 import { KoosResultsPage } from "@/pages/questionnaires/koos/KoosResultsPage";
 import { HoosQuestionnairePage } from "@/pages/questionnaires/hoos/HoosQuestionnairePage";
 import { HoosResultsPage } from "@/pages/questionnaires/hoos/HoosResultsPage";
+import { DashQuestionnairePage } from "@/pages/questionnaires/dash/DashQuestionnairePage";
+import { DashResultsPage } from "@/pages/questionnaires/dash/DashResultsPage";
 import App from "@/App";
 import { HomePage } from "@/pages/home/HomePage";
 import { SatisfactionQuestionnairePage } from "@/pages/questionnaires/satisfaction/SatisfactionQuestionnairePage";
@@ -60,6 +62,23 @@ export const router = createBrowserRouter([
               {
                 path: "results",
                 element: <HoosResultsPage />,
+              },
+              {
+                path: "qr-generation",
+                element: <div>QR Generation Page (Coming Soon)</div>,
+              },
+            ],
+          },
+          {
+            path: "dash",
+            children: [
+              {
+                index: true,
+                element: <DashQuestionnairePage />,
+              },
+              {
+                path: "results",
+                element: <DashResultsPage />,
               },
               {
                 path: "qr-generation",

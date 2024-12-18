@@ -1,4 +1,4 @@
-import { HOOSResponse, HOOSResult, SectionScore } from "../types/hoos.types";
+import { QuestionnaireResponse, QuestionnaireResult, SectionScore } from "../types/questionnaire.types";
 
 // Configuration for score interpretation
 const INTERPRETATION_RANGES = {
@@ -28,15 +28,15 @@ const getInterpretation = (score: number): string => {
   return "Unable to interpret";
 };
 
-export const calculateHoosScores = (responses: HOOSResponse): HOOSResult => {
+export const calculateHoosScores = (responses: QuestionnaireResponse): QuestionnaireResult => {
   try {
     const subscaleScores: { [key: string]: number } = {};
 
     // Calculate scores for each section
     for (const [section, questions] of Object.entries(SECTION_QUESTIONS)) {
       const validResponses = questions
-        .filter(q => q in responses)
-        .map(q => responses[q]);
+        .filter(q => q in responses && typeof responses[q] === 'number')
+        .map(q => responses[q] as number);
 
       if (validResponses.length > 0) {
         // Formula: 100 - mean(responses) * 25

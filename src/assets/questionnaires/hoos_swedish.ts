@@ -1,6 +1,6 @@
-import { HOOSQuestionnaire } from "../../lib/types/hoos.types.ts";
+import { Questionnaire } from "../../lib/types/questionnaire.types";
 
-export const questions: HOOSQuestionnaire[] = [
+export const questions: Questionnaire[] = [
   {
     title: "HOOS",
     subtitle: "Frågeformulär för höftpatienter",

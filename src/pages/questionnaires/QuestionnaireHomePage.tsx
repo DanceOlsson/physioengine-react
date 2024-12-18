@@ -13,7 +13,7 @@ interface Questionnaire {
   id: string;
   title: string;
   description: string;
-  category: "knee" | "hip" | "ankle" | "general";
+  category: "knee" | "hip" | "arm" | "general";
 }
 
 const questionnaires: Questionnaire[] = [
@@ -30,6 +30,12 @@ const questionnaires: Questionnaire[] = [
     category: "hip",
   },
   {
+    id: "dash",
+    title: "DASH",
+    description: "Disabilities of the Arm, Shoulder and Hand",
+    category: "arm",
+  },
+  {
     id: "satisfaction",
     title: "Patient Satisfaction",
     description: "Brief survey about your healthcare experience",
@@ -43,7 +49,7 @@ export function QuestionnaireHomePage() {
 
   return (
     <div className="py-24">
-      <h1 className="text-3xl font-bold">Questionnaires</h1>
+      <h1 className="text-3xl font-bold text-foreground">Questionnaires</h1>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mt-6">
         {questionnaires.map((questionnaire) => (
@@ -53,10 +59,14 @@ export function QuestionnaireHomePage() {
             className="cursor-pointer"
           >
             <Card className="p-6 hover:shadow-lg transition-shadow">
-              <h2 className="text-xl font-semibold">{questionnaire.title}</h2>
-              <p className="text-gray-600 mt-2">{questionnaire.description}</p>
+              <h2 className="text-xl font-semibold text-foreground">
+                {questionnaire.title}
+              </h2>
+              <p className="text-muted-foreground mt-2">
+                {questionnaire.description}
+              </p>
               <div className="mt-4">
-                <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-blue-100 text-blue-800">
+                <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-primary/10 text-primary">
                   {questionnaire.category}
                 </span>
               </div>
