@@ -1,7 +1,7 @@
 // Import necessary dependencies from React and ReactDOM
 import { StrictMode } from "react"; // StrictMode helps catch common bugs during development
 import { createRoot } from "react-dom/client"; // createRoot is the new way to render React apps
-import "./globals.css"; // Import global CSS styles
+import "@/styles/globals.css"; // Import global CSS styles
 import { RouterProvider } from "react-router-dom";
 import { router } from "./app/router.tsx";
 import { ThemeProvider } from "@/components/theme-provider";
