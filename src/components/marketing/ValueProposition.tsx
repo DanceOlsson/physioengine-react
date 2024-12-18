@@ -16,12 +16,7 @@ interface BenefitProps {
   imagePosition: "left" | "right";
 }
 
-const Benefit = ({
-  imageUrl,
-  altText,
-  description,
-  imagePosition,
-}: BenefitProps) => {
+const Benefit = ({ imageUrl, altText, imagePosition }: BenefitProps) => {
   const imageRef = useRef<HTMLDivElement>(null);
   const [translateX, setTranslateX] = useState(
     imagePosition === "left" ? -100 : 100
