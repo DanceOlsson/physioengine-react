@@ -3,7 +3,14 @@ import { cn } from "@/lib/utils";
 import showQrCodeImage from "@/assets/images/marketing/physical-therapy-qr-code-consultation-side-view.webp";
 import resultsImage from "@/assets/images/marketing/physical-therapy-results-doctor-patient-table.webp";
 import { useEffect, useRef, useState } from "react";
-import { QrCode, Scan, ClipboardList, LineChart } from "lucide-react";
+import {
+  QrCode,
+  Scan,
+  ClipboardList,
+  LineChart,
+  ArrowRight,
+} from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface ValuePropositionProps {
   className?: string;
@@ -126,8 +133,12 @@ const Benefit = ({ imageUrl, altText, imagePosition }: BenefitProps) => {
             imagePosition === "left" ? "text-right" : "text-left"
           }`}
         >
-          <Button variant="default" size="lg">
-            Explore All Tools
+          <Button variant="default" size="lg" className="group" asChild>
+            <Link to="/questionnaires">
+              <ClipboardList className="mr-2 h-4 w-4" />
+              Explore Questionnaires
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Link>
           </Button>
         </div>
       </div>
