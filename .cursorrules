@@ -14,13 +14,23 @@ Project Structure:
 
 - Use /src/pages for route components
   • Name page components with PascalCase and Page suffix (e.g., HomePage.tsx)
-  • Use folder structure for nested routes (e.g., questionnaires/[id]/index.tsx)
-  • Match file names to route structure (e.g., DashboardSettingsPage.tsx)
-  • Use index.tsx for main route components
+  • Use folder structure for nested routes (e.g., questionnaires/[name])
+  • Match file names to route structure
 - Use /src/components for reusable UI components
-- Use /src/lib for utility functions
+  • /ui for shadcn/ui components
+  • /questionnaires for questionnaire components
+  • /layout for layout components
+  • /forms for form components
+  • /features for feature-specific components
+- Use /src/lib for core functionality
+  • /types for TypeScript definitions
+  • /calculators for questionnaire scoring logic
+  • /utils for utility functions
+- Use /src/assets/questionnaires for questionnaire data
+  • Name files as [name]\_swedish.ts
+- Use /src/data for data models and constants
 - Use @/ alias for imports from src directory
-- Keep configuration files in root (e.g., vite.config.ts, tailwind.config.js)
+- Keep configuration files in root
 
 TypeScript Usage:
 
@@ -29,6 +39,15 @@ TypeScript Usage:
 - Use type guards for runtime checks
 - Leverage TypeScript's strict mode
 - Use ES modules syntax consistently (import/export)
+- Questionnaire Type System:
+  • Use centralized questionnaire.types.ts
+  • Follow QuestionnaireResponse/Result patterns
+  • Use proper type inheritance for specialized questionnaires
+  • Implement strict typing for calculator functions
+- Component Types:
+  • Define prop interfaces above components
+  • Use proper generics for reusable components
+  • Implement proper event handler types
 
 React Router Patterns:
 
@@ -44,31 +63,55 @@ UI and Styling:
 - Implement Tailwind CSS with mobile-first approach
 - Follow consistent spacing and color patterns
 - Ensure accessibility standards
-- Use CSS variables for theme customization
+- Theme Implementation:
+  • Use Tailwind CSS classes for theme customization
+  • Implement dark mode using Tailwind's dark: modifier
+  • Follow Tailwind color palette and design tokens
+  • Use Tailwind's prefers-color-scheme media query
+  • Follow shadcn/ui theming patterns
+  • Ensure consistent dark mode across components
+- Questionnaire UI:
+  • Use Card components for question sections
+  • Implement consistent form layouts
+  • Follow mobile-responsive patterns
+  • Use shared UI components (Button, Input, etc.)
+- Component Consistency:
+  • Maintain uniform spacing
+  • Use consistent color schemes
+  • Follow established form patterns
 
 State Management:
 
 - Use React Router for URL-based state
 - Implement local state with useState
 - Share state with context when needed
-- Handle form state effectively
-- Implement proper loading states
+- Use controlled components for forms
+- Store questionnaire responses in localStorage
+- Form handling:
+  • Validate user input
+  • Handle conditional questions
+  • Show error messages
 
 Performance:
 
 - Implement code splitting by route
 - Optimize bundle size
 - Use proper React hooks dependencies
-- Implement proper error boundaries
-- Use image optimization techniques
-- Implement proper caching strategies
+- Implement error boundaries
+- Cache questionnaire responses
 
 Deployment (Vercel):
 
 - Use ES modules syntax in configuration files
-- Implement proper environment variable handling
-- Add proper build outputs in package.json
-- Configure proper redirects for SPA routing
-- Use Vercel's edge functions when needed
-- Implement proper error handling for production
-- Add proper meta tags for SEO
+- Environment Variables:
+  • Handle API keys securely
+  • Configure questionnaire feature flags
+- Build Configuration:
+  • Optimize questionnaire data bundling
+  • Configure SPA routing for questionnaire paths
+- Error Handling:
+  • Implement production error boundaries
+  • Add error logging for questionnaire failures
+- SEO:
+  • Add meta tags for questionnaire pages
+  • Implement proper page titles
