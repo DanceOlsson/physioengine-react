@@ -64,13 +64,13 @@ export function Features() {
   ];
 
   return (
-    <section id="features" className="py-24 bg-white">
+    <section id="features" className="py-24 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             Core Features
           </h2>
-          <p className="mt-4 text-lg text-gray-600">
+          <p className="mt-4 text-lg text-muted-foreground">
             Everything you need to manage your physiotherapy questionnaires
             effectively
           </p>
@@ -79,29 +79,29 @@ export function Features() {
         <div className="space-y-16">
           {/* For Physiotherapists */}
           <div>
-            <h3 className="text-2xl font-semibold mb-8 text-gray-900">
+            <h3 className="text-2xl font-semibold mb-8 text-foreground">
               For Physiotherapists
             </h3>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
               {physiotherapistFeatures.map((feature) => (
                 <div
                   key={feature.title}
-                  className="group relative p-6 bg-white rounded-2xl 
-                                                  shadow-sm ring-1 ring-gray-200 hover:ring-blue-500 
-                                                  transition-all duration-200 hover:shadow-md"
+                  className="group relative p-6 bg-card rounded-2xl 
+                            shadow-sm ring-1 ring-border hover:ring-primary 
+                            transition-all duration-200 hover:shadow-md"
                 >
                   <div className="flex items-center space-x-4">
                     <div
-                      className="p-2 bg-blue-50 rounded-lg text-blue-600 group-hover:bg-blue-100 
-                                  transition-colors duration-200"
+                      className="p-2 bg-primary/10 rounded-lg text-primary 
+                                  group-hover:bg-primary/20 transition-colors duration-200"
                     >
                       {feature.icon}
                     </div>
                     <div>
-                      <h4 className="text-lg font-medium text-gray-900">
+                      <h4 className="text-lg font-medium text-foreground">
                         {feature.title}
                       </h4>
-                      <p className="mt-1 text-sm text-gray-600">
+                      <p className="mt-1 text-sm text-muted-foreground">
                         {feature.description}
                       </p>
                     </div>
@@ -113,29 +113,29 @@ export function Features() {
 
           {/* For Patients */}
           <div>
-            <h3 className="text-2xl font-semibold mb-8 text-gray-900">
+            <h3 className="text-2xl font-semibold mb-8 text-foreground">
               For Patients
             </h3>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
               {patientFeatures.map((feature) => (
                 <div
                   key={feature.title}
-                  className="group relative p-6 bg-white rounded-2xl 
-                                                  shadow-sm ring-1 ring-gray-200 hover:ring-blue-500 
-                                                  transition-all duration-200 hover:shadow-md"
+                  className="group relative p-6 bg-card rounded-2xl 
+                            shadow-sm ring-1 ring-border hover:ring-primary 
+                            transition-all duration-200 hover:shadow-md"
                 >
                   <div className="flex items-center space-x-4">
                     <div
-                      className="p-2 bg-green-50 rounded-lg text-green-600 group-hover:bg-green-100 
-                                  transition-colors duration-200"
+                      className="p-2 bg-accent rounded-lg text-accent-foreground 
+                                  group-hover:bg-accent/80 transition-colors duration-200"
                     >
                       {feature.icon}
                     </div>
                     <div>
-                      <h4 className="text-lg font-medium text-gray-900">
+                      <h4 className="text-lg font-medium text-foreground">
                         {feature.title}
                       </h4>
-                      <p className="mt-1 text-sm text-gray-600">
+                      <p className="mt-1 text-sm text-muted-foreground">
                         {feature.description}
                       </p>
                     </div>
