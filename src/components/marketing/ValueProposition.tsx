@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import showQrCodeImage from "@/assets/images/marketing/physical-therapy-qr-code-consultation-side-view.webp";
 import resultsImage from "@/assets/images/marketing/physical-therapy-results-doctor-patient-table.webp";
 import { useEffect, useRef, useState } from "react";
+import { QrCode, Scan, ClipboardList, LineChart } from "lucide-react";
 
 interface ValuePropositionProps {
   className?: string;
@@ -69,38 +70,83 @@ const Benefit = ({
     };
   }, [imagePosition]);
 
+  const steps =
+    imagePosition === "left"
+      ? [
+          {
+            icon: <QrCode className="w-6 h-6 text-blue-600" />,
+            text: "Find relevant questionnaire, show a QR code on your screen",
+          },
+          {
+            icon: <Scan className="w-6 h-6 text-blue-600" />,
+            text: "Your patient scans it with their phone. Patient can then easily fill in the questionnaire",
+          },
+        ]
+      : [
+          {
+            icon: <ClipboardList className="w-6 h-6 text-blue-600" />,
+            text: "As soon as they're done, you see their results right away",
+          },
+          {
+            icon: <LineChart className="w-6 h-6 text-blue-600" />,
+            text: "Quickly understand their condition and plan treatment, all in one place",
+          },
+        ];
+
   return (
-    <div className="flex flex-col md:flex-row items-center gap-8 py-12">
+    <div className="flex flex-col md:flex-row items-start gap-0 py-12 relative">
       {imagePosition === "left" && (
         <div
           ref={imageRef}
-          className="w-full md:w-1/2 transition-transform duration-300 ease-out"
+          className="relative w-full md:w-3/4 transition-transform duration-300 ease-out h-[450px] -ml-32"
           style={{ transform: `translateX(${translateX}px)` }}
         >
+          <div className="absolute inset-0 bg-gradient-to-l from-white/100 via-white/25 to-transparent z-10" />
           <img
             src={imageUrl}
             alt={altText}
-            className="rounded-lg shadow-lg w-full h-auto"
+            className="rounded-[2rem] w-full h-full object-cover"
             loading="lazy"
           />
         </div>
       )}
-      <div className="w-full md:w-1/2 space-y-4">
-        <p className="text-lg text-gray-700 leading-relaxed">{description}</p>
-        <Button variant="default" size="lg" className="w-full md:w-auto">
-          Explore All Tools
-        </Button>
+      <div
+        className={`w-full md:w-1/2 flex flex-col min-h-[450px] md:pt-20 z-10 
+        ${imagePosition === "left" ? "-ml-24" : "-mr-24"}`}
+      >
+        <div className="flex-grow">
+          <div className="space-y-8">
+            {steps.map((step, index) => (
+              <div key={index} className="flex items-start gap-4 group">
+                <div className="pt-1">{step.icon}</div>
+                <p className="text-xl text-gray-800 leading-relaxed">
+                  {step.text}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div
+          className={`mt-16 ${
+            imagePosition === "left" ? "text-right" : "text-left"
+          }`}
+        >
+          <Button variant="default" size="lg">
+            Explore All Tools
+          </Button>
+        </div>
       </div>
       {imagePosition === "right" && (
         <div
           ref={imageRef}
-          className="w-full md:w-1/2 transition-transform duration-300 ease-out"
+          className="relative w-full md:w-3/4 transition-transform duration-300 ease-out h-[450px] -mr-32"
           style={{ transform: `translateX(${translateX}px)` }}
         >
+          <div className="absolute inset-0 bg-gradient-to-r from-white/100 via-white/25 to-transparent z-10" />
           <img
             src={imageUrl}
             alt={altText}
-            className="rounded-lg shadow-lg w-full h-auto"
+            className="rounded-[2rem] w-full h-full object-cover"
             loading="lazy"
           />
         </div>
