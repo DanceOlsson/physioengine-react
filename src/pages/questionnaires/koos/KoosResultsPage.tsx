@@ -1,3 +1,10 @@
+// Note: Layout concerns are handled by parent App.tsx:
+// - container width
+// - horizontal padding
+// - flex layout
+// - main tag wrapper
+// Only page-specific spacing (py-24) is handled here
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui";
@@ -87,7 +94,7 @@ export function KoosResultsPage() {
   };
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="py-24">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold mb-8">KOOS Results</h1>
 
