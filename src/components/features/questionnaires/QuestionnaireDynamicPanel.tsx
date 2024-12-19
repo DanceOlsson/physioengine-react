@@ -96,10 +96,12 @@ export function QuestionnaireDynamicPanel({
 
   const handleFormSubmit = () => {
     setShowResults(true);
+    onStateChange("finalResults");
   };
 
   const handleBack = () => {
     setShowResults(false);
+    onStateChange("form");
   };
 
   return (

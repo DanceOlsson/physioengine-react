@@ -10,7 +10,7 @@ import {
   type PanelState,
 } from "@/components/features/questionnaires/QuestionnaireDynamicPanel";
 import { QuestionnaireActionDialog } from "@/components/features/questionnaires/QuestionnaireActionDialog";
-import { useBeforeUnload } from "@/hooks/use-before-unload";
+import { useBeforeUnload } from "@/hooks/use-before-unload.ts";
 
 const questionnaires: Questionnaire[] = [
   {

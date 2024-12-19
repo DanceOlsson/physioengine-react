@@ -72,7 +72,7 @@ export function QuestionnaireSidebar({
 
             <div className="px-2">
               <Button
-                variant={selectedCategory === null ? "secondary" : "ghost"}
+                variant={selectedCategory === null ? "default" : "ghost"}
                 className="w-full justify-start"
                 onClick={() => onCategorySelect(null)}
               >
@@ -82,7 +82,7 @@ export function QuestionnaireSidebar({
                 <Button
                   key={category.id}
                   variant={
-                    selectedCategory === category.id ? "secondary" : "ghost"
+                    selectedCategory === category.id ? "default" : "ghost"
                   }
                   className="w-full justify-start"
                   onClick={() => onCategorySelect(category.id)}

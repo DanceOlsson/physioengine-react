@@ -1,16 +1,17 @@
 import { useEffect } from "react";
 
-export function useBeforeUnload(enabled: boolean, message: string) {
+export function useBeforeUnload(shouldPrevent: boolean, message?: string) {
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      if (enabled) {
+      if (shouldPrevent) {
         event.preventDefault();
-        event.returnValue = message;
-        return message;
+        // Modern browsers require returnValue to be set
+        event.returnValue = message || "";
+        return message; // For older browsers
       }
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [enabled, message]);
+  }, [shouldPrevent, message]);
 } 
