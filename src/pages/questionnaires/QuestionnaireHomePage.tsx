@@ -1,20 +1,16 @@
-// Note: Layout concerns are handled by parent App.tsx:
-// - container width
-// - horizontal padding
-// - flex layout
-// - main tag wrapper
-// Only page-specific spacing (py-24) is handled here
-
-import { Card } from "@/components/ui/card";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { useState, useEffect } from "react";
+import { QuestionnaireSidebar } from "@/components/features/questionnaires/QuestionnaireSidebar";
+import {
+  QuestionnaireList,
+  type Questionnaire,
+} from "@/components/features/questionnaires/QuestionnaireList";
+import {
+  QuestionnaireDynamicPanel,
+  type PanelState,
+} from "@/components/features/questionnaires/QuestionnaireDynamicPanel";
 import { QuestionnaireActionDialog } from "@/components/features/questionnaires/QuestionnaireActionDialog";
-import { useState } from "react";
-
-interface Questionnaire {
-  id: string;
-  title: string;
-  description: string;
-  category: "knee" | "hip" | "arm" | "general";
-}
+import { useBeforeUnload } from "@/hooks/use-before-unload";
 
 const questionnaires: Questionnaire[] = [
   {
@@ -44,43 +40,121 @@ const questionnaires: Questionnaire[] = [
 ];
 
 export function QuestionnaireHomePage() {
+  // Responsive state
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(isMobile);
+
+  // Filter state
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Questionnaire state
   const [selectedQuestionnaire, setSelectedQuestionnaire] =
     useState<Questionnaire | null>(null);
+  const [showActionDialog, setShowActionDialog] = useState(false);
+  const [panelState, setPanelState] = useState<PanelState>("empty");
+  const [showDynamicPanel, setShowDynamicPanel] = useState(false);
+  const [buttonPosition, setButtonPosition] = useState<{
+    top: number;
+    right: number;
+  } | null>(null);
+
+  // Filter questionnaires
+  const filteredQuestionnaires = questionnaires.filter((q) => {
+    const matchesCategory =
+      !selectedCategory || q.category === selectedCategory;
+    const matchesSearch =
+      !searchQuery ||
+      q.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      q.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
+  // Handle mobile responsiveness
+  useEffect(() => {
+    setIsSidebarCollapsed(isMobile);
+  }, [isMobile]);
+
+  // Handle navigation protection
+  const shouldPreventNavigation =
+    panelState === "form" ||
+    panelState === "qrCode" ||
+    panelState === "liveResults";
+
+  useBeforeUnload(
+    shouldPreventNavigation,
+    "You have an active questionnaire session. Are you sure you want to leave?"
+  );
+
+  // Handle questionnaire selection
+  const handleQuestionnaireSelect = (
+    questionnaire: Questionnaire,
+    position: { top: number; right: number }
+  ) => {
+    if (shouldPreventNavigation) {
+      const confirmed = window.confirm(
+        "You have an active questionnaire session. Are you sure you want to switch questionnaires?"
+      );
+      if (!confirmed) return;
+    }
+    setSelectedQuestionnaire(questionnaire);
+    setButtonPosition(position);
+    setShowActionDialog(true);
+    setShowDynamicPanel(false);
+    setPanelState("empty");
+  };
+
+  // Handle action selection
+  const handleActionSelect = (action: "qrCode" | "form") => {
+    setShowActionDialog(false);
+    setShowDynamicPanel(true);
+    setPanelState(action === "qrCode" ? "qrCode" : "form");
+  };
 
   return (
-    <div className="py-24">
-      <h1 className="text-3xl font-bold text-foreground">Questionnaires</h1>
+    <div className="flex h-full">
+      {/* Sidebar */}
+      {!isMobile && (
+        <QuestionnaireSidebar
+          isCollapsed={isSidebarCollapsed}
+          onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          selectedCategory={selectedCategory}
+          onCategorySelect={setSelectedCategory}
+          onSearch={setSearchQuery}
+        />
+      )}
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mt-6">
-        {questionnaires.map((questionnaire) => (
-          <div
-            key={questionnaire.id}
-            onClick={() => setSelectedQuestionnaire(questionnaire)}
-            className="cursor-pointer"
-          >
-            <Card className="p-6 hover:shadow-lg transition-shadow">
-              <h2 className="text-xl font-semibold text-foreground">
-                {questionnaire.title}
-              </h2>
-              <p className="text-muted-foreground mt-2">
-                {questionnaire.description}
-              </p>
-              <div className="mt-4">
-                <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-primary/10 text-primary">
-                  {questionnaire.category}
-                </span>
-              </div>
-            </Card>
+      {/* Main content */}
+      <div className="relative flex flex-1 overflow-hidden">
+        {/* List panel */}
+        <div className="w-full">
+          <QuestionnaireList
+            questionnaires={filteredQuestionnaires}
+            selectedQuestionnaire={selectedQuestionnaire}
+            onQuestionnaireSelect={handleQuestionnaireSelect}
+          />
+        </div>
+
+        {/* Dynamic panel - only show after action selection */}
+        {showDynamicPanel && (
+          <div className="absolute inset-y-0 right-0 w-[60%] transform transition-transform duration-300 ease-in-out">
+            <QuestionnaireDynamicPanel
+              questionnaire={selectedQuestionnaire}
+              state={panelState}
+              onStateChange={setPanelState}
+            />
           </div>
-        ))}
-      </div>
+        )}
 
-      <QuestionnaireActionDialog
-        open={selectedQuestionnaire !== null}
-        onOpenChange={(open) => !open && setSelectedQuestionnaire(null)}
-        questionnaireName={selectedQuestionnaire?.title ?? ""}
-        questionnaireId={selectedQuestionnaire?.id ?? ""}
-      />
+        {/* Action Dialog */}
+        <QuestionnaireActionDialog
+          open={showActionDialog}
+          onOpenChange={setShowActionDialog}
+          questionnaireName={selectedQuestionnaire?.title ?? ""}
+          onActionSelect={handleActionSelect}
+          buttonPosition={buttonPosition}
+        />
+      </div>
     </div>
   );
 }
