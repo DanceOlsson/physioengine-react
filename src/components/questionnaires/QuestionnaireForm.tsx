@@ -1,13 +1,9 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  Button,
-  Card,
-  Label,
-  RadioGroup,
-  RadioGroupItem,
-  Input,
-} from "@/components/ui";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Input } from "@/components/ui/input";
 
 interface QuestionnaireFormProps {
   questionnaire: {
@@ -33,15 +29,14 @@ interface QuestionnaireFormProps {
     }>;
   };
   storageKey: string;
-  resultsPath: string;
+  onSubmit: () => void;
 }
 
 export function QuestionnaireForm({
   questionnaire,
   storageKey,
-  resultsPath,
+  onSubmit,
 }: QuestionnaireFormProps) {
-  const navigate = useNavigate();
   const [responses, setResponses] = useState<Record<string, number | string>>(
     {}
   );
@@ -67,7 +62,7 @@ export function QuestionnaireForm({
 
   const handleSubmit = () => {
     localStorage.setItem(storageKey, JSON.stringify(responses));
-    navigate(resultsPath);
+    onSubmit();
   };
 
   const isComplete = () => {
@@ -150,8 +145,8 @@ export function QuestionnaireForm({
   };
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <div className="max-w-3xl mx-auto">
+    <div className="h-full overflow-auto">
+      <div className="max-w-3xl mx-auto p-6">
         <h1 className="text-3xl font-bold mb-2 text-foreground">
           {questionnaire.title}
         </h1>
@@ -187,7 +182,7 @@ export function QuestionnaireForm({
           </Card>
         ))}
 
-        <div className="flex justify-end mt-6">
+        <div className="flex justify-end mt-6 mb-6">
           <Button onClick={handleSubmit} disabled={!isComplete()} size="lg">
             Submit Questionnaire
           </Button>
