@@ -11,6 +11,7 @@ import {
 } from "@/components/features/questionnaires/QuestionnaireDynamicPanel";
 import { QuestionnaireActionDialog } from "@/components/features/questionnaires/QuestionnaireActionDialog";
 import { useBeforeUnload } from "@/hooks/use-before-unload.ts";
+import { QuestionnaireWarningDialog } from "@/components/features/questionnaires/QuestionnaireWarningDialog";
 
 const questionnaires: Questionnaire[] = [
   {
@@ -58,6 +59,11 @@ export function QuestionnaireHomePage() {
     top: number;
     right: number;
   } | null>(null);
+  const [showWarningDialog, setShowWarningDialog] = useState(false);
+  const [pendingQuestionnaire, setPendingQuestionnaire] = useState<{
+    questionnaire: Questionnaire;
+    position: { top: number; right: number };
+  } | null>(null);
 
   // Filter questionnaires
   const filteredQuestionnaires = questionnaires.filter((q) => {
@@ -92,16 +98,27 @@ export function QuestionnaireHomePage() {
     position: { top: number; right: number }
   ) => {
     if (shouldPreventNavigation) {
-      const confirmed = window.confirm(
-        "You have an active questionnaire session. Are you sure you want to switch questionnaires?"
-      );
-      if (!confirmed) return;
+      setPendingQuestionnaire({ questionnaire, position });
+      setShowWarningDialog(true);
+      return;
     }
+
     setSelectedQuestionnaire(questionnaire);
     setButtonPosition(position);
     setShowActionDialog(true);
     setShowDynamicPanel(false);
     setPanelState("empty");
+  };
+
+  const handleWarningConfirm = () => {
+    if (pendingQuestionnaire) {
+      setSelectedQuestionnaire(pendingQuestionnaire.questionnaire);
+      setButtonPosition(pendingQuestionnaire.position);
+      setShowActionDialog(true);
+      setShowDynamicPanel(false);
+      setPanelState("empty");
+      setPendingQuestionnaire(null);
+    }
   };
 
   // Handle action selection
@@ -145,6 +162,13 @@ export function QuestionnaireHomePage() {
             />
           </div>
         )}
+
+        {/* Warning Dialog */}
+        <QuestionnaireWarningDialog
+          open={showWarningDialog}
+          onOpenChange={setShowWarningDialog}
+          onConfirm={handleWarningConfirm}
+        />
 
         {/* Action Dialog */}
         <QuestionnaireActionDialog
