@@ -4,16 +4,16 @@ import { Link } from "react-router-dom";
 
 export function Hero() {
   return (
-    <div className="relative">
+    <div className="relative w-screen -ml-[50vw] left-1/2">
       {/* Background Pattern */}
-      <div className="absolute inset-0 bg-grid-blue-500/[0.03] -z-10" />
+      <div className="absolute inset-0 w-full bg-grid-blue-500/[0.03] -z-10" />
       <div
-        className="absolute inset-0 bg-gradient-to-b from-blue-50 via-transparent to-background 
+        className="absolute inset-0 w-full bg-gradient-to-b from-blue-50 via-transparent to-background 
                       dark:from-blue-950 dark:to-background -z-10"
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-40 pb-32">
-        <div className="text-center space-y-12">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center space-y-12 pt-40 pb-32">
           <h1
             className="text-5xl md:text-6xl font-bold tracking-tight bg-gradient-to-r 
                        from-gray-900 via-blue-800 to-gray-900 dark:from-gray-100 dark:via-blue-300 dark:to-gray-100 bg-clip-text text-transparent"
