@@ -7,6 +7,7 @@
 
 import { Header } from "@/components/layout/Header";
 import { Outlet } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
       <main className="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 pt-16">
         <Outlet />
       </main>
+      <Analytics />
     </div>
   );
 }
