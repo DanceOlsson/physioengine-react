@@ -38,7 +38,8 @@ physioengine-react/
 │   │   ├── ui/               # Base UI components
 │   │   ├── layout/           # Layout components
 │   │   ├── marketing/        # Marketing components
-│   │   ├── questionnaires/   # Questionnaire components
+│   │   ├── dynamic-readers/  # Dynamic form components
+│   │   │   └── questionnaires/
 │   │   ├── forms/           # Form components
 │   │   ├── features/        # Feature-specific components
 │   │   └── theme-provider.tsx
@@ -82,8 +83,9 @@ physioengine-react/
 - `components/ui/` - Base UI components (button, dialog, input, etc.)
 - `components/layout/` - Layout components (Header)
 - `components/marketing/` - Marketing components (Hero, Features, ValueProposition)
+- `components/dynamic-readers/` - Dynamic form components
+  - `QuestionnaireForm` - Generic dynamic form handling for questionnaires
 - `components/questionnaires/` - Questionnaire-specific components
-  - `QuestionnaireForm` - Generic form handling
   - `QuestionnaireResults` - Results display with charts
 - `components/features/questionnaires/` - Questionnaire feature components
   - `QuestionnaireList` - Displays available questionnaires in grid/list view
@@ -169,7 +171,7 @@ Each questionnaire has a dedicated calculator that:
 ### Data Flow
 
 1. Questionnaire data defined in `/assets/questionnaires/`
-2. Rendered through `QuestionnaireForm` component
+2. Rendered through `DynamicQuestionnaireForm` component
 3. Responses stored in localStorage
 4. Processed by calculator functions
 5. Results displayed in dedicated results pages

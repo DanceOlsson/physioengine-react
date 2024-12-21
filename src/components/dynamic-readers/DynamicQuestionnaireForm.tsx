@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
 
-interface QuestionnaireFormProps {
+interface DynamicQuestionnaireFormProps {
   questionnaire: {
     title: string;
     subtitle: string;
@@ -30,13 +30,15 @@ interface QuestionnaireFormProps {
   };
   storageKey: string;
   onSubmit: () => void;
+  resultsPath: string;
 }
 
-export function QuestionnaireForm({
+export function DynamicQuestionnaireForm({
   questionnaire,
   storageKey,
   onSubmit,
-}: QuestionnaireFormProps) {
+  resultsPath,
+}: DynamicQuestionnaireFormProps) {
   const [responses, setResponses] = useState<Record<string, number | string>>(
     {}
   );
@@ -86,7 +88,7 @@ export function QuestionnaireForm({
   };
 
   const shouldShowQuestion = (
-    question: QuestionnaireFormProps["questionnaire"]["sections"][0]["questions"][0]
+    question: DynamicQuestionnaireFormProps["questionnaire"]["sections"][0]["questions"][0]
   ) => {
     if (!question.dependsOn) return true;
     return (
@@ -96,7 +98,7 @@ export function QuestionnaireForm({
   };
 
   const renderQuestion = (
-    question: QuestionnaireFormProps["questionnaire"]["sections"][0]["questions"][0]
+    question: DynamicQuestionnaireFormProps["questionnaire"]["sections"][0]["questions"][0]
   ) => {
     if (!shouldShowQuestion(question)) return null;
 

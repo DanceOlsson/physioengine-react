@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { type Questionnaire } from "./QuestionnaireList";
-import { QuestionnaireForm } from "@/components/questionnaires/QuestionnaireForm";
+import { DynamicQuestionnaireForm } from "@/components/dynamic-readers/DynamicQuestionnaireForm";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -132,10 +132,11 @@ export function QuestionnaireDynamicPanel({
               </div>
             </div>
           ) : (
-            <QuestionnaireForm
+            <DynamicQuestionnaireForm
               questionnaire={data}
               storageKey={storageKey}
               onSubmit={handleFormSubmit}
+              resultsPath="results"
             />
           )}
         </div>
