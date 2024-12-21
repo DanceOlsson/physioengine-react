@@ -85,7 +85,10 @@ physioengine-react/
 - `components/questionnaires/` - Questionnaire-specific components
   - `QuestionnaireForm` - Generic form handling
   - `QuestionnaireResults` - Results display with charts
-- `components/features/` - Feature-specific components (QuestionnaireActionDialog)
+- `components/features/questionnaires/` - Questionnaire feature components
+  - `QuestionnaireList` - Displays available questionnaires in grid/list view
+  - `QuestionnaireSidebar` - Navigation and filtering sidebar
+  - `QuestionnaireDynamicPanel` - Dynamic content panel for questionnaire details
 - `theme-provider.tsx` - Theme management and dark mode support
 
 ### Marketing Components
@@ -105,7 +108,17 @@ physioengine-react/
 
 ### Questionnaire System
 
-- Unified type system for all questionnaires
+#### Homepage Features
+
+- Dynamic layout with grid/list view toggle
+- Sidebar navigation with filtering capabilities
+- Detailed questionnaire preview panel
+- Mobile-responsive design
+- Category-based filtering and search
+- Interactive cards/list items with quick actions
+
+#### Form Functionality
+
 - Generic form component supporting:
   - Regular radio button questions
   - Text input fields
@@ -162,6 +175,20 @@ Each questionnaire has a dedicated calculator that:
 5. Results displayed in dedicated results pages
 
 ## Development Guidelines
+
+### Component Architecture
+
+#### Questionnaire Homepage Components
+
+1. `QuestionnaireList`
+   - Handles grid/list view rendering
+   - Manages questionnaire item display
+2. `QuestionnaireSidebar`
+   - Provides navigation and filtering
+   - Manages category selection
+3. `QuestionnaireDynamicPanel`
+   - Displays questionnaire details and preview
+   - Manages questionnaire actions
 
 ### Adding a New Questionnaire
 
