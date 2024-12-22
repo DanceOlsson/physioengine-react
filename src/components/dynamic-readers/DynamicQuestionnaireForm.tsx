@@ -30,14 +30,12 @@ interface DynamicQuestionnaireFormProps {
   };
   storageKey: string;
   onSubmit: () => void;
-  resultsPath: string;
 }
 
 export function DynamicQuestionnaireForm({
   questionnaire,
   storageKey,
   onSubmit,
-  resultsPath,
 }: DynamicQuestionnaireFormProps) {
   const [responses, setResponses] = useState<Record<string, number | string>>(
     {}
