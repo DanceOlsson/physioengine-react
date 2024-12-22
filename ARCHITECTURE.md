@@ -22,6 +22,9 @@ PhysioEngine is a modern web application designed for physiotherapists to admini
 - **Radix UI** - Accessible component primitives
 - **Chart.js 4.4** - Data visualization
 - **Lucide React** - Icon system
+- **Firebase 10.x** - Backend and database services
+  - Realtime Database for questionnaire responses
+  - Analytics for usage tracking
 
 ## Directory Structure
 
@@ -46,7 +49,8 @@ physioengine-react/
 │   ├── lib/
 │   │   ├── types/           # TypeScript type definitions
 │   │   ├── calculators/     # Score calculation logic
-│   │   └── utils/          # Utility functions
+│   │   ├── utils/          # Utility functions
+│   │   └── firebase.ts     # Firebase configuration and services
 │   ├── pages/
 │   │   ├── home/           # Home page components
 │   │   └── questionnaires/ # Questionnaire pages
@@ -73,8 +77,34 @@ physioengine-react/
 - `eslint.config.js` - Code quality rules
 - `postcss.config.js` - CSS processing
 - `.cursorrules` - Cursor IDE configuration
-  - Code formatting rules
-  - Project-specific settings
+- Environment Configuration
+  - `.env` - Environment variables (not in git)
+  - `.env.example` - Example environment variables
+  - Firebase configuration in environment variables
+
+### Data Flow
+
+1. Questionnaire data defined in `/assets/questionnaires/`
+2. Rendered through `DynamicQuestionnaireForm` component
+3. Responses stored in:
+   - localStorage for offline access
+   - Firebase Realtime Database for persistence
+4. Processed by calculator functions
+5. Results displayed in dedicated results pages
+
+### Firebase Integration
+
+- Configuration in `src/lib/firebase.ts`
+- Services:
+  - Realtime Database for questionnaire responses
+  - Analytics for usage tracking
+- Environment Variables:
+  - API keys and configuration in `.env`
+  - Example configuration in `.env.example`
+- Data Structure:
+  - Questionnaire responses stored by type
+  - User sessions tracked
+  - Results persistence
 
 ## Component Organization
 
