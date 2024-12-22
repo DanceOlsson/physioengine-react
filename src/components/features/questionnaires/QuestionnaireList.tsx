@@ -58,8 +58,8 @@ export function QuestionnaireList({
       </div>
 
       <ScrollArea.Root className="h-[calc(100vh-10rem)]">
-        <ScrollArea.Viewport className="h-full w-full px-6">
-          <div className="grid gap-3">
+        <ScrollArea.Viewport className="h-full w-full px-6 pb-6">
+          <div className="grid gap-3 pt-3">
             {questionnaires.map((questionnaire) => (
               <div
                 key={questionnaire.id}
@@ -68,7 +68,7 @@ export function QuestionnaireList({
               >
                 <Card
                   className={cn(
-                    "p-4 transition-all hover:shadow-md",
+                    "p-4 transition-all duration-200 hover:ring-1 hover:ring-blue-500 hover:bg-gray-100/50 dark:hover:bg-gray-800/50",
                     selectedQuestionnaire?.id === questionnaire.id &&
                       "border-primary shadow-md"
                   )}
