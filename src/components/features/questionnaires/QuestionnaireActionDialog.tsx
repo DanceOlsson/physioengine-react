@@ -20,6 +20,8 @@ export function QuestionnaireActionDialog({
   buttonPosition,
 }: QuestionnaireActionDialogProps) {
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const isCompact = useMediaQuery("(max-width: 400px)");
+  const isVeryCompact = useMediaQuery("(max-width: 350px)");
   const [position, setPosition] = useState<{
     top: number;
     left: number;
@@ -29,7 +31,7 @@ export function QuestionnaireActionDialog({
     if (buttonPosition) {
       // Calculate available space to the right
       const availableRight = window.innerWidth - buttonPosition.right - 16; // 16px gap
-      const dialogWidth = 300; // Reduced width
+      const dialogWidth = isVeryCompact ? 120 : isCompact ? 200 : 300; // Adjust width based on screen size
 
       // If not enough space on the right, position to the left
       const left =
@@ -38,7 +40,7 @@ export function QuestionnaireActionDialog({
           : buttonPosition.right + 16;
 
       // Ensure the dialog stays within vertical bounds
-      const dialogHeight = isMobile ? 180 : 300; // Approximate height
+      const dialogHeight = isMobile ? 140 : 200; // Reduced heights
       const top = Math.min(
         Math.max(0, buttonPosition.top - dialogHeight / 3),
         window.innerHeight - dialogHeight
@@ -46,14 +48,15 @@ export function QuestionnaireActionDialog({
 
       setPosition({ top, left });
     }
-  }, [buttonPosition, isMobile]);
+  }, [buttonPosition, isMobile, isCompact, isVeryCompact]);
 
   if (!buttonPosition || !position) return null;
 
   return (
     <div
       className={cn(
-        "fixed bg-background border shadow-lg rounded-lg w-[300px] transform transition-all duration-300 ease-in-out z-50",
+        "fixed bg-background border shadow-lg rounded-lg transform transition-all duration-300 ease-in-out z-50",
+        isVeryCompact ? "w-[120px]" : isCompact ? "w-[200px]" : "w-[300px]",
         open
           ? "translate-x-0 opacity-100"
           : "translate-x-[-8px] opacity-0 pointer-events-none"
@@ -64,45 +67,34 @@ export function QuestionnaireActionDialog({
       }}
     >
       <div className="p-4">
-        <div className="mb-4">
-          <h2 className="text-lg font-semibold">{questionnaireName}</h2>
-          <p className="text-sm text-muted-foreground">Choose how to proceed</p>
-        </div>
+        {!isVeryCompact && (
+          <div className="mb-2 text-center">
+            <h2 className="font-semibold text-base">{questionnaireName}</h2>
+          </div>
+        )}
 
-        <div className="space-y-2">
-          {!isMobile && (
-            <Button
-              variant="outline"
-              className="w-full justify-start h-auto py-2"
-              onClick={() => {
-                onActionSelect("qrCode");
-                onOpenChange(false);
-              }}
-            >
-              <QrCode className="h-4 w-4 mr-2" />
-              <div>
-                <div className="font-medium">QR Code</div>
-                <div className="text-xs text-muted-foreground">
-                  Generate code for remote access
-                </div>
-              </div>
-            </Button>
-          )}
+        <div className="flex gap-2">
           <Button
             variant="outline"
-            className="w-full justify-start h-auto py-2"
+            className="flex-1 flex flex-col items-center p-3 h-auto"
+            onClick={() => {
+              onActionSelect("qrCode");
+              onOpenChange(false);
+            }}
+          >
+            <QrCode className="h-5 w-5 mb-1" />
+            <span className="text-xs">QR Code</span>
+          </Button>
+          <Button
+            variant="outline"
+            className="flex-1 flex flex-col items-center p-3 h-auto"
             onClick={() => {
               onActionSelect("form");
               onOpenChange(false);
             }}
           >
-            <PencilLine className="h-4 w-4 mr-2" />
-            <div>
-              <div className="font-medium">Fill Directly</div>
-              <div className="text-xs text-muted-foreground">
-                Fill in the questionnaire now
-              </div>
-            </div>
+            <PencilLine className="h-5 w-5 mb-1" />
+            <span className="text-xs">Fill</span>
           </Button>
         </div>
       </div>
