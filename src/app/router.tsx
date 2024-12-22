@@ -13,9 +13,22 @@ import App from "@/App";
 import { HomePage } from "@/pages/home/HomePage";
 import { SatisfactionQuestionnairePage } from "@/pages/questionnaires/satisfaction/SatisfactionQuestionnairePage";
 import { SatisfactionResultsPage } from "@/pages/questionnaires/satisfaction/SatisfactionResultsPage";
+import FillQuestionnairePage from "@/pages/fill/[sessionId]";
+import { MobileLayout } from "@/components/layout/MobileLayout";
 
 // Create and export our router configuration
 export const router = createBrowserRouter([
+  // Mobile QR code routes with separate layout
+  {
+    path: "fill/:sessionId",
+    element: <MobileLayout />,
+    children: [
+      {
+        index: true,
+        element: <FillQuestionnairePage />,
+      },
+    ],
+  },
   {
     // The root path "/" is our main app layout
     path: "/",
@@ -46,10 +59,6 @@ export const router = createBrowserRouter([
                 path: "results",
                 element: <KoosResultsPage />,
               },
-              {
-                path: "qr-generation",
-                element: <div>QR Generation Page (Coming Soon)</div>,
-              },
             ],
           },
           {
@@ -63,10 +72,6 @@ export const router = createBrowserRouter([
                 path: "results",
                 element: <HoosResultsPage />,
               },
-              {
-                path: "qr-generation",
-                element: <div>QR Generation Page (Coming Soon)</div>,
-              },
             ],
           },
           {
@@ -79,10 +84,6 @@ export const router = createBrowserRouter([
               {
                 path: "results",
                 element: <DashResultsPage />,
-              },
-              {
-                path: "qr-generation",
-                element: <div>QR Generation Page (Coming Soon)</div>,
               },
             ],
           },

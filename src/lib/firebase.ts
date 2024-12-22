@@ -1,5 +1,4 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
@@ -10,12 +9,25 @@ const firebaseConfig = {
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
-  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL, // Required for Realtime Database
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const database = getDatabase(app);
+export const app = initializeApp(firebaseConfig);
 
-export { app, analytics, database }; 
+// Initialize Realtime Database
+export const database = getDatabase(app);
+
+// Initialize Analytics only if not blocked
+let analytics: any = null;
+if (!window.location.hostname.includes("localhost")) {
+  import("firebase/analytics").then(({ getAnalytics }) => {
+    try {
+      analytics = getAnalytics(app);
+    } catch (error) {
+      console.warn("Analytics blocked or failed to initialize:", error);
+    }
+  });
+}
+
+export { analytics }; 

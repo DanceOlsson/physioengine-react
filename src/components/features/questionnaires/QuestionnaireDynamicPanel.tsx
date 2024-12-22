@@ -5,6 +5,7 @@ import { DynamicQuestionnaireForm } from "@/components/dynamic-readers/DynamicQu
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import { QuestionnaireQrPanel } from "./QuestionnaireQrPanel";
 
 // Import questionnaire data
 import { questions as koosQuestions } from "@/assets/questionnaires/koos_swedish";
@@ -136,21 +137,20 @@ export function QuestionnaireDynamicPanel({
               questionnaire={data}
               storageKey={storageKey}
               onSubmit={handleFormSubmit}
-              resultsPath="results"
             />
           )}
         </div>
       )}
 
-      {state === "qrCode" && (
-        <div className="animate-in slide-in-from-right h-full">
-          <Card className="m-6 p-6">
-            <h3 className="text-xl font-semibold mb-4">QR Code</h3>
-            <p className="text-muted-foreground">
-              QR code generation will be implemented here
-            </p>
-          </Card>
-        </div>
+      {state === "qrCode" && questionnaire && (
+        <QuestionnaireQrPanel
+          questionnaire={questionnaire}
+          onBack={() => onStateChange("empty")}
+          onResponseReceived={() => {
+            setShowResults(true);
+            onStateChange("liveResults");
+          }}
+        />
       )}
 
       {state === "liveResults" && (
