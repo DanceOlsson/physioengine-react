@@ -1,3 +1,10 @@
+/**
+ * This component provides theme management functionality for the application.
+ * It handles dark/light/system theme preferences, persists the selection in localStorage,
+ * and provides a context hook (useTheme) for accessing/updating the theme throughout the app.
+ * The theme is applied via CSS classes on the document root element.
+ */
+
 import { createContext, useContext, useEffect, useState } from "react";
 
 type Theme = "dark" | "light" | "system";

@@ -1,3 +1,10 @@
+/**
+ * This page handles the mobile questionnaire filling experience accessed via QR code.
+ * It loads a questionnaire session from Firebase, displays the appropriate questionnaire,
+ * and saves the responses back to the database. The page includes error handling for
+ * common issues like ad blockers and network connectivity problems.
+ */
+
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ref, get, update } from "firebase/database";

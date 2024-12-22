@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,30 @@ export function QuestionnaireQrPanel({
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [qrSize, setQrSize] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const updateSize = () => {
+      if (containerRef.current) {
+        const container = containerRef.current;
+        const containerWidth = container.clientWidth;
+        // Account for padding and other elements (200px buffer)
+        const availableHeight = window.innerHeight - 200;
+        // Use the smaller of width/height while maintaining maximum bounds
+        const size = Math.min(
+          containerWidth - 48, // Account for padding (24px on each side)
+          availableHeight,
+          500 // Maximum size
+        );
+        setQrSize(size);
+      }
+    };
+
+    updateSize();
+    window.addEventListener("resize", updateSize);
+    return () => window.removeEventListener("resize", updateSize);
+  }, []);
 
   // Generate a unique session ID when component mounts
   useEffect(() => {
@@ -81,7 +105,7 @@ export function QuestionnaireQrPanel({
       </div>
 
       <div className="p-6">
-        <Card className="p-6">
+        <Card className="p-6" ref={containerRef}>
           <h3 className="text-xl font-semibold mb-2">{questionnaire.title}</h3>
           <p className="text-muted-foreground mb-6">
             Scan this QR code to fill out the questionnaire
@@ -106,11 +130,19 @@ export function QuestionnaireQrPanel({
               </Button>
             </div>
           ) : sessionId ? (
-            <div className="flex flex-col items-center">
-              <div className="p-4 bg-white rounded-lg">
-                <QRCodeSVG value={qrUrl} size={200} level="H" includeMargin />
+            <div className="flex flex-col items-center w-full max-w-2xl mx-auto">
+              <div
+                className="flex items-center justify-center bg-white rounded-lg p-6"
+                style={{ width: qrSize, height: qrSize }}
+              >
+                <QRCodeSVG
+                  value={qrUrl}
+                  size={qrSize - 48} // Subtract padding
+                  level="H"
+                  includeMargin={false}
+                />
               </div>
-              <p className="mt-4 text-sm text-muted-foreground">
+              <p className="mt-6 text-sm text-muted-foreground">
                 Session ID: {sessionId}
               </p>
               <p className="mt-2 text-xs text-muted-foreground break-all">
