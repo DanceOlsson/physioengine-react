@@ -96,7 +96,7 @@ export function QuestionnaireQrPanel({
   const qrUrl = sessionId ? `${window.location.origin}/fill/${sessionId}` : "";
 
   return (
-    <div className="animate-in slide-in-from-right h-full">
+    <div className="animate-in slide-in-from-right h-full flex flex-col">
       <div className="p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <Button variant="ghost" size="sm" onClick={onBack}>
           <ArrowLeft className="mr-2 h-4 w-4" />
@@ -104,58 +104,66 @@ export function QuestionnaireQrPanel({
         </Button>
       </div>
 
-      <div className="p-6">
+      <div className="p-6 flex-1 overflow-auto">
         <Card className="p-6" ref={containerRef}>
-          <h3 className="text-xl font-semibold mb-2">{questionnaire.title}</h3>
-          <p className="text-muted-foreground mb-6">
-            Scan this QR code to fill out the questionnaire
-          </p>
+          <div className="space-y-6 overflow-y-auto">
+            <div>
+              <h3 className="text-xl font-semibold mb-2">
+                {questionnaire.title}
+              </h3>
+              <p className="text-muted-foreground mb-6">
+                Scan this QR code to fill out the questionnaire
+              </p>
+            </div>
 
-          {isGenerating ? (
-            <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg">
-              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-              <p className="mt-2 text-sm text-muted-foreground">
-                Generating QR code...
-              </p>
-            </div>
-          ) : error ? (
-            <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg border-destructive">
-              <p className="text-sm text-destructive">{error}</p>
-              <Button
-                variant="outline"
-                className="mt-4"
-                onClick={() => window.location.reload()}
-              >
-                Try Again
-              </Button>
-            </div>
-          ) : sessionId ? (
-            <div className="flex flex-col items-center w-full max-w-2xl mx-auto">
-              <div
-                className="flex items-center justify-center bg-white rounded-lg p-6"
-                style={{ width: qrSize, height: qrSize }}
-              >
-                <QRCodeSVG
-                  value={qrUrl}
-                  size={qrSize - 48} // Subtract padding
-                  level="H"
-                  includeMargin={false}
-                />
-              </div>
-              <p className="mt-6 text-sm text-muted-foreground">
-                Session ID: {sessionId}
-              </p>
-              <p className="mt-2 text-xs text-muted-foreground break-all">
-                URL: {qrUrl}
-              </p>
-              {window.location.hostname === "localhost" && (
-                <p className="mt-2 text-xs text-yellow-500">
-                  Note: For mobile testing, use ngrok URL:
-                  https://safe-newly-salmon.ngrok-free.app/fill/{sessionId}
+            {isGenerating ? (
+              <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Generating QR code...
                 </p>
-              )}
-            </div>
-          ) : null}
+              </div>
+            ) : error ? (
+              <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg border-destructive">
+                <p className="text-sm text-destructive">{error}</p>
+                <Button
+                  variant="outline"
+                  className="mt-4"
+                  onClick={() => window.location.reload()}
+                >
+                  Try Again
+                </Button>
+              </div>
+            ) : sessionId ? (
+              <div className="flex flex-col items-center w-full max-w-2xl mx-auto">
+                <div
+                  className="flex items-center justify-center bg-white rounded-lg p-6"
+                  style={{ width: qrSize, height: qrSize }}
+                >
+                  <QRCodeSVG
+                    value={qrUrl}
+                    size={qrSize - 48}
+                    level="H"
+                    includeMargin={false}
+                  />
+                </div>
+                <div className="w-full mt-6 space-y-2">
+                  <p className="text-sm text-muted-foreground">
+                    Session ID: {sessionId}
+                  </p>
+                  <p className="text-xs text-muted-foreground break-all">
+                    URL: {qrUrl}
+                  </p>
+                  {window.location.hostname === "localhost" && (
+                    <p className="text-xs text-yellow-500">
+                      Note: For mobile testing, use ngrok URL:
+                      https://safe-newly-salmon.ngrok-free.app/fill/{sessionId}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ) : null}
+          </div>
         </Card>
       </div>
     </div>
