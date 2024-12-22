@@ -51,3 +51,10 @@ data/*
 *~
 
 .cursorrules
+
+# Firebase
+.env
+.firebase/
+*.log
+firebase-debug.log*
+firebase-debug.*.log*
