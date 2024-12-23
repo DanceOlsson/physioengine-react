@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Input } from "@/components/ui/input";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
 interface MobileQuestionnaireReaderProps {
   questionnaire: {
@@ -47,31 +47,65 @@ export function MobileQuestionnaireReader({
   const [responses, setResponses] = useState<Record<string, number | string>>(
     {}
   );
+  const [selectedOption, setSelectedOption] = useState<string | number | null>(
+    null
+  );
 
   const currentQuestion = allQuestions[currentQuestionIndex];
   const totalQuestions = allQuestions.length;
   const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
 
-  const handleResponse = (value: number | string) => {
-    setResponses((prev) => {
-      const newResponses = { ...prev, [currentQuestion.id]: value };
+  const handleOptionSelect = (value: string | number) => {
+    if (selectedOption === value) {
+      // Confirm selection and move to next question
+      setResponses((prev) => {
+        const newResponses = { ...prev, [currentQuestion.id]: value };
 
-      // Clear dependent responses when their condition is no longer met
-      allQuestions.forEach((question) => {
-        if (question.dependsOn?.questionId === currentQuestion.id) {
-          if (value !== question.dependsOn.expectedValue) {
-            delete newResponses[question.id];
+        // Clear dependent responses when their condition is no longer met
+        allQuestions.forEach((question) => {
+          if (question.dependsOn?.questionId === currentQuestion.id) {
+            if (value !== question.dependsOn.expectedValue) {
+              delete newResponses[question.id];
+            }
           }
-        }
+        });
+
+        return newResponses;
       });
 
-      return newResponses;
-    });
+      // Wait for the confetti animation to play before moving to next question
+      if (currentQuestionIndex < totalQuestions - 1) {
+        // Wait 400ms to see the full confetti animation
+        setTimeout(() => {
+          setSelectedOption(null);
+          setCurrentQuestionIndex((prev) => prev + 1);
+        }, 400);
+      }
+    } else {
+      setSelectedOption(value);
+    }
+  };
 
-    // Auto-advance to next question
+  const handleTextInput = (value: string) => {
+    setResponses((prev) => ({ ...prev, [currentQuestion.id]: value }));
+  };
+
+  const handlePrevious = () => {
+    if (currentQuestionIndex > 0) {
+      setSelectedOption(null);
+      setCurrentQuestionIndex((prev) => prev - 1);
+    }
+  };
+
+  const handleNext = () => {
     if (currentQuestionIndex < totalQuestions - 1) {
+      setSelectedOption(null);
       setCurrentQuestionIndex((prev) => prev + 1);
     }
+  };
+
+  const handleSubmit = () => {
+    onSubmit(responses);
   };
 
   const isComplete = () => {
@@ -88,10 +122,6 @@ export function MobileQuestionnaireReader({
       .map((q) => q.id);
 
     return requiredQuestions.every((q) => q in responses);
-  };
-
-  const handleSubmit = () => {
-    onSubmit(responses);
   };
 
   return (
@@ -116,50 +146,85 @@ export function MobileQuestionnaireReader({
 
       {/* Question */}
       <div className="p-4">
-        <div className="mb-2 text-sm font-medium text-muted-foreground">
+        <div className="mb-2 text-sm font-medium text-muted-foreground motion-safe:motion-preset-fade motion-duration-200">
           {currentQuestion.sectionTitle}
         </div>
-        <p className="text-lg font-medium text-foreground mb-6">
-          {currentQuestion.text}
-        </p>
 
-        {currentQuestion.type === "text" ? (
-          <Input
-            type="text"
-            value={(responses[currentQuestion.id] as string) || ""}
-            onChange={(e) => handleResponse(e.target.value)}
-            placeholder="Type your answer here..."
-            className="w-full"
-          />
-        ) : (
-          <RadioGroup
-            value={responses[currentQuestion.id]?.toString()}
-            onValueChange={(value: string) => {
-              const numValue = Number(value);
-              const finalValue = isNaN(numValue) ? value : numValue;
-              handleResponse(finalValue);
-            }}
-            className="space-y-3"
-          >
-            {currentQuestion.options?.map((option, optionIndex) => (
-              <div
-                key={optionIndex}
-                className="flex items-center space-x-3 rounded-lg border p-4"
-              >
-                <RadioGroupItem
-                  value={option.value.toString()}
-                  id={`${currentQuestion.id}-${optionIndex}`}
-                />
-                <Label
-                  htmlFor={`${currentQuestion.id}-${optionIndex}`}
-                  className="flex-1"
-                >
-                  {option.text}
-                </Label>
-              </div>
-            ))}
-          </RadioGroup>
-        )}
+        <div className="relative">
+          <div className="motion-safe:motion-preset-slide motion-duration-200">
+            <div className="space-y-3">
+              <p className="text-lg font-medium text-foreground mb-6 motion-safe:motion-preset-fade motion-duration-200">
+                {currentQuestion.text}
+              </p>
+
+              {currentQuestion.type === "text" ? (
+                <div className="motion-safe:motion-preset-fade motion-duration-200">
+                  <Input
+                    type="text"
+                    value={(responses[currentQuestion.id] as string) || ""}
+                    onChange={(e) => handleTextInput(e.target.value)}
+                    placeholder="Type your answer here..."
+                    className="w-full"
+                  />
+                </div>
+              ) : (
+                <div className="space-y-3 motion-safe:motion-preset-fade motion-duration-200">
+                  {currentQuestion.options?.map((option) => {
+                    const isSelected = selectedOption === option.value;
+                    const isConfirmed =
+                      responses[currentQuestion.id] === option.value;
+
+                    return (
+                      <button
+                        key={option.value}
+                        onClick={() => handleOptionSelect(option.value)}
+                        type="button"
+                        className={cn(
+                          "w-full flex items-center justify-between px-4 py-3 rounded-lg text-left",
+                          "transition-colors duration-200",
+                          "active:scale-[0.98]",
+                          isSelected &&
+                            !isConfirmed && [
+                              "bg-white/10 dark:bg-white/10",
+                              "text-foreground",
+                              "ring-1 ring-white/30",
+                              "motion-safe:animate-[shimmer_2s_ease-in-out_infinite]",
+                            ],
+                          isConfirmed && [
+                            "bg-white dark:bg-white/10",
+                            "text-foreground",
+                            "motion-safe:motion-preset-confetti",
+                          ],
+                          !isSelected &&
+                            !isConfirmed && [
+                              "bg-muted/50 dark:bg-white/5",
+                              "hover:bg-white/10 dark:hover:bg-white/10",
+                            ]
+                        )}
+                      >
+                        <div className="flex-1">{option.text}</div>
+                        {(isSelected || isConfirmed) && (
+                          <div
+                            className={cn(
+                              "w-6 h-6 rounded-full flex items-center justify-center shrink-0 ml-2",
+                              isConfirmed
+                                ? "bg-white/20"
+                                : "bg-white/20 motion-safe:motion-preset-bounce"
+                            )}
+                          >
+                            <ChevronRight
+                              className={cn("h-4 w-4", "text-white")}
+                            />
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Navigation */}
@@ -167,8 +232,9 @@ export function MobileQuestionnaireReader({
         <div className="flex justify-between items-center">
           <Button
             variant="ghost"
-            onClick={() => setCurrentQuestionIndex((prev) => prev - 1)}
+            onClick={handlePrevious}
             disabled={currentQuestionIndex === 0}
+            className="motion-safe:motion-preset-slide"
           >
             <ChevronLeft className="h-4 w-4 mr-2" />
             Previous
@@ -178,15 +244,16 @@ export function MobileQuestionnaireReader({
             <Button
               onClick={handleSubmit}
               disabled={!isComplete()}
-              className="ml-auto"
+              className="ml-auto motion-safe:motion-preset-slide"
             >
               Submit
             </Button>
           ) : (
             <Button
               variant="ghost"
-              onClick={() => setCurrentQuestionIndex((prev) => prev + 1)}
-              disabled={currentQuestionIndex === totalQuestions - 1}
+              onClick={handleNext}
+              disabled={!responses[currentQuestion.id]}
+              className="motion-safe:motion-preset-slide"
             >
               Next
               <ChevronRight className="h-4 w-4 ml-2" />

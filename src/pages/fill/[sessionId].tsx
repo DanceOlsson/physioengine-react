@@ -37,94 +37,78 @@ const getQuestionnaireData = (id: string) => {
 export default function FillQuestionnairePage() {
   const { sessionId } = useParams();
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<{
-    message: string;
-    isFirebaseError?: boolean;
-  } | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [questionnaireId, setQuestionnaireId] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
-    const fetchSession = async () => {
-      if (!sessionId) return;
+    const loadSession = async () => {
+      if (!sessionId) {
+        setError("No session ID provided");
+        setLoading(false);
+        return;
+      }
 
       try {
         const sessionRef = ref(database, `sessions/${sessionId}`);
         const snapshot = await get(sessionRef);
 
         if (!snapshot.exists()) {
-          setError({ message: "Session not found" });
+          setError("Session not found");
+          setLoading(false);
           return;
         }
 
-        const data = snapshot.val();
-
-        if (data.status === "completed") {
-          setSubmitted(true);
+        const sessionData = snapshot.val();
+        if (sessionData.status === "completed") {
+          setError("This questionnaire has already been completed");
+          setLoading(false);
           return;
         }
 
-        setQuestionnaireId(data.questionnaireId);
+        setQuestionnaireId(sessionData.questionnaireId);
+        setLoading(false);
       } catch (err) {
-        console.error("Error fetching session:", err);
-        // Check if it's likely a connection error
-        const isFirebaseError =
-          err instanceof Error &&
-          (err.message.includes("fetch") ||
-            err.message.includes("network") ||
-            err.message.includes("connection"));
-
-        setError({
-          message: isFirebaseError
-            ? "Unable to connect to the questionnaire service. Please check if you have an ad blocker enabled and disable it for this site."
-            : "Failed to load session",
-          isFirebaseError,
-        });
-      } finally {
+        if (err instanceof Error) {
+          // Check if it's a Firebase error related to ad blockers
+          if (err.message.includes("network error")) {
+            setError(
+              "Unable to connect to the server. If you're using an ad blocker, please disable it for this site."
+            );
+          } else {
+            setError("An error occurred while loading the questionnaire");
+          }
+        }
         setLoading(false);
       }
     };
 
-    fetchSession();
+    loadSession();
   }, [sessionId]);
 
   const handleSubmit = async (responses: Record<string, number | string>) => {
     if (!sessionId) return;
 
     try {
-      setLoading(true);
       const sessionRef = ref(database, `sessions/${sessionId}`);
-
       await update(sessionRef, {
-        responses,
         status: "completed",
-        completedAt: Date.now(),
+        responses,
+        completedAt: new Date().toISOString(),
       });
-
       setSubmitted(true);
     } catch (err) {
-      console.error("Error submitting responses:", err);
-      const isFirebaseError =
-        err instanceof Error &&
-        (err.message.includes("fetch") ||
-          err.message.includes("network") ||
-          err.message.includes("connection"));
-
-      setError({
-        message: isFirebaseError
-          ? "Unable to submit responses. Please check if you have an ad blocker enabled and disable it for this site."
-          : "Failed to submit responses",
-        isFirebaseError,
-      });
-    } finally {
-      setLoading(false);
+      setError("Failed to submit responses. Please try again.");
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-2 text-muted-foreground" />
+          <p className="text-muted-foreground">Loading questionnaire...</p>
+        </div>
       </div>
     );
   }
@@ -133,26 +117,20 @@ export default function FillQuestionnairePage() {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center max-w-md">
-          <div className="flex justify-center mb-4">
-            <ShieldAlert className="h-12 w-12 text-destructive" />
-          </div>
+          <ShieldAlert className="h-8 w-8 text-destructive mx-auto mb-2" />
           <h1 className="text-xl font-semibold text-destructive mb-2">Error</h1>
-          <p className="text-muted-foreground mb-4">{error.message}</p>
-          {error.isFirebaseError && (
+          <p className="text-muted-foreground mb-4">{error}</p>
+          {error.includes("ad blocker") && (
             <div className="space-y-4">
               <p className="text-sm text-muted-foreground">
-                Common ad blockers that might cause this:
+                This site requires access to our secure database to:
+                <ul className="list-disc list-inside mt-2">
+                  <li>Load your questionnaire</li>
+                  <li>Save your responses securely</li>
+                  <li>Ensure data privacy</li>
+                </ul>
               </p>
-              <ul className="text-sm text-muted-foreground list-disc list-inside">
-                <li>uBlock Origin</li>
-                <li>AdBlock Plus</li>
-                <li>Privacy Badger</li>
-              </ul>
-              <Button
-                variant="outline"
-                onClick={() => window.location.reload()}
-                className="mt-4"
-              >
+              <Button onClick={() => window.location.reload()}>
                 Try Again
               </Button>
             </div>

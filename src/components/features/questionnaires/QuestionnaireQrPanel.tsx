@@ -147,19 +147,35 @@ export function QuestionnaireQrPanel({
                     includeMargin={false}
                   />
                 </div>
-                <div className="w-full mt-6 space-y-2">
-                  <p className="text-sm text-muted-foreground">
-                    Session ID: {sessionId}
-                  </p>
-                  <p className="text-xs text-muted-foreground break-all">
-                    URL: {qrUrl}
-                  </p>
-                  {window.location.hostname === "localhost" && (
-                    <p className="text-xs text-yellow-500">
-                      Note: For mobile testing, use ngrok URL:
-                      https://safe-newly-salmon.ngrok-free.app/fill/{sessionId}
+                <div className="w-full mt-6 space-y-4">
+                  <div className="bg-accent/50 rounded-lg p-4 space-y-2">
+                    <h3 className="font-medium">Enhanced Mobile Experience</h3>
+                    <p className="text-sm text-muted-foreground">
+                      We've designed a smooth, engaging questionnaire experience
+                      for your patients:
                     </p>
-                  )}
+                    <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
+                      <li>Simple one-question-at-a-time format</li>
+                      <li>Satisfying animations and interactions</li>
+                      <li>Easy to navigate back and forth</li>
+                      <li>Clear progress indication</li>
+                    </ul>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">
+                      Session ID: {sessionId}
+                    </p>
+                    <p className="text-xs text-muted-foreground break-all">
+                      URL: {qrUrl}
+                    </p>
+                    {window.location.hostname === "localhost" && (
+                      <p className="text-xs text-yellow-500">
+                        Note: For mobile testing, use ngrok URL:
+                        https://safe-newly-salmon.ngrok-free.app/fill/
+                        {sessionId}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
             ) : null}
