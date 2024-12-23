@@ -12,6 +12,7 @@ import {
 import { QuestionnaireActionDialog } from "@/components/features/questionnaires/QuestionnaireActionDialog";
 import { useBeforeUnload } from "@/hooks/use-before-unload.ts";
 import { QuestionnaireWarningDialog } from "@/components/features/questionnaires/QuestionnaireWarningDialog";
+import { cn } from "@/lib/utils";
 
 const questionnaires: Questionnaire[] = [
   {
@@ -30,7 +31,7 @@ const questionnaires: Questionnaire[] = [
     id: "dash",
     title: "DASH",
     description: "Disabilities of the Arm, Shoulder and Hand",
-    category: "arm",
+    category: "upper-extremity",
   },
   {
     id: "satisfaction",
@@ -142,7 +143,12 @@ export function QuestionnaireHomePage() {
       )}
 
       {/* Main content */}
-      <div className="relative flex flex-1 overflow-hidden">
+      <div
+        className={cn(
+          "flex-1 relative overflow-hidden transition-all duration-300",
+          !isMobile && (isSidebarCollapsed ? "ml-16" : "ml-[250px]")
+        )}
+      >
         {/* List panel */}
         <div className="w-full">
           <QuestionnaireList

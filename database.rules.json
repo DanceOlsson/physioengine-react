@@ -1,0 +1,20 @@
+{
+  "rules": {
+    "sessions": {
+      "$sessionId": {
+        // Allow read if session exists
+        ".read": true,
+        // Allow write only if the session doesn't exist yet or it's being completed
+        ".write": "!data.exists() || (data.exists() && data.child('status').val() === 'pending' && newData.child('status').val() === 'completed')",
+        // Validate session data structure
+        ".validate": "newData.hasChildren(['questionnaireId', 'status', 'created'])",
+        "status": {
+          ".validate": "newData.val() === 'pending' || newData.val() === 'completed'"
+        },
+        "responses": {
+          ".validate": "newData.parent().child('status').val() === 'completed'"
+        }
+      }
+    }
+  }
+}

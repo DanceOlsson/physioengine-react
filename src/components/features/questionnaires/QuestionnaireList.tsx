@@ -7,7 +7,15 @@ export interface Questionnaire {
   id: string;
   title: string;
   description: string;
-  category: "knee" | "hip" | "arm" | "general";
+  category:
+    | "upper-extremity"
+    | "hip"
+    | "knee"
+    | "foot-ankle"
+    | "neck-back"
+    | "concussion"
+    | "general"
+    | "lower-extremity";
 }
 
 interface QuestionnaireListProps {
