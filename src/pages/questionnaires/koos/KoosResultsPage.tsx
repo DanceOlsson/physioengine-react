@@ -5,16 +5,16 @@
 // - main tag wrapper
 // Only page-specific spacing (py-24) is handled here
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { Bar } from "react-chartjs-2";
 import { Card } from "@/components/ui";
-import { Button } from "@/components/ui";
-import { calculateKoosScores } from "@/lib/calculators/koos";
 import {
-  QuestionnaireResponse,
   QuestionnaireResult,
   SectionScore,
 } from "@/lib/types/questionnaire.types";
+import { calculateKoosScores } from "@/lib/calculators/koos";
+import { useQuestionnaireResponses } from "@/hooks/useQuestionnaireResponses";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -24,7 +24,6 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { Bar } from "react-chartjs-2";
 
 // Register ChartJS components
 ChartJS.register(
@@ -39,26 +38,37 @@ ChartJS.register(
 export function KoosResultsPage() {
   const navigate = useNavigate();
   const [results, setResults] = useState<QuestionnaireResult | null>(null);
+  const { responses, error } = useQuestionnaireResponses("koosResponses");
+  const chartRef = useRef<ChartJS<"bar"> | null>(null);
+
+  // Cleanup chart on unmount
+  useEffect(() => {
+    return () => {
+      if (chartRef.current) {
+        chartRef.current.destroy();
+      }
+    };
+  }, []);
 
   useEffect(() => {
-    const storedResponses = localStorage.getItem("koosResponses");
-    if (!storedResponses) {
+    if (error) {
       navigate("/questionnaires/koos");
       return;
     }
 
-    try {
-      const responses = JSON.parse(storedResponses) as QuestionnaireResponse;
-      const calculatedResults = calculateKoosScores(responses);
-      setResults(calculatedResults);
-    } catch (error) {
-      console.error("Error calculating results:", error);
-      navigate("/questionnaires/koos");
+    if (responses) {
+      try {
+        const calculatedResults = calculateKoosScores(responses);
+        setResults(calculatedResults);
+      } catch (err) {
+        console.error("Error calculating results:", err);
+        navigate("/questionnaires/koos");
+      }
     }
-  }, [navigate]);
+  }, [responses, error, navigate]);
 
-  if (!results) {
-    return <div>Loading results...</div>;
+  if (!results || !responses) {
+    return <div className="text-foreground">Loading results...</div>;
   }
 
   const chartData = {
@@ -67,8 +77,8 @@ export function KoosResultsPage() {
       {
         label: "Score",
         data: results.sections.map((section: SectionScore) => section.score),
-        backgroundColor: "rgba(53, 162, 235, 0.5)",
-        borderColor: "rgb(53, 162, 235)",
+        backgroundColor: "hsl(var(--primary) / 0.5)",
+        borderColor: "hsl(var(--primary))",
         borderWidth: 1,
       },
     ],
@@ -76,80 +86,87 @@ export function KoosResultsPage() {
 
   const chartOptions = {
     responsive: true,
-    plugins: {
-      legend: {
-        position: "top" as const,
-      },
-      title: {
-        display: true,
-        text: "KOOS Scores by Section",
-      },
-    },
+    maintainAspectRatio: false,
     scales: {
       y: {
         beginAtZero: true,
         max: 100,
         title: {
           display: true,
-          text: "Score (0-100)",
+          text: "Score",
+          color: "hsl(var(--foreground))",
         },
+        ticks: {
+          color: "hsl(var(--muted-foreground))",
+        },
+        grid: {
+          color: "hsl(var(--border))",
+        },
+      },
+      x: {
+        ticks: {
+          color: "hsl(var(--muted-foreground))",
+        },
+        grid: {
+          color: "hsl(var(--border))",
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        display: false,
       },
     },
   };
 
   return (
-    <div className="py-24">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">KOOS Results</h1>
+    <div className="space-y-8">
+      <Card className="p-6">
+        <h2 className="text-xl font-semibold mb-4 text-foreground">
+          Overall Score
+        </h2>
+        <div className="text-4xl font-bold text-primary mb-2">
+          {Math.round(results.total_score)}
+        </div>
+        <div className="text-lg text-muted-foreground">
+          Interpretation: {results.interpretation}
+        </div>
+      </Card>
 
-        <Card className="mb-8 p-6">
-          <h2 className="text-xl font-semibold mb-4">Overall Score</h2>
-          <div className="text-4xl font-bold text-blue-600 mb-2">
-            {Math.round(results.total_score)}
-          </div>
-          <div className="text-lg text-gray-600">
-            Interpretation: {results.interpretation}
-          </div>
-        </Card>
+      <Card className="p-6">
+        <h2 className="text-xl font-semibold mb-6 text-foreground">
+          Section Scores
+        </h2>
+        <div className="h-[400px] bg-card">
+          <Bar ref={chartRef as any} data={chartData} options={chartOptions} />
+        </div>
+      </Card>
 
-        <Card className="mb-8 p-6">
-          <h2 className="text-xl font-semibold mb-6">Section Scores</h2>
-          <div className="h-[400px]">
-            <Bar data={chartData} options={chartOptions} />
-          </div>
-        </Card>
-
-        <Card className="mb-8 p-6">
-          <h2 className="text-xl font-semibold mb-4">Detailed Results</h2>
-          <div className="space-y-4">
-            {results.sections.map((section: SectionScore, index: number) => (
-              <div key={index} className="border-b last:border-0 pb-4">
-                <h3 className="font-medium text-lg">{section.name}</h3>
-                <div className="flex justify-between items-center mt-2">
-                  <div className="text-gray-600">
-                    Score: {Math.round(section.score)}/100
-                  </div>
-                  <div className="text-gray-600">
-                    Interpretation: {section.interpretation}
-                  </div>
+      <Card className="p-6">
+        <h2 className="text-xl font-semibold mb-4 text-foreground">
+          Detailed Results
+        </h2>
+        <div className="space-y-4">
+          {results.sections.map((section: SectionScore, index: number) => (
+            <div
+              key={index}
+              className="border-b border-border last:border-0 pb-4"
+            >
+              <h3 className="font-medium text-lg text-foreground">
+                {section.name}
+              </h3>
+              <div className="flex justify-between items-center mt-2">
+                <div className="text-muted-foreground">
+                  Score: {Math.round(section.score)}/100
+                </div>
+                <div className="text-muted-foreground">
+                  Interpretation: {section.interpretation}
                 </div>
               </div>
-            ))}
-          </div>
-        </Card>
-
-        <div className="flex justify-between">
-          <Button
-            variant="outline"
-            onClick={() => navigate("/questionnaires/koos")}
-          >
-            Take Again
-          </Button>
-          <Button variant="outline" onClick={() => navigate("/questionnaires")}>
-            Back to Questionnaires
-          </Button>
+            </div>
+          ))}
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

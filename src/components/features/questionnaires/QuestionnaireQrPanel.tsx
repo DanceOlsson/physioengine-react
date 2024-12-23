@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { database } from "@/lib/firebase";
 import { ref, set, onValue } from "firebase/database";
 import { ArrowLeft, Loader2 } from "lucide-react";
+import { KoosResultsPage } from "@/pages/questionnaires/koos/KoosResultsPage";
+import { HoosResultsPage } from "@/pages/questionnaires/hoos/HoosResultsPage";
+import { DashResultsPage } from "@/pages/questionnaires/dash/DashResultsPage";
 
 interface QuestionnaireQrPanelProps {
   questionnaire: {
@@ -15,6 +18,34 @@ interface QuestionnaireQrPanelProps {
   onResponseReceived: () => void;
 }
 
+const getStorageKey = (questionnaireId: string) => {
+  switch (questionnaireId) {
+    case "koos":
+      return "koosResponses";
+    case "hoos":
+      return "hoosResponses";
+    case "dash":
+      return "dashResponses";
+    case "satisfaction":
+      return "satisfactionResponses";
+    default:
+      return null;
+  }
+};
+
+const ResultsComponent = ({ questionnaireId }: { questionnaireId: string }) => {
+  switch (questionnaireId) {
+    case "koos":
+      return <KoosResultsPage />;
+    case "hoos":
+      return <HoosResultsPage />;
+    case "dash":
+      return <DashResultsPage />;
+    default:
+      return null;
+  }
+};
+
 export function QuestionnaireQrPanel({
   questionnaire,
   onBack,
@@ -24,6 +55,7 @@ export function QuestionnaireQrPanel({
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [qrSize, setQrSize] = useState(0);
+  const [showResults, setShowResults] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -59,10 +91,16 @@ export function QuestionnaireQrPanel({
           .toString(36)
           .slice(2, 7)}`;
 
+        const storageKey = getStorageKey(questionnaire.id);
+        if (!storageKey) {
+          throw new Error("Invalid questionnaire ID");
+        }
+
         // Create a new session in Firebase with additional metadata
         const sessionRef = ref(database, `sessions/${newSessionId}`);
         await set(sessionRef, {
           questionnaireId: questionnaire.id,
+          storageKey,
           status: "pending",
           created: Date.now(),
           readerType: "mobile", // Specify that this is for mobile reader
@@ -79,6 +117,10 @@ export function QuestionnaireQrPanel({
         onValue(sessionRef, (snapshot) => {
           const data = snapshot.val();
           if (data?.status === "completed" && data?.responses) {
+            // Save responses to localStorage first
+            localStorage.setItem(storageKey, JSON.stringify(data.responses));
+            // Show results in panel
+            setShowResults(true);
             onResponseReceived();
           }
         });
@@ -94,6 +136,22 @@ export function QuestionnaireQrPanel({
   }, [questionnaire.id, questionnaire.title, onResponseReceived]);
 
   const qrUrl = sessionId ? `${window.location.origin}/fill/${sessionId}` : "";
+
+  if (showResults) {
+    return (
+      <div className="animate-in slide-in-from-right h-full flex flex-col">
+        <div className="p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <Button variant="ghost" size="sm" onClick={onBack}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back
+          </Button>
+        </div>
+        <div className="p-6 flex-1 overflow-auto">
+          <ResultsComponent questionnaireId={questionnaire.id} />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="animate-in slide-in-from-right h-full flex flex-col">
@@ -146,36 +204,6 @@ export function QuestionnaireQrPanel({
                     level="H"
                     includeMargin={false}
                   />
-                </div>
-                <div className="w-full mt-6 space-y-4">
-                  <div className="bg-accent/50 rounded-lg p-4 space-y-2">
-                    <h3 className="font-medium">Enhanced Mobile Experience</h3>
-                    <p className="text-sm text-muted-foreground">
-                      We've designed a smooth, engaging questionnaire experience
-                      for your patients:
-                    </p>
-                    <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
-                      <li>Simple one-question-at-a-time format</li>
-                      <li>Satisfying animations and interactions</li>
-                      <li>Easy to navigate back and forth</li>
-                      <li>Clear progress indication</li>
-                    </ul>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-sm text-muted-foreground">
-                      Session ID: {sessionId}
-                    </p>
-                    <p className="text-xs text-muted-foreground break-all">
-                      URL: {qrUrl}
-                    </p>
-                    {window.location.hostname === "localhost" && (
-                      <p className="text-xs text-yellow-500">
-                        Note: For mobile testing, use ngrok URL:
-                        https://safe-newly-salmon.ngrok-free.app/fill/
-                        {sessionId}
-                      </p>
-                    )}
-                  </div>
                 </div>
               </div>
             ) : null}

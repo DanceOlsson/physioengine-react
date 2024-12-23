@@ -39,6 +39,7 @@ export default function FillQuestionnairePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [questionnaireId, setQuestionnaireId] = useState<string | null>(null);
+  const [storageKey, setStorageKey] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
@@ -67,6 +68,7 @@ export default function FillQuestionnairePage() {
         }
 
         setQuestionnaireId(sessionData.questionnaireId);
+        setStorageKey(sessionData.storageKey);
         setLoading(false);
       } catch (err) {
         if (err instanceof Error) {
@@ -87,7 +89,7 @@ export default function FillQuestionnairePage() {
   }, [sessionId]);
 
   const handleSubmit = async (responses: Record<string, number | string>) => {
-    if (!sessionId) return;
+    if (!sessionId || !storageKey) return;
 
     try {
       const sessionRef = ref(database, `sessions/${sessionId}`);
@@ -157,7 +159,7 @@ export default function FillQuestionnairePage() {
     ? getQuestionnaireData(questionnaireId)
     : null;
 
-  if (!questionnaireData || !sessionId) {
+  if (!questionnaireData || !sessionId || !storageKey) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center">
