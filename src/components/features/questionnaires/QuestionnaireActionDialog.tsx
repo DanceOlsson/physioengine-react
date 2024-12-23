@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { QrCode, PencilLine } from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 interface QuestionnaireActionDialogProps {
   open: boolean;
@@ -26,6 +26,24 @@ export function QuestionnaireActionDialog({
     top: number;
     left: number;
   } | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        open &&
+        dialogRef.current &&
+        !dialogRef.current.contains(event.target as Node)
+      ) {
+        onOpenChange(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [open, onOpenChange]);
 
   useEffect(() => {
     if (buttonPosition) {
@@ -54,6 +72,7 @@ export function QuestionnaireActionDialog({
 
   return (
     <div
+      ref={dialogRef}
       className={cn(
         "fixed bg-background border shadow-lg rounded-lg transform transition-all duration-300 ease-in-out z-50",
         isVeryCompact ? "w-[120px]" : isCompact ? "w-[200px]" : "w-[300px]",
