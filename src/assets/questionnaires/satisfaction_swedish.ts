@@ -14,11 +14,11 @@ export const questions: Questionnaire[] = [
             id: "S1",
             text: "Hur nöjd är du med din behandling?",
             options: [
-              { value: 0, text: "Mycket missnöjd" },
-              { value: 1, text: "Missnöjd" },
-              { value: 2, text: "Neutral" },
-              { value: 3, text: "Nöjd" },
-              { value: 4, text: "Mycket nöjd" }
+              { value: 1, text: "Mycket missnöjd" },
+              { value: 2, text: "Missnöjd" },
+              { value: 3, text: "Neutral" },
+              { value: 4, text: "Nöjd" },
+              { value: 5, text: "Mycket nöjd" }
             ]
           }
         ]

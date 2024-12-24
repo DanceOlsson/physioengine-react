@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui";
-import { Button } from "@/components/ui";
+import { Button } from "@/components/ui/button";
 import { QuestionnaireResponse } from "@/lib/types/questionnaire.types";
 
 export function SatisfactionResultsPage() {
@@ -62,6 +62,11 @@ export function SatisfactionResultsPage() {
     }
   };
 
+  const handleRetake = () => {
+    localStorage.removeItem("satisfactionResponses");
+    window.dispatchEvent(new Event("storage")); // Trigger storage event to update state
+  };
+
   return (
     <div className="py-24">
       <div className="max-w-4xl mx-auto">
@@ -91,10 +96,7 @@ export function SatisfactionResultsPage() {
         </Card>
 
         <div className="flex justify-between">
-          <Button
-            variant="outline"
-            onClick={() => navigate("/questionnaires/satisfaction")}
-          >
+          <Button variant="outline" onClick={handleRetake}>
             Ta enkäten igen
           </Button>
           <Button variant="outline" onClick={() => navigate("/questionnaires")}>

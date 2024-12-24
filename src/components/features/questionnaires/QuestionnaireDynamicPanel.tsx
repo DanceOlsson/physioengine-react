@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { type Questionnaire } from "./QuestionnaireList";
 import { DynamicQuestionnaireForm } from "@/components/dynamic-readers/DynamicQuestionnaireForm";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { QuestionnaireQrPanel } from "./QuestionnaireQrPanel";
@@ -71,6 +71,16 @@ export function QuestionnaireDynamicPanel({
   onStateChange,
 }: QuestionnaireDynamicPanelProps) {
   const [showResults, setShowResults] = useState(false);
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setShowResults(false);
+      onStateChange("form");
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, [onStateChange]);
 
   if (!questionnaire) {
     return (
