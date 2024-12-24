@@ -70,6 +70,12 @@ UI and Styling:
   • Use Tailwind's prefers-color-scheme media query
   • Follow shadcn/ui theming patterns
   • Ensure consistent dark mode across components
+- Chart Components:
+  • Place reusable chart components in /src/components/features/charts
+  • Use theme-aware colors from theme provider
+  • Implement proper cleanup for Chart.js instances
+  • Follow Chart.js TypeScript type definitions
+  • Handle system theme preferences
 - Questionnaire UI:
   • Use Card components for question sections
   • Implement consistent form layouts

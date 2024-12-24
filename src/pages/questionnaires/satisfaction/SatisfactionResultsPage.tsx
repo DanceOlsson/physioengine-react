@@ -28,6 +28,40 @@ export function SatisfactionResultsPage() {
     return <div className="text-foreground">Loading results...</div>;
   }
 
+  const getSatisfactionEmoji = (score: number) => {
+    switch (score) {
+      case 5:
+        return "😄";
+      case 4:
+        return "🙂";
+      case 3:
+        return "😐";
+      case 2:
+        return "🙁";
+      case 1:
+        return "😞";
+      default:
+        return "❓";
+    }
+  };
+
+  const getSatisfactionText = (score: number) => {
+    switch (score) {
+      case 5:
+        return "Mycket nöjd";
+      case 4:
+        return "Nöjd";
+      case 3:
+        return "Neutral";
+      case 2:
+        return "Missnöjd";
+      case 1:
+        return "Mycket missnöjd";
+      default:
+        return "Okänt";
+    }
+  };
+
   return (
     <div className="py-24">
       <div className="max-w-4xl mx-auto">
@@ -36,20 +70,23 @@ export function SatisfactionResultsPage() {
         </h1>
 
         <Card className="mb-8 p-6">
-          <h2 className="text-xl font-semibold mb-4 text-foreground">
+          <h2 className="text-xl font-semibold mb-6 text-foreground">
             Din feedback
           </h2>
-          <div className="text-lg text-muted-foreground">
-            Nöjdhet med behandling:{" "}
-            {response["S1"] === 4
-              ? "Mycket nöjd"
-              : response["S1"] === 3
-              ? "Nöjd"
-              : response["S1"] === 2
-              ? "Neutral"
-              : response["S1"] === 1
-              ? "Missnöjd"
-              : "Mycket missnöjd"}
+          <div className="flex flex-col items-center space-y-4">
+            <div
+              className="text-6xl"
+              role="img"
+              aria-label={getSatisfactionText(Number(response["S1"]))}
+            >
+              {getSatisfactionEmoji(Number(response["S1"]))}
+            </div>
+            <div className="text-2xl font-medium text-foreground">
+              {getSatisfactionText(Number(response["S1"]))}
+            </div>
+            <div className="text-muted-foreground">
+              Poäng: {response["S1"]} av 5
+            </div>
           </div>
         </Card>
 

@@ -5,9 +5,8 @@
 // - main tag wrapper
 // Only page-specific spacing (py-24) is handled here
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bar } from "react-chartjs-2";
 import { Card } from "@/components/ui";
 import {
   QuestionnaireResult,
@@ -15,40 +14,12 @@ import {
 } from "@/lib/types/questionnaire.types";
 import { calculateKoosScores } from "@/lib/calculators/koos";
 import { useQuestionnaireResponses } from "@/hooks/useQuestionnaireResponses";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-
-// Register ChartJS components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+import { QuestionnaireBarChart } from "@/components/features/charts/QuestionnaireBarChart";
 
 export function KoosResultsPage() {
   const navigate = useNavigate();
   const [results, setResults] = useState<QuestionnaireResult | null>(null);
   const { responses, error } = useQuestionnaireResponses("koosResponses");
-  const chartRef = useRef<ChartJS<"bar"> | null>(null);
-
-  // Cleanup chart on unmount
-  useEffect(() => {
-    return () => {
-      if (chartRef.current) {
-        chartRef.current.destroy();
-      }
-    };
-  }, []);
 
   useEffect(() => {
     if (error) {
@@ -71,54 +42,6 @@ export function KoosResultsPage() {
     return <div className="text-foreground">Loading results...</div>;
   }
 
-  const chartData = {
-    labels: results.sections.map((section: SectionScore) => section.name),
-    datasets: [
-      {
-        label: "Score",
-        data: results.sections.map((section: SectionScore) => section.score),
-        backgroundColor: "hsl(var(--primary) / 0.5)",
-        borderColor: "hsl(var(--primary))",
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      y: {
-        beginAtZero: true,
-        max: 100,
-        title: {
-          display: true,
-          text: "Score",
-          color: "hsl(var(--foreground))",
-        },
-        ticks: {
-          color: "hsl(var(--muted-foreground))",
-        },
-        grid: {
-          color: "hsl(var(--border))",
-        },
-      },
-      x: {
-        ticks: {
-          color: "hsl(var(--muted-foreground))",
-        },
-        grid: {
-          color: "hsl(var(--border))",
-        },
-      },
-    },
-    plugins: {
-      legend: {
-        display: false,
-      },
-    },
-  };
-
   return (
     <div className="space-y-8">
       <Card className="p-6">
@@ -138,7 +61,7 @@ export function KoosResultsPage() {
           Section Scores
         </h2>
         <div className="h-[400px] bg-card">
-          <Bar ref={chartRef as any} data={chartData} options={chartOptions} />
+          <QuestionnaireBarChart sections={results.sections} />
         </div>
       </Card>
 
