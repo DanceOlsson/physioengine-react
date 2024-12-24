@@ -30,19 +30,52 @@ interface MobileQuestionnaireReaderProps {
   onSubmit: (responses: Record<string, number | string>) => void;
 }
 
+type QuestionOrSection = {
+  type: "question" | "section";
+  id: string;
+  text: string;
+  sectionTitle?: string;
+  sectionInstructions?: string;
+  questionOptions?: Array<{
+    value: string | number;
+    text: string;
+  }>;
+  questionType?: "text";
+  dependsOn?: {
+    questionId: string;
+    expectedValue: string | number;
+  };
+};
+
 export function MobileQuestionnaireReader({
   questionnaire,
   onSubmit,
 }: MobileQuestionnaireReaderProps) {
-  // Flatten questions for single-question view
-  const allQuestions = questionnaire.sections.flatMap((section) =>
-    section.questions.map((q) => ({
-      ...q,
-      sectionTitle: section.title,
-    }))
+  // Flatten sections and questions for single-item view
+  const allItems: QuestionOrSection[] = questionnaire.sections.flatMap(
+    (section) => {
+      const sectionItem: QuestionOrSection = {
+        type: "section",
+        id: `section-${section.title}`,
+        text: section.title,
+        sectionInstructions: section.instructions,
+      };
+
+      const questions: QuestionOrSection[] = section.questions.map((q) => ({
+        type: "question",
+        id: q.id,
+        text: q.text,
+        sectionTitle: section.title,
+        questionType: q.type,
+        questionOptions: q.options,
+        dependsOn: q.dependsOn,
+      }));
+
+      return section.instructions ? [sectionItem, ...questions] : questions;
+    }
   );
 
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [responses, setResponses] = useState<Record<string, number | string>>(
     {}
   );
@@ -50,21 +83,23 @@ export function MobileQuestionnaireReader({
     null
   );
 
-  const currentQuestion = allQuestions[currentQuestionIndex];
-  const totalQuestions = allQuestions.length;
-  const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+  const currentItem = allItems[currentIndex];
+  const totalItems = allItems.length;
+  const progress = ((currentIndex + 1) / totalItems) * 100;
 
   const handleOptionSelect = (value: string | number) => {
     if (selectedOption === value) {
-      // Confirm selection and move to next question
       setResponses((prev) => {
-        const newResponses = { ...prev, [currentQuestion.id]: value };
+        const newResponses = { ...prev, [currentItem.id]: value };
 
         // Clear dependent responses when their condition is no longer met
-        allQuestions.forEach((question) => {
-          if (question.dependsOn?.questionId === currentQuestion.id) {
-            if (value !== question.dependsOn.expectedValue) {
-              delete newResponses[question.id];
+        allItems.forEach((item) => {
+          if (
+            item.type === "question" &&
+            item.dependsOn?.questionId === currentItem.id
+          ) {
+            if (value !== item.dependsOn.expectedValue) {
+              delete newResponses[item.id];
             }
           }
         });
@@ -72,12 +107,10 @@ export function MobileQuestionnaireReader({
         return newResponses;
       });
 
-      // Wait for the confetti animation to play before moving to next question
-      if (currentQuestionIndex < totalQuestions - 1) {
-        // Wait 400ms to see the full confetti animation
+      if (currentIndex < totalItems - 1) {
         setTimeout(() => {
           setSelectedOption(null);
-          setCurrentQuestionIndex((prev) => prev + 1);
+          setCurrentIndex((prev) => prev + 1);
         }, 400);
       }
     } else {
@@ -86,34 +119,39 @@ export function MobileQuestionnaireReader({
   };
 
   const handleTextInput = (value: string) => {
-    setResponses((prev) => ({ ...prev, [currentQuestion.id]: value }));
+    setResponses((prev) => ({ ...prev, [currentItem.id]: value }));
   };
 
   const handlePrevious = () => {
-    if (currentQuestionIndex > 0) {
+    if (currentIndex > 0) {
       setSelectedOption(null);
-      setCurrentQuestionIndex((prev) => prev - 1);
+      setCurrentIndex((prev) => prev - 1);
     }
   };
 
   const handleNext = () => {
-    if (currentQuestionIndex < totalQuestions - 1) {
+    if (currentIndex < totalItems - 1) {
       setSelectedOption(null);
-      setCurrentQuestionIndex((prev) => prev + 1);
+      setCurrentIndex((prev) => prev + 1);
     }
   };
 
   const handleSubmit = () => {
-    onSubmit(responses);
+    // Filter out section responses before submitting
+    const questionResponses = Object.fromEntries(
+      Object.entries(responses).filter(([key]) => !key.startsWith("section-"))
+    );
+    onSubmit(questionResponses);
   };
 
   const isComplete = () => {
-    const requiredQuestions = allQuestions
-      .filter((question) => {
-        if (question.dependsOn) {
+    const requiredQuestions = allItems
+      .filter((item) => {
+        if (item.type !== "question") return false;
+        if (item.dependsOn) {
           return (
-            responses[question.dependsOn.questionId] ===
-            question.dependsOn.expectedValue
+            responses[item.dependsOn.questionId] ===
+            item.dependsOn.expectedValue
           );
         }
         return true;
@@ -139,91 +177,106 @@ export function MobileQuestionnaireReader({
           {questionnaire.title}
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Question {currentQuestionIndex + 1} of {totalQuestions}
+          {currentIndex + 1} of {totalItems}
         </p>
       </div>
 
-      {/* Question */}
+      {/* Content */}
       <div className="p-4">
-        <div className="mb-2 text-sm font-medium text-muted-foreground motion-safe:motion-preset-fade motion-duration-200">
-          {currentQuestion.sectionTitle}
-        </div>
-
-        <div className="relative">
-          <div className="motion-safe:motion-preset-slide motion-duration-200">
-            <div className="space-y-3">
-              <p className="text-lg font-medium text-foreground mb-6 motion-safe:motion-preset-fade motion-duration-200">
-                {currentQuestion.text}
+        {currentItem.type === "section" ? (
+          <div className="space-y-6 motion-safe:motion-preset-fade motion-duration-200">
+            <h2 className="text-2xl font-semibold text-foreground">
+              {currentItem.text}
+            </h2>
+            {currentItem.sectionInstructions && (
+              <p className="text-muted-foreground whitespace-pre-wrap">
+                {currentItem.sectionInstructions}
               </p>
+            )}
+          </div>
+        ) : (
+          <div className="relative">
+            <div className="motion-safe:motion-preset-slide motion-duration-200">
+              <div className="space-y-3">
+                {currentItem.sectionTitle && (
+                  <div className="mb-2 text-sm font-medium text-muted-foreground motion-safe:motion-preset-fade motion-duration-200">
+                    {currentItem.sectionTitle}
+                  </div>
+                )}
 
-              {currentQuestion.type === "text" ? (
-                <div className="motion-safe:motion-preset-fade motion-duration-200">
-                  <Input
-                    type="text"
-                    value={(responses[currentQuestion.id] as string) || ""}
-                    onChange={(e) => handleTextInput(e.target.value)}
-                    placeholder="Type your answer here..."
-                    className="w-full"
-                  />
-                </div>
-              ) : (
-                <div className="space-y-3 motion-safe:motion-preset-fade motion-duration-200">
-                  {currentQuestion.options?.map((option) => {
-                    const isSelected = selectedOption === option.value;
-                    const isConfirmed =
-                      responses[currentQuestion.id] === option.value;
+                <p className="text-lg font-medium text-foreground mb-6 motion-safe:motion-preset-fade motion-duration-200">
+                  {currentItem.text}
+                </p>
 
-                    return (
-                      <button
-                        key={option.value}
-                        onClick={() => handleOptionSelect(option.value)}
-                        type="button"
-                        className={cn(
-                          "w-full flex items-center justify-between px-4 py-3 rounded-lg text-left",
-                          "transition-colors duration-200",
-                          "active:scale-[0.98]",
-                          isSelected &&
-                            !isConfirmed && [
-                              "bg-white/10 dark:bg-white/10",
+                {currentItem.questionType === "text" ? (
+                  <div className="motion-safe:motion-preset-fade motion-duration-200">
+                    <Input
+                      type="text"
+                      value={(responses[currentItem.id] as string) || ""}
+                      onChange={(e) => handleTextInput(e.target.value)}
+                      placeholder="Type your answer here..."
+                      className="w-full"
+                    />
+                  </div>
+                ) : (
+                  <div className="space-y-3 motion-safe:motion-preset-fade motion-duration-200">
+                    {currentItem.questionOptions?.map((option) => {
+                      const isSelected = selectedOption === option.value;
+                      const isConfirmed =
+                        responses[currentItem.id] === option.value;
+
+                      return (
+                        <button
+                          key={option.value}
+                          onClick={() => handleOptionSelect(option.value)}
+                          type="button"
+                          className={cn(
+                            "w-full flex items-center justify-between px-4 py-3 rounded-lg text-left",
+                            "transition-colors duration-200",
+                            "active:scale-[0.98]",
+                            isSelected &&
+                              !isConfirmed && [
+                                "bg-white/10 dark:bg-white/10",
+                                "text-foreground",
+                                "ring-1 ring-white/30",
+                                "motion-safe:animate-[shimmer_2s_ease-in-out_infinite]",
+                              ],
+                            isConfirmed && [
+                              "bg-white dark:bg-white/10",
                               "text-foreground",
-                              "ring-1 ring-white/30",
-                              "motion-safe:animate-[shimmer_2s_ease-in-out_infinite]",
+                              "motion-safe:motion-preset-confetti",
                             ],
-                          isConfirmed && [
-                            "bg-white dark:bg-white/10",
-                            "text-foreground",
-                            "motion-safe:motion-preset-confetti",
-                          ],
-                          !isSelected &&
-                            !isConfirmed && [
-                              "bg-muted/50 dark:bg-white/5",
-                              "hover:bg-white/10 dark:hover:bg-white/10",
-                            ]
-                        )}
-                      >
-                        <div className="flex-1">{option.text}</div>
-                        {(isSelected || isConfirmed) && (
-                          <div
-                            className={cn(
-                              "w-6 h-6 rounded-full flex items-center justify-center shrink-0 ml-2",
-                              isConfirmed
-                                ? "bg-white/20"
-                                : "bg-white/20 motion-safe:motion-preset-bounce"
-                            )}
-                          >
-                            <ChevronRight
-                              className={cn("h-4 w-4", "text-white")}
-                            />
-                          </div>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
+                            !isSelected &&
+                              !isConfirmed && [
+                                "bg-muted/50 dark:bg-white/5",
+                                "hover:bg-white/10 dark:hover:bg-white/10",
+                              ]
+                          )}
+                        >
+                          <div className="flex-1">{option.text}</div>
+                          {(isSelected || isConfirmed) && (
+                            <div
+                              className={cn(
+                                "w-6 h-6 rounded-full flex items-center justify-center shrink-0 ml-2",
+                                isConfirmed
+                                  ? "bg-white/20"
+                                  : "bg-white/20 motion-safe:motion-preset-bounce"
+                              )}
+                            >
+                              <ChevronRight
+                                className={cn("h-4 w-4", "text-white")}
+                              />
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Navigation */}
@@ -232,14 +285,14 @@ export function MobileQuestionnaireReader({
           <Button
             variant="ghost"
             onClick={handlePrevious}
-            disabled={currentQuestionIndex === 0}
+            disabled={currentIndex === 0}
             className="motion-safe:motion-preset-slide"
           >
             <ChevronLeft className="h-4 w-4 mr-2" />
             Previous
           </Button>
 
-          {currentQuestionIndex === totalQuestions - 1 ? (
+          {currentIndex === totalItems - 1 ? (
             <Button
               onClick={handleSubmit}
               disabled={!isComplete()}
@@ -251,8 +304,7 @@ export function MobileQuestionnaireReader({
             <Button
               variant="ghost"
               onClick={handleNext}
-              disabled={!responses[currentQuestion.id]}
-              className="motion-safe:motion-preset-slide"
+              className="ml-auto motion-safe:motion-preset-slide"
             >
               Next
               <ChevronRight className="h-4 w-4 ml-2" />
