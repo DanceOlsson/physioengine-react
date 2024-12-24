@@ -43,11 +43,6 @@
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
-
-    /* Chart specific colors that adapt to theme */
-    --chart-bar: 142 76% 36%;  /* Same as primary by default */
-    --chart-bar-background: hsl(var(--chart-bar) / 0.9);
-    --chart-bar-border: hsl(var(--chart-bar));
   }
 
   .dark {
@@ -78,11 +73,6 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
-
-    /* Chart colors for dark mode - using lighter shades */
-    --chart-bar: 142 76% 76%;  /* Lighter shade of primary */
-    --chart-bar-background: hsl(var(--chart-bar) / 0.9);
-    --chart-bar-border: hsl(var(--chart-bar));
   }
 }
 
