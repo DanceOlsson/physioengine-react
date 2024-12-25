@@ -4,8 +4,20 @@ import { type Questionnaire } from "./QuestionnaireList";
 import { DynamicQuestionnaireForm } from "@/components/dynamic-readers/DynamicQuestionnaireForm";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, X } from "lucide-react";
 import { QuestionnaireQrPanel } from "./QuestionnaireQrPanel";
+import { MobileQuestionnaireReader } from "@/components/dynamic-readers/MobileQuestionnaireReader";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 // Import questionnaire data
 import { questions as koosQuestions } from "@/assets/questionnaires/koos_swedish";
@@ -31,6 +43,8 @@ interface QuestionnaireDynamicPanelProps {
   questionnaire: Questionnaire | null;
   state: PanelState;
   onStateChange: (state: PanelState) => void;
+  isQrEntry?: boolean;
+  onBack?: () => void;
 }
 
 const getQuestionnaireData = (id: string) => {
@@ -69,8 +83,12 @@ export function QuestionnaireDynamicPanel({
   questionnaire,
   state,
   onStateChange,
+  isQrEntry = false,
+  onBack,
 }: QuestionnaireDynamicPanelProps) {
   const [showResults, setShowResults] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const [showExitWarning, setShowExitWarning] = useState(false);
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -111,12 +129,45 @@ export function QuestionnaireDynamicPanel({
   };
 
   const handleBack = () => {
-    setShowResults(false);
-    onStateChange("form");
+    if (onBack) {
+      if (state === "form" && !showResults) {
+        setShowExitWarning(true);
+      } else {
+        onBack();
+      }
+    } else {
+      setShowResults(false);
+      onStateChange("form");
+    }
+  };
+
+  const handleConfirmExit = () => {
+    setShowExitWarning(false);
+    onBack?.();
   };
 
   return (
-    <div className={cn("h-full bg-background border-l", className)}>
+    <div
+      className={cn("h-full bg-background", !isMobile && "border-l", className)}
+    >
+      <AlertDialog open={showExitWarning} onOpenChange={setShowExitWarning}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Exit Questionnaire?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Your progress will be lost if you exit now. Are you sure you want
+              to go back to the questionnaire list?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Continue Questionnaire</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmExit}>
+              Exit
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {state === "empty" && (
         <div className="flex h-full items-center justify-center p-6">
           <Card className="flex flex-col items-center justify-center p-6 text-center">
@@ -135,12 +186,34 @@ export function QuestionnaireDynamicPanel({
               <div className="p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                 <Button variant="ghost" size="sm" onClick={handleBack}>
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to Form
+                  Previous Step
                 </Button>
               </div>
               <div className="p-6">
                 <ResultsComponent />
               </div>
+            </div>
+          ) : isMobile ? (
+            <div className="h-full">
+              {!isQrEntry && (
+                <div className="sticky top-0 p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10">
+                  <div className="flex items-center justify-between">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleBack}
+                      className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                    >
+                      <X className="mr-2 h-4 w-4" />
+                      Exit Questionnaire
+                    </Button>
+                  </div>
+                </div>
+              )}
+              <MobileQuestionnaireReader
+                questionnaire={data}
+                onSubmit={handleFormSubmit}
+              />
             </div>
           ) : (
             <DynamicQuestionnaireForm
@@ -165,6 +238,19 @@ export function QuestionnaireDynamicPanel({
 
       {state === "liveResults" && (
         <div className="animate-in slide-in-from-right h-full overflow-auto">
+          {!isQrEntry && isMobile && (
+            <div className="sticky top-0 p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleBack}
+                className="text-destructive hover:text-destructive hover:bg-destructive/10"
+              >
+                <X className="mr-2 h-4 w-4" />
+                Exit Questionnaire
+              </Button>
+            </div>
+          )}
           <div className="p-6">
             <ResultsComponent />
           </div>
@@ -173,6 +259,19 @@ export function QuestionnaireDynamicPanel({
 
       {state === "finalResults" && (
         <div className="animate-in slide-in-from-right h-full overflow-auto">
+          {!isQrEntry && isMobile && (
+            <div className="sticky top-0 p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleBack}
+                className="text-destructive hover:text-destructive hover:bg-destructive/10"
+              >
+                <X className="mr-2 h-4 w-4" />
+                Exit Questionnaire
+              </Button>
+            </div>
+          )}
           <div className="p-6">
             <ResultsComponent />
           </div>

@@ -66,6 +66,9 @@ export function QuestionnaireHomePage() {
     position: { top: number; right: number };
   } | null>(null);
 
+  // Add isQrEntry state
+  const [isQrEntry, setIsQrEntry] = useState(false);
+
   // Filter questionnaires
   const filteredQuestionnaires = questionnaires.filter((q) => {
     const matchesCategory =
@@ -127,6 +130,7 @@ export function QuestionnaireHomePage() {
     setShowActionDialog(false);
     setShowDynamicPanel(true);
     setPanelState(action === "qrCode" ? "qrCode" : "form");
+    setIsQrEntry(action === "qrCode");
   };
 
   return (
@@ -154,7 +158,7 @@ export function QuestionnaireHomePage() {
         <div
           className={cn(
             "w-full transition-all duration-300",
-            showDynamicPanel && "w-[35%] min-w-[400px]"
+            showDynamicPanel && !isMobile && "w-[35%] min-w-[400px]"
           )}
         >
           <QuestionnaireList
@@ -167,11 +171,32 @@ export function QuestionnaireHomePage() {
 
         {/* Dynamic panel - only show after action selection */}
         {showDynamicPanel && (
-          <div className="absolute inset-y-0 right-0 w-[65%] max-w-[800px] transform transition-all duration-300 ease-in-out bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/75 border-l">
+          <div
+            className={cn(
+              "transform transition-all duration-300 ease-in-out bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/75 border-l",
+              isMobile
+                ? "fixed inset-0 z-50"
+                : "absolute inset-y-0 right-0 w-[65%] max-w-[800px]"
+            )}
+          >
             <QuestionnaireDynamicPanel
               questionnaire={selectedQuestionnaire}
               state={panelState}
-              onStateChange={setPanelState}
+              onStateChange={(newState) => {
+                if (newState === "empty") {
+                  setShowDynamicPanel(false);
+                }
+                setPanelState(newState);
+              }}
+              isQrEntry={isQrEntry}
+              onBack={
+                isMobile && !isQrEntry
+                  ? () => {
+                      setShowDynamicPanel(false);
+                      setPanelState("empty");
+                    }
+                  : undefined
+              }
             />
           </div>
         )}
