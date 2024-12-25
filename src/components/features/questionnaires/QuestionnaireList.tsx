@@ -26,6 +26,7 @@ interface QuestionnaireListProps {
     questionnaire: Questionnaire,
     buttonRect: { top: number; right: number }
   ) => void;
+  isPanelOpen: boolean;
 }
 
 export function QuestionnaireList({
@@ -33,6 +34,7 @@ export function QuestionnaireList({
   questionnaires,
   selectedQuestionnaire,
   onQuestionnaireSelect,
+  isPanelOpen,
 }: QuestionnaireListProps) {
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -55,7 +57,10 @@ export function QuestionnaireList({
 
   return (
     <div
-      className={cn("h-full bg-background relative max-w-md", className)}
+      className={cn(
+        "h-full bg-background relative w-full max-w-full",
+        className
+      )}
       ref={listRef}
     >
       <div className="p-6">
@@ -67,7 +72,14 @@ export function QuestionnaireList({
 
       <ScrollArea.Root className="h-[calc(100vh-10rem)]">
         <ScrollArea.Viewport className="h-full w-full px-6 pb-6">
-          <div className="grid gap-3 pt-3">
+          <div
+            className={cn(
+              "grid gap-4 pt-1",
+              isPanelOpen
+                ? "grid-cols-1"
+                : "grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
+            )}
+          >
             {questionnaires.map((questionnaire) => (
               <div
                 key={questionnaire.id}
@@ -76,21 +88,23 @@ export function QuestionnaireList({
               >
                 <Card
                   className={cn(
-                    "p-4 transition-all duration-200 hover:ring-1 hover:ring-blue-500 hover:bg-gray-100/50 dark:hover:bg-gray-800/50",
+                    "p-4 h-full transition-all duration-200 hover:ring-1 hover:ring-primary hover:bg-accent/50",
                     selectedQuestionnaire?.id === questionnaire.id &&
-                      "border-primary shadow-md"
+                      "ring-2 ring-primary shadow-md"
                   )}
                 >
-                  <h3 className="text-lg font-semibold text-foreground">
-                    {questionnaire.title}
-                  </h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {questionnaire.description}
-                  </p>
-                  <div className="mt-3">
-                    <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-primary/10 text-primary">
-                      {questionnaire.category}
-                    </span>
+                  <div className="flex flex-col h-full min-h-[120px]">
+                    <h3 className="text-lg font-semibold text-foreground">
+                      {questionnaire.title}
+                    </h3>
+                    <p className="mt-1 text-sm text-muted-foreground flex-grow">
+                      {questionnaire.description}
+                    </p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-primary/10 text-primary">
+                        {questionnaire.category}
+                      </span>
+                    </div>
                   </div>
                 </Card>
               </div>
@@ -98,10 +112,10 @@ export function QuestionnaireList({
           </div>
         </ScrollArea.Viewport>
         <ScrollArea.Scrollbar
-          className="flex touch-none select-none bg-zinc-100 p-0.5 transition-colors hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700"
+          className="flex touch-none select-none bg-accent p-0.5 transition-colors hover:bg-accent/80"
           orientation="vertical"
         >
-          <ScrollArea.Thumb className="relative flex-1 rounded-full bg-zinc-300 dark:bg-zinc-600" />
+          <ScrollArea.Thumb className="relative flex-1 rounded-full bg-muted-foreground/30" />
         </ScrollArea.Scrollbar>
       </ScrollArea.Root>
     </div>

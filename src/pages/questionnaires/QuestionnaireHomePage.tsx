@@ -146,21 +146,28 @@ export function QuestionnaireHomePage() {
       <div
         className={cn(
           "flex-1 relative overflow-hidden transition-all duration-300",
-          !isMobile && (isSidebarCollapsed ? "ml-16" : "ml-[250px]")
+          !isMobile && (isSidebarCollapsed ? "ml-16" : "ml-[250px]"),
+          "max-w-[2000px] mx-auto"
         )}
       >
         {/* List panel */}
-        <div className="w-full">
+        <div
+          className={cn(
+            "w-full transition-all duration-300",
+            showDynamicPanel && "w-[35%] min-w-[400px]"
+          )}
+        >
           <QuestionnaireList
             questionnaires={filteredQuestionnaires}
             selectedQuestionnaire={selectedQuestionnaire}
             onQuestionnaireSelect={handleQuestionnaireSelect}
+            isPanelOpen={showDynamicPanel}
           />
         </div>
 
         {/* Dynamic panel - only show after action selection */}
         {showDynamicPanel && (
-          <div className="absolute inset-y-0 right-0 w-[60%] transform transition-transform duration-300 ease-in-out">
+          <div className="absolute inset-y-0 right-0 w-[65%] max-w-[800px] transform transition-all duration-300 ease-in-out bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/75 border-l">
             <QuestionnaireDynamicPanel
               questionnaire={selectedQuestionnaire}
               state={panelState}
