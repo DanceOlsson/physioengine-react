@@ -4,7 +4,7 @@ import { type Questionnaire } from "./QuestionnaireList";
 import { DynamicQuestionnaireForm } from "@/components/dynamic-readers/DynamicQuestionnaireForm";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, X } from "lucide-react";
+import { ArrowLeft, X, QrCode, PencilLine } from "lucide-react";
 import { QuestionnaireQrPanel } from "./QuestionnaireQrPanel";
 import { MobileQuestionnaireReader } from "@/components/dynamic-readers/MobileQuestionnaireReader";
 import { useMediaQuery } from "@/hooks/use-media-query";
@@ -18,6 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { QuestionnaireActionPanel } from "./QuestionnaireActionPanel";
 
 // Import questionnaire data
 import { questions as koosQuestions } from "@/assets/questionnaires/koos_swedish";
@@ -33,6 +34,7 @@ import { SatisfactionResultsPage } from "@/pages/questionnaires/satisfaction/Sat
 
 export type PanelState =
   | "empty"
+  | "action"
   | "form"
   | "qrCode"
   | "liveResults"
@@ -45,6 +47,7 @@ interface QuestionnaireDynamicPanelProps {
   onStateChange: (state: PanelState) => void;
   isQrEntry?: boolean;
   onBack?: () => void;
+  onActionSelect?: (action: "qrCode" | "form") => void;
 }
 
 const getQuestionnaireData = (id: string) => {
@@ -85,6 +88,7 @@ export function QuestionnaireDynamicPanel({
   onStateChange,
   isQrEntry = false,
   onBack,
+  onActionSelect,
 }: QuestionnaireDynamicPanelProps) {
   const [showResults, setShowResults] = useState(false);
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -148,7 +152,12 @@ export function QuestionnaireDynamicPanel({
 
   return (
     <div
-      className={cn("h-full bg-background", !isMobile && "border-l", className)}
+      className={cn(
+        "h-full",
+        "bg-background",
+        !isMobile && "border-l",
+        className
+      )}
     >
       <AlertDialog open={showExitWarning} onOpenChange={setShowExitWarning}>
         <AlertDialogContent>
@@ -167,6 +176,13 @@ export function QuestionnaireDynamicPanel({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {state === "action" && questionnaire && (
+        <QuestionnaireActionPanel
+          questionnaire={questionnaire}
+          onActionSelect={onActionSelect!}
+        />
+      )}
 
       {state === "empty" && (
         <div className="flex h-full items-center justify-center p-6">

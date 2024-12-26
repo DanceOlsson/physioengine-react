@@ -106,10 +106,10 @@ export function QuestionnaireList({
           </div>
         </ScrollArea.Viewport>
         <ScrollArea.Scrollbar
-          className="flex touch-none select-none bg-accent p-0.5 transition-colors hover:bg-accent/80"
+          className="flex touch-none select-none bg-accent p-0.5 transition-colors duration-150 ease-out hover:bg-accent/80"
           orientation="vertical"
         >
-          <ScrollArea.Thumb className="relative flex-1 rounded-full bg-muted-foreground/30" />
+          <ScrollArea.Thumb className="relative flex-1 rounded-full bg-accent-foreground/20" />
         </ScrollArea.Scrollbar>
       </ScrollArea.Root>
     </div>

@@ -155,7 +155,7 @@ export function QuestionnaireQrPanel({
 
   return (
     <div className="animate-in slide-in-from-right h-full flex flex-col">
-      <div className="p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="md:hidden p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <Button variant="ghost" size="sm" onClick={onBack}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back
@@ -163,50 +163,60 @@ export function QuestionnaireQrPanel({
       </div>
 
       <div className="p-6 flex-1 overflow-auto">
-        <Card className="p-6" ref={containerRef}>
-          <div className="space-y-6 overflow-y-auto">
-            <div>
-              <h3 className="text-xl font-semibold mb-2">
+        <Card className="w-full max-w-lg mx-auto" ref={containerRef}>
+          <div className="p-6">
+            <div className="mb-6">
+              <h3 className="text-2xl font-semibold mb-2">
                 {questionnaire.title}
               </h3>
-              <p className="text-muted-foreground mb-6">
-                Scan this QR code to fill out the questionnaire
-              </p>
-            </div>
-
-            {isGenerating ? (
-              <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Generating QR code...
-                </p>
-              </div>
-            ) : error ? (
-              <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg border-destructive">
-                <p className="text-sm text-destructive">{error}</p>
-                <Button
-                  variant="outline"
-                  className="mt-4"
-                  onClick={() => window.location.reload()}
-                >
-                  Try Again
-                </Button>
-              </div>
-            ) : sessionId ? (
-              <div className="flex flex-col items-center w-full max-w-2xl mx-auto">
-                <div
-                  className="flex items-center justify-center bg-white rounded-lg p-6"
-                  style={{ width: qrSize, height: qrSize }}
-                >
-                  <QRCodeSVG
-                    value={qrUrl}
-                    size={qrSize - 48}
-                    level="H"
-                    includeMargin={false}
-                  />
+              <div className="space-y-4">
+                <p className="text-muted-foreground">Follow these steps:</p>
+                <div className="space-y-2 text-muted-foreground">
+                  <p>1. Show this QR code to your patient</p>
+                  <p>2. Patient scans the code with their phone camera</p>
+                  <p>3. Patient fills out the questionnaire on their device</p>
+                  <p>
+                    4. Results will appear automatically on your screen in
+                    real-time
+                  </p>
                 </div>
               </div>
-            ) : null}
+            </div>
+            <div className="flex flex-col items-center gap-4">
+              {isGenerating ? (
+                <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg">
+                  <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Generating QR code...
+                  </p>
+                </div>
+              ) : error ? (
+                <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg border-destructive">
+                  <p className="text-sm text-destructive">{error}</p>
+                  <Button
+                    variant="outline"
+                    className="mt-4"
+                    onClick={() => window.location.reload()}
+                  >
+                    Try Again
+                  </Button>
+                </div>
+              ) : sessionId ? (
+                <div className="flex flex-col items-center w-full max-w-2xl mx-auto">
+                  <div
+                    className="flex items-center justify-center bg-white rounded-lg p-6"
+                    style={{ width: qrSize, height: qrSize }}
+                  >
+                    <QRCodeSVG
+                      value={qrUrl}
+                      size={qrSize - 48}
+                      level="H"
+                      includeMargin={false}
+                    />
+                  </div>
+                </div>
+              ) : null}
+            </div>
           </div>
         </Card>
       </div>
