@@ -8,27 +8,27 @@ export function Header() {
 
   return (
     <header className="fixed w-full bg-white/80 dark:bg-gray-950/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 z-50">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
+      <nav className="w-full">
+        <div className="flex h-16 2xl:h-20 3xl:h-24 items-center justify-between px-4 2xl:px-8 3xl:px-16 transition-all">
           <div className="flex items-center">
             <Link to="/">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-400 dark:to-blue-600 bg-clip-text text-transparent">
+              <h1 className="text-2xl 2xl:text-3xl 3xl:text-4xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-400 dark:to-blue-600 bg-clip-text text-transparent">
                 PhysioEngine
               </h1>
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex md:items-center md:space-x-8">
+          <div className="hidden md:flex md:items-center md:space-x-8 2xl:space-x-12 3xl:space-x-16">
             <Link
               to="/questionnaires"
-              className="text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors"
+              className="text-sm 2xl:text-base 3xl:text-lg font-medium text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors"
             >
               Questionnaires
             </Link>
             <a
               href="#contact"
-              className="text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors"
+              className="text-sm 2xl:text-base 3xl:text-lg font-medium text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors"
             >
               Contact
             </a>
@@ -36,7 +36,7 @@ export function Header() {
               variant="ghost"
               size="icon"
               onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-              className="mr-2"
+              className="mr-2 2xl:scale-125 3xl:scale-150"
             >
               <Sun className="h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
               <Moon

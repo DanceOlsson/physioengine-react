@@ -146,7 +146,7 @@ export function DynamicQuestionnaireForm({
 
   return (
     <div className="h-full overflow-auto">
-      <div className="max-w-3xl mx-auto p-6">
+      <div className="p-6">
         <h1 className="text-3xl font-bold mb-2 text-foreground">
           {questionnaire.title}
         </h1>
@@ -182,7 +182,7 @@ export function DynamicQuestionnaireForm({
           </Card>
         ))}
 
-        <div className="flex justify-end mt-6 mb-6">
+        <div className="flex justify-end mt-6">
           <Button onClick={handleSubmit} disabled={!isComplete()} size="lg">
             Submit Questionnaire
           </Button>

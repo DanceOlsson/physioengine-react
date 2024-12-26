@@ -12,8 +12,10 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col overflow-x-hidden">
       <Header />
-      <main className="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 pt-16">
-        <Outlet />
+      <main className="flex-1">
+        <div className="mx-auto w-full max-w-[2000px]">
+          <Outlet />
+        </div>
       </main>
     </div>
   );

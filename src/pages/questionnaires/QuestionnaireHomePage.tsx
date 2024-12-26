@@ -134,33 +134,21 @@ export function QuestionnaireHomePage() {
   };
 
   return (
-    <div className="flex h-full">
-      {/* Sidebar */}
+    <div className="flex h-[calc(100vh-64px)] 2xl:h-[calc(100vh-80px)] 3xl:h-[calc(100vh-96px)] w-full mt-[64px] 2xl:mt-[80px] 3xl:mt-[96px]">
+      {/* Sidebar spacer - fixed width */}
       {!isMobile && (
-        <QuestionnaireSidebar
-          isCollapsed={isSidebarCollapsed}
-          onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-          selectedCategory={selectedCategory}
-          onCategorySelect={setSelectedCategory}
-          onSearch={setSearchQuery}
+        <div
+          className={cn(
+            "shrink-0 transition-all duration-300",
+            isSidebarCollapsed ? "w-16" : "w-[250px] 2xl:w-[350px]"
+          )}
         />
       )}
 
-      {/* Main content */}
-      <div
-        className={cn(
-          "flex-1 relative overflow-hidden transition-all duration-300",
-          !isMobile && (isSidebarCollapsed ? "ml-16" : "ml-[250px]"),
-          "max-w-[2000px] mx-auto"
-        )}
-      >
-        {/* List panel */}
-        <div
-          className={cn(
-            "w-full transition-all duration-300",
-            showDynamicPanel && !isMobile && "w-[35%] min-w-[400px]"
-          )}
-        >
+      {/* Main content area - fills remaining space */}
+      <div className="flex w-full">
+        {/* List panel - fills all space, or 50% when panel is open */}
+        <div className={cn("w-full", showDynamicPanel && !isMobile && "w-1/2")}>
           <QuestionnaireList
             questionnaires={filteredQuestionnaires}
             selectedQuestionnaire={selectedQuestionnaire}
@@ -169,14 +157,12 @@ export function QuestionnaireHomePage() {
           />
         </div>
 
-        {/* Dynamic panel - only show after action selection */}
+        {/* Dynamic panel - 50% of remaining space or full screen on mobile */}
         {showDynamicPanel && (
           <div
             className={cn(
-              "transform transition-all duration-300 ease-in-out bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/75 border-l",
-              isMobile
-                ? "fixed inset-0 z-50"
-                : "absolute inset-y-0 right-0 w-[65%] max-w-[800px]"
+              "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/75 border-l",
+              isMobile ? "fixed inset-0 z-50" : "w-1/2"
             )}
           >
             <QuestionnaireDynamicPanel
@@ -217,6 +203,17 @@ export function QuestionnaireHomePage() {
           buttonPosition={buttonPosition}
         />
       </div>
+
+      {/* Render sidebar last to ensure proper z-index */}
+      {!isMobile && (
+        <QuestionnaireSidebar
+          isCollapsed={isSidebarCollapsed}
+          onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          selectedCategory={selectedCategory}
+          onCategorySelect={setSelectedCategory}
+          onSearch={setSearchQuery}
+        />
+      )}
     </div>
   );
 }

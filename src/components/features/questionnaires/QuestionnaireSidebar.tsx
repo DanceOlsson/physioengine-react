@@ -50,14 +50,15 @@ export function QuestionnaireSidebar({
   };
 
   return (
-    <div
+    <aside
       className={cn(
-        "fixed left-0 top-[64px] h-[calc(100vh-64px)] border-r bg-background transition-all duration-300 overflow-hidden",
-        isCollapsed ? "w-16" : "w-[250px]",
-        className
+        "fixed left-0 z-30 border-r bg-background transition-all duration-300",
+        "top-[64px] 2xl:top-[80px] 3xl:top-[96px]",
+        "h-[calc(100vh-64px)] 2xl:h-[calc(100vh-80px)] 3xl:h-[calc(100vh-96px)]",
+        isCollapsed ? "w-16" : "w-[250px] 2xl:w-[350px]"
       )}
     >
-      <div className="flex h-full flex-col">
+      <div className="flex h-full flex-col bg-background">
         <div className="flex items-center justify-between p-4 border-b">
           {!isCollapsed && <span className="font-semibold">Filters</span>}
           <Button
@@ -147,6 +148,6 @@ export function QuestionnaireSidebar({
           </>
         )}
       </div>
-    </div>
+    </aside>
   );
 }
