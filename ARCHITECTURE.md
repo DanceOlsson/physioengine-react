@@ -117,11 +117,21 @@ physioengine-react/
   - `QuestionnaireForm` - Generic dynamic form handling for questionnaires
 - `components/questionnaires/` - Questionnaire-specific components
   - `QuestionnaireResults` - Results display with charts
-- `components/features/questionnaires/` - Questionnaire feature components
-  - `QuestionnaireList` - Displays available questionnaires in grid/list view
-  - `QuestionnaireSidebar` - Navigation and filtering sidebar
-  - `QuestionnaireDynamicPanel` - Dynamic content panel for questionnaire details
+- `components/features/` - Feature-specific components
+  - `charts/` - Reusable chart components
+    - `QuestionnaireBarChart` - Theme-aware bar chart for questionnaire results
+  - `questionnaires/` - Questionnaire feature components
+    - `QuestionnaireList` - Displays available questionnaires in grid/list view
+    - `QuestionnaireSidebar` - Navigation and filtering sidebar
+    - `QuestionnaireDynamicPanel` - Dynamic content panel for questionnaire details
 - `theme-provider.tsx` - Theme management and dark mode support
+
+### Layout System
+
+- Mobile-first responsive design
+- Adaptive header and sidebar for large displays (>1536px)
+- Content optimized for ultra-wide displays (up to 2000px)
+- Dynamic panels: 50/50 split on desktop, full-screen on mobile
 
 ### Marketing Components
 
