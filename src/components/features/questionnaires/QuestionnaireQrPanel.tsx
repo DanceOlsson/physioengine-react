@@ -63,8 +63,10 @@ export function QuestionnaireQrPanel({
       if (containerRef.current) {
         const container = containerRef.current;
         const containerWidth = container.clientWidth;
-        // Account for padding and other elements (200px buffer)
-        const availableHeight = window.innerHeight - 200;
+        // Calculate available height by considering the container's position
+        const containerRect = container.getBoundingClientRect();
+        const availableHeight = window.innerHeight - containerRect.top - 100; // 100px buffer for bottom margin
+
         // Use the smaller of width/height while maintaining maximum bounds
         const size = Math.min(
           containerWidth - 48, // Account for padding (24px on each side)
@@ -165,20 +167,16 @@ export function QuestionnaireQrPanel({
       <div className="p-6 flex-1 overflow-auto">
         <Card className="w-full max-w-lg mx-auto" ref={containerRef}>
           <div className="p-6">
-            <div className="mb-6">
-              <h3 className="text-2xl font-semibold mb-2">
+            <div className="mb-4">
+              <h3 className="text-xl font-semibold mb-1">
                 {questionnaire.title}
               </h3>
-              <div className="space-y-4">
-                <p className="text-muted-foreground">Follow these steps:</p>
-                <div className="space-y-2 text-muted-foreground">
+              <div className="space-y-1">
+                <div className="text-sm text-muted-foreground">
                   <p>1. Show this QR code to your patient</p>
                   <p>2. Patient scans the code with their phone camera</p>
                   <p>3. Patient fills out the questionnaire on their device</p>
-                  <p>
-                    4. Results will appear automatically on your screen in
-                    real-time
-                  </p>
+                  <p>4. Results will appear automatically on your screen</p>
                 </div>
               </div>
             </div>
