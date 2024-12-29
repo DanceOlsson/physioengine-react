@@ -18,7 +18,7 @@ import {
   ResizableHandle,
 } from "@/components/ui/resizable";
 import { Button } from "@/components/ui/button";
-import { Menu, ArrowLeft } from "lucide-react";
+import { Menu, ArrowLeft, ChevronRight } from "lucide-react";
 
 const questionnaires: Questionnaire[] = [
   {
@@ -108,29 +108,35 @@ export function QuestionnaireHomePage() {
       {/* Sidebar - hidden on mobile except for hamburger */}
       <div
         className={cn(
-          "fixed top-[64px] 2xl:top-[80px] 3xl:top-[96px] left-0 z-40",
-          "md:relative md:top-0",
-          "2xl:fixed 2xl:left-0",
-          "h-[calc(100vh-64px)] 2xl:h-[calc(100vh-80px)] 3xl:h-[calc(100vh-96px)]"
+          // Mobile: fixed under header
+          "fixed top-[64px] left-0 z-40",
+          // Desktop: fixed position with responsive header height
+          "2xl:top-[80px] 3xl:top-[96px]",
+          // Height matches header offset
+          "h-[calc(100vh-64px)] 2xl:h-[calc(100vh-80px)] 3xl:h-[calc(100vh-96px)]",
+          // Width handling
+          isSidebarCollapsed ? "w-20" : "w-64",
+          !isSidebarCollapsed && "2xl:w-[350px]"
         )}
       >
-        {/* Only show hamburger when no questionnaire is selected on mobile */}
+        {/* Only show hamburger when sidebar is collapsed on mobile */}
         <Button
           variant="ghost"
-          size="sm"
-          onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          size="icon"
+          onClick={() => setIsSidebarCollapsed(false)}
           className={cn(
-            "md:hidden absolute top-2 left-2 z-50",
-            selectedQuestionnaire && "hidden" // Hide when questionnaire is selected
+            "md:hidden absolute top-2 left-2 z-50 h-10 w-10",
+            (!isSidebarCollapsed || selectedQuestionnaire) && "hidden" // Hide when sidebar is visible or questionnaire is selected
           )}
         >
-          <Menu className="h-4 w-4" />
+          <ChevronRight className="h-6 w-6" />
         </Button>
         <div
           className={cn(
-            "hidden md:block",
-            "transition-transform duration-200",
-            !isSidebarCollapsed && "-translate-x-full md:translate-x-0"
+            "h-full",
+            "transition-transform duration-200 ease-in-out",
+            isSidebarCollapsed ? "-translate-x-full" : "translate-x-0",
+            "md:translate-x-0" // Always visible on desktop
           )}
         >
           <QuestionnaireSidebar
@@ -147,6 +153,7 @@ export function QuestionnaireHomePage() {
       <ResizablePanelGroup
         direction="horizontal"
         className={cn(
+          // Height and margin for header
           "h-[calc(100vh-64px)] 2xl:h-[calc(100vh-80px)] 3xl:h-[calc(100vh-96px)]",
           "mt-[64px] 2xl:mt-[80px] 3xl:mt-[96px]",
           "flex-1 overflow-hidden",
@@ -157,7 +164,7 @@ export function QuestionnaireHomePage() {
           // Normal state (when not collapsed)
           !isSidebarCollapsed && "md:ml-64",
           // Wide state (when not collapsed)
-          !isSidebarCollapsed && "2xl:ml-[350px] 3xl:ml-[400px]"
+          !isSidebarCollapsed && "2xl:ml-[350px]"
         )}
         autoSaveId="questionnaire-layout"
       >
