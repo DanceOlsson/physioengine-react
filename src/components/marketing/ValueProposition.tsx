@@ -96,32 +96,35 @@ const Benefit = ({ imageUrl, altText, imagePosition }: BenefitProps) => {
         ];
 
   return (
-    <div className="flex flex-col md:flex-row items-start gap-0 py-12 relative">
+    <div className="flex flex-col md:flex-row items-start gap-6 md:gap-0 py-8 sm:py-12 relative">
       {imagePosition === "left" && (
         <div
           ref={imageRef}
-          className="relative w-full md:w-3/4 transition-transform duration-300 ease-out h-[450px] -ml-32"
+          className="relative w-full md:w-3/4 transition-transform duration-300 ease-out h-[300px] sm:h-[450px] md:-ml-32 rounded-2xl overflow-hidden"
           style={{ transform: `translateX(${translateX}px)` }}
         >
           <div className="absolute inset-0 bg-gradient-to-l from-background via-background/25 to-transparent z-10" />
           <img
             src={imageUrl}
             alt={altText}
-            className="rounded-[2rem] w-full h-full object-cover"
+            className="w-full h-full object-cover"
             loading="lazy"
           />
         </div>
       )}
       <div
-        className={`w-full md:w-1/2 flex flex-col min-h-[450px] md:pt-20 z-10 
-        ${imagePosition === "left" ? "-ml-24" : "-mr-24"}`}
+        className={cn(
+          "w-full md:w-1/2 flex flex-col min-h-[300px] sm:min-h-[450px] z-10 px-4 md:px-0",
+          "md:pt-20",
+          imagePosition === "left" ? "md:-ml-24" : "md:-mr-24"
+        )}
       >
         <div className="flex-grow">
-          <div className="space-y-8">
+          <div className="space-y-6 sm:space-y-8">
             {steps.map((step, index) => (
               <div key={index} className="flex items-start gap-4 group">
-                <div className="pt-1">{step.icon}</div>
-                <p className="text-xl text-foreground leading-relaxed">
+                <div className="pt-1 shrink-0">{step.icon}</div>
+                <p className="text-lg sm:text-xl text-foreground leading-relaxed">
                   {step.text}
                 </p>
               </div>
@@ -129,11 +132,17 @@ const Benefit = ({ imageUrl, altText, imagePosition }: BenefitProps) => {
           </div>
         </div>
         <div
-          className={`mt-16 ${
+          className={cn(
+            "mt-8 sm:mt-16",
             imagePosition === "left" ? "text-right" : "text-left"
-          }`}
+          )}
         >
-          <Button variant="default" size="lg" className="group" asChild>
+          <Button
+            variant="default"
+            size="lg"
+            className="group w-full sm:w-auto"
+            asChild
+          >
             <Link to="/questionnaires">
               <ClipboardList className="mr-2 h-4 w-4" />
               Explore Questionnaires
@@ -145,14 +154,14 @@ const Benefit = ({ imageUrl, altText, imagePosition }: BenefitProps) => {
       {imagePosition === "right" && (
         <div
           ref={imageRef}
-          className="relative w-full md:w-3/4 transition-transform duration-300 ease-out h-[450px] -mr-32"
+          className="relative w-full md:w-3/4 transition-transform duration-300 ease-out h-[300px] sm:h-[450px] md:-mr-32 rounded-2xl overflow-hidden"
           style={{ transform: `translateX(${translateX}px)` }}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/25 to-transparent z-10" />
           <img
             src={imageUrl}
             alt={altText}
-            className="rounded-[2rem] w-full h-full object-cover"
+            className="w-full h-full object-cover"
             loading="lazy"
           />
         </div>
@@ -163,8 +172,8 @@ const Benefit = ({ imageUrl, altText, imagePosition }: BenefitProps) => {
 
 export function ValueProposition({ className }: ValuePropositionProps) {
   return (
-    <section className={cn("container mx-auto px-4 py-16", className)}>
-      <div className="space-y-16">
+    <section className={cn("container mx-auto px-4 py-12 sm:py-16", className)}>
+      <div className="space-y-12 sm:space-y-16">
         <Benefit
           imageUrl={showQrCodeImage}
           altText="Physical therapist showing QR code to patient for easy consultation"
