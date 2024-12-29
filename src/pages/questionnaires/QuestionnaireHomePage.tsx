@@ -116,7 +116,15 @@ export function QuestionnaireHomePage() {
         className={cn(
           "h-[calc(100vh-64px)] 2xl:h-[calc(100vh-80px)] 3xl:h-[calc(100vh-96px)]",
           "mt-[64px] 2xl:mt-[80px] 3xl:mt-[96px]",
-          "flex-1 overflow-hidden"
+          "flex-1 overflow-hidden",
+          // Sidebar margin states
+          "ml-0",
+          // Collapsed state
+          isSidebarCollapsed && "md:ml-20",
+          // Normal state (when not collapsed)
+          !isSidebarCollapsed && "md:ml-64",
+          // Wide state (when not collapsed)
+          !isSidebarCollapsed && "2xl:ml-[350px] 3xl:ml-[400px]"
         )}
         autoSaveId="questionnaire-layout"
       >
@@ -125,10 +133,7 @@ export function QuestionnaireHomePage() {
           order={1}
           defaultSize={30}
           minSize={MIN_PANEL_SIZE}
-          className={cn(
-            "flex flex-col gap-4 p-4 pt-6",
-            isSidebarCollapsed ? "md:pl-20" : "md:pl-64"
-          )}
+          className="flex flex-col gap-4 p-4 pt-6"
         >
           <QuestionnaireList
             questionnaires={questionnaires}
