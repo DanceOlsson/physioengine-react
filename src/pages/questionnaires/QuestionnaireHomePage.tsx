@@ -109,7 +109,9 @@ export function QuestionnaireHomePage() {
       <div
         className={cn(
           "fixed top-[64px] 2xl:top-[80px] 3xl:top-[96px] left-0 z-40",
-          "md:relative md:top-0"
+          "md:relative md:top-0",
+          "2xl:fixed 2xl:left-0",
+          "h-[calc(100vh-64px)] 2xl:h-[calc(100vh-80px)] 3xl:h-[calc(100vh-96px)]"
         )}
       >
         {/* Only show hamburger when no questionnaire is selected on mobile */}

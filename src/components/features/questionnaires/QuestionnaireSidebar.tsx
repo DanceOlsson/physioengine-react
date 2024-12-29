@@ -53,8 +53,7 @@ export function QuestionnaireSidebar({
     <aside
       className={cn(
         "fixed left-0 z-30 border-r bg-background transition-all duration-300",
-        "top-[64px] 2xl:top-[80px] 3xl:top-[96px]",
-        "h-[calc(100vh-64px)] 2xl:h-[calc(100vh-80px)] 3xl:h-[calc(100vh-96px)]",
+        "h-[calc(100vh-64px)]",
         isCollapsed ? "w-16" : "w-[250px] 2xl:w-[350px]"
       )}
     >
