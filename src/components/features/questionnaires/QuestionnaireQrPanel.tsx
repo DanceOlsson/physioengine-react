@@ -158,9 +158,16 @@ export function QuestionnaireQrPanel({
   return (
     <div className="animate-in slide-in-from-right h-full flex flex-col">
       <div className="md:hidden p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <Button variant="ghost" size="sm" onClick={onBack}>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            // Go back to list instead of empty state
+            onBack();
+          }}
+        >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back
+          Back to List
         </Button>
       </div>
 

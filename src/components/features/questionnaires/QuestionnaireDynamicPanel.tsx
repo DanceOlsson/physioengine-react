@@ -181,6 +181,7 @@ export function QuestionnaireDynamicPanel({
         <QuestionnaireActionPanel
           questionnaire={questionnaire}
           onActionSelect={onActionSelect!}
+          onBack={onBack!}
         />
       )}
 
@@ -244,7 +245,7 @@ export function QuestionnaireDynamicPanel({
       {state === "qrCode" && questionnaire && (
         <QuestionnaireQrPanel
           questionnaire={questionnaire}
-          onBack={() => onStateChange("empty")}
+          onBack={onBack!}
           onResponseReceived={() => {
             setShowResults(true);
             onStateChange("liveResults");

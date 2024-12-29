@@ -17,6 +17,8 @@ import {
   ResizablePanel,
   ResizableHandle,
 } from "@/components/ui/resizable";
+import { Button } from "@/components/ui/button";
+import { Menu, ArrowLeft } from "lucide-react";
 
 const questionnaires: Questionnaire[] = [
   {
@@ -86,10 +88,9 @@ export function QuestionnaireHomePage() {
   };
 
   const handleBack = () => {
-    if (isMobile) {
-      setSelectedQuestionnaire(null);
-      setPanelState("empty");
-    }
+    // Always go back to list
+    setSelectedQuestionnaire(null);
+    setPanelState("empty");
   };
 
   const handleWarningConfirm = () => {
@@ -104,20 +105,50 @@ export function QuestionnaireHomePage() {
 
   return (
     <div className="flex h-screen flex-col md:flex-row">
-      <QuestionnaireSidebar
-        isCollapsed={isSidebarCollapsed}
-        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-        selectedCategory={selectedCategory}
-        onCategorySelect={setSelectedCategory}
-        onSearch={() => {}}
-      />
+      {/* Sidebar - hidden on mobile except for hamburger */}
+      <div
+        className={cn(
+          "fixed top-[64px] 2xl:top-[80px] 3xl:top-[96px] left-0 z-40",
+          "md:relative md:top-0"
+        )}
+      >
+        {/* Only show hamburger when no questionnaire is selected on mobile */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          className={cn(
+            "md:hidden absolute top-2 left-2 z-50",
+            selectedQuestionnaire && "hidden" // Hide when questionnaire is selected
+          )}
+        >
+          <Menu className="h-4 w-4" />
+        </Button>
+        <div
+          className={cn(
+            "hidden md:block",
+            "transition-transform duration-200",
+            !isSidebarCollapsed && "-translate-x-full md:translate-x-0"
+          )}
+        >
+          <QuestionnaireSidebar
+            isCollapsed={isSidebarCollapsed}
+            onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+            selectedCategory={selectedCategory}
+            onCategorySelect={setSelectedCategory}
+            onSearch={() => {}}
+          />
+        </div>
+      </div>
+
+      {/* Main content area */}
       <ResizablePanelGroup
         direction="horizontal"
         className={cn(
           "h-[calc(100vh-64px)] 2xl:h-[calc(100vh-80px)] 3xl:h-[calc(100vh-96px)]",
           "mt-[64px] 2xl:mt-[80px] 3xl:mt-[96px]",
           "flex-1 overflow-hidden",
-          // Sidebar margin states
+          // Sidebar margin states - only on desktop
           "ml-0",
           // Collapsed state
           isSidebarCollapsed && "md:ml-20",
@@ -128,12 +159,16 @@ export function QuestionnaireHomePage() {
         )}
         autoSaveId="questionnaire-layout"
       >
+        {/* On mobile: Hide list when questionnaire selected */}
         <ResizablePanel
           id="questionnaire-list"
           order={1}
           defaultSize={30}
           minSize={MIN_PANEL_SIZE}
-          className="flex flex-col gap-4 p-4 pt-6"
+          className={cn(
+            "flex flex-col gap-4 p-4 pt-6",
+            selectedQuestionnaire && "hidden md:flex"
+          )}
         >
           <QuestionnaireList
             questionnaires={questionnaires}
@@ -143,9 +178,10 @@ export function QuestionnaireHomePage() {
           />
         </ResizablePanel>
 
+        {/* On mobile: Show full screen with back button */}
         {selectedQuestionnaire && (
           <>
-            <ResizableHandle withHandle />
+            <ResizableHandle className="hidden md:flex" withHandle />
             <ResizablePanel
               id="dynamic-panel"
               order={2}
@@ -153,8 +189,25 @@ export function QuestionnaireHomePage() {
                 panelState === "form" || panelState === "qrCode" ? 70 : 50
               }
               minSize={MIN_PANEL_SIZE}
-              className="flex flex-col"
+              className={cn(
+                "flex flex-col",
+                "fixed inset-0 md:relative md:inset-auto", // Full screen on mobile
+                "z-30 md:z-auto"
+              )}
             >
+              <div className="md:hidden p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedQuestionnaire(null);
+                    setPanelState("empty");
+                  }}
+                >
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back to List
+                </Button>
+              </div>
               <QuestionnaireDynamicPanel
                 questionnaire={selectedQuestionnaire}
                 state={panelState}
