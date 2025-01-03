@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Question, Questionnaire } from "@/lib/types/questionnaire.types";
 import { cn } from "@/lib/utils";
+import { ChevronRight } from "lucide-react";
 
 interface DynamicQuestionnaireFormProps {
   questionnaire: Questionnaire;
@@ -88,34 +89,42 @@ export function DynamicQuestionnaireForm({
             const finalValue = isNaN(numValue) ? value : numValue;
             handleResponse(question.id, finalValue);
           }}
-          className="space-y-3"
+          className="bg-muted/30"
         >
           {question.options.map((option, optionIndex) => {
             const isSelected =
               responses[question.id]?.toString() === option.value.toString();
             return (
-              <div
+              <label
                 key={optionIndex}
+                htmlFor={`${question.id}-${optionIndex}`}
                 className={cn(
-                  "flex items-center space-x-3 space-y-0",
-                  "rounded-lg border-2 border-muted p-4",
-                  "transition-all duration-200 ease-in-out",
-                  "hover:bg-accent/5",
-                  isSelected && "border-primary bg-primary/5"
+                  "flex items-center justify-between w-full h-11 px-4 cursor-pointer",
+                  "group transition-all duration-200",
+                  "hover:bg-accent hover:text-accent-foreground",
+                  isSelected && "bg-accent/50 text-accent-foreground"
                 )}
               >
-                <RadioGroupItem
-                  value={option.value.toString()}
-                  id={`${question.id}-${optionIndex}`}
-                  className="data-[state=checked]:border-primary data-[state=checked]:text-primary"
+                <div className="flex items-center space-x-4">
+                  <RadioGroupItem
+                    value={option.value.toString()}
+                    id={`${question.id}-${optionIndex}`}
+                    className={cn(
+                      "h-5 w-5",
+                      "border-muted-foreground/30",
+                      "data-[state=checked]:border-primary data-[state=checked]:text-primary"
+                    )}
+                  />
+                  <span className="text-sm">{option.text}</span>
+                </div>
+                <ChevronRight
+                  className={cn(
+                    "h-4 w-4 shrink-0 text-muted-foreground transition-transform",
+                    "opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5",
+                    isSelected && "opacity-100"
+                  )}
                 />
-                <Label
-                  htmlFor={`${question.id}-${optionIndex}`}
-                  className="flex-1 cursor-pointer text-base"
-                >
-                  {option.text}
-                </Label>
-              </div>
+              </label>
             );
           })}
         </RadioGroup>
