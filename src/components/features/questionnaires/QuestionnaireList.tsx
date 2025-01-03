@@ -1,4 +1,3 @@
-import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useRef } from "react";
 import { ChevronRight } from "lucide-react";
@@ -20,22 +19,15 @@ export interface Questionnaire {
 }
 
 interface QuestionnaireListProps {
-  className?: string;
   questionnaires: Questionnaire[];
   selectedQuestionnaire: Questionnaire | null;
-  onQuestionnaireSelect: (
-    questionnaire: Questionnaire,
-    buttonRect: { top: number; right: number }
-  ) => void;
-  isPanelOpen: boolean;
+  onQuestionnaireSelect: (questionnaire: Questionnaire) => void;
 }
 
 export function QuestionnaireList({
-  className,
   questionnaires,
   selectedQuestionnaire,
   onQuestionnaireSelect,
-  isPanelOpen,
 }: QuestionnaireListProps) {
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -44,16 +36,7 @@ export function QuestionnaireList({
     event: React.MouseEvent<HTMLDivElement>
   ) => {
     event.preventDefault();
-    const target = event.currentTarget;
-    const rect = target.getBoundingClientRect();
-    const listRect = listRef.current?.getBoundingClientRect();
-
-    if (listRect) {
-      onQuestionnaireSelect(questionnaire, {
-        top: rect.top,
-        right: rect.right,
-      });
-    }
+    onQuestionnaireSelect(questionnaire);
   };
 
   return (

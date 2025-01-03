@@ -4,7 +4,7 @@ import { type Questionnaire } from "./QuestionnaireList";
 import { DynamicQuestionnaireForm } from "@/components/dynamic-readers/DynamicQuestionnaireForm";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, X, QrCode, PencilLine } from "lucide-react";
+import { ArrowLeft, X } from "lucide-react";
 import { QuestionnaireQrPanel } from "./QuestionnaireQrPanel";
 import { MobileQuestionnaireReader } from "@/components/dynamic-readers/MobileQuestionnaireReader";
 import { useMediaQuery } from "@/hooks/use-media-query";

@@ -1,5 +1,5 @@
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { QuestionnaireSidebar } from "@/components/features/questionnaires/QuestionnaireSidebar";
 import {
   QuestionnaireList,
@@ -18,7 +18,7 @@ import {
   ResizableHandle,
 } from "@/components/ui/resizable";
 import { Button } from "@/components/ui/button";
-import { Menu, ArrowLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, ChevronRight } from "lucide-react";
 
 const questionnaires: Questionnaire[] = [
   {
@@ -94,10 +94,7 @@ export function QuestionnaireHomePage() {
     "You have an active questionnaire session. Are you sure you want to leave?"
   );
 
-  const handleQuestionnaireSelect = (
-    questionnaire: Questionnaire,
-    position: { top: number; right: number }
-  ) => {
+  const handleQuestionnaireSelect = (questionnaire: Questionnaire) => {
     if (shouldPreventNavigation) {
       // Store the pending questionnaire selection
       setPendingQuestionnaire(questionnaire);
@@ -202,7 +199,6 @@ export function QuestionnaireHomePage() {
               questionnaires={filteredQuestionnaires}
               selectedQuestionnaire={selectedQuestionnaire}
               onQuestionnaireSelect={handleQuestionnaireSelect}
-              isPanelOpen={!!selectedQuestionnaire}
             />
           </ResizablePanel>
 
