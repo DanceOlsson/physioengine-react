@@ -6,6 +6,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Question, Questionnaire } from "@/lib/types/questionnaire.types";
+import { cn } from "@/lib/utils";
 
 interface DynamicQuestionnaireFormProps {
   questionnaire: Questionnaire;
@@ -77,6 +78,50 @@ export function DynamicQuestionnaireForm({
   const renderQuestion = (question: Question) => {
     if (!shouldShowQuestion(question)) return null;
 
+    // If the question has options, treat it as a regular question regardless of type
+    if ("options" in question) {
+      return (
+        <RadioGroup
+          value={responses[question.id]?.toString()}
+          onValueChange={(value: string) => {
+            const numValue = Number(value);
+            const finalValue = isNaN(numValue) ? value : numValue;
+            handleResponse(question.id, finalValue);
+          }}
+          className="space-y-3"
+        >
+          {question.options.map((option, optionIndex) => {
+            const isSelected =
+              responses[question.id]?.toString() === option.value.toString();
+            return (
+              <div
+                key={optionIndex}
+                className={cn(
+                  "flex items-center space-x-3 space-y-0",
+                  "rounded-lg border-2 border-muted p-4",
+                  "transition-all duration-200 ease-in-out",
+                  "hover:bg-accent/5",
+                  isSelected && "border-primary bg-primary/5"
+                )}
+              >
+                <RadioGroupItem
+                  value={option.value.toString()}
+                  id={`${question.id}-${optionIndex}`}
+                  className="data-[state=checked]:border-primary data-[state=checked]:text-primary"
+                />
+                <Label
+                  htmlFor={`${question.id}-${optionIndex}`}
+                  className="flex-1 cursor-pointer text-base"
+                >
+                  {option.text}
+                </Label>
+              </div>
+            );
+          })}
+        </RadioGroup>
+      );
+    }
+
     switch (question.type) {
       case "text":
         return (
@@ -89,36 +134,6 @@ export function DynamicQuestionnaireForm({
               className="max-w-md"
             />
           </div>
-        );
-
-      case "regular":
-        return (
-          <RadioGroup
-            value={responses[question.id]?.toString()}
-            onValueChange={(value: string) => {
-              // If the option value is a string (like "yes"/"no"), keep it as string
-              const numValue = Number(value);
-              const finalValue = isNaN(numValue) ? value : numValue;
-              handleResponse(question.id, finalValue);
-            }}
-          >
-            <div className="grid gap-4">
-              {question.options.map((option, optionIndex) => (
-                <div key={optionIndex} className="flex items-center space-x-2">
-                  <RadioGroupItem
-                    value={option.value.toString()}
-                    id={`${question.id}-${optionIndex}`}
-                  />
-                  <Label
-                    htmlFor={`${question.id}-${optionIndex}`}
-                    className="text-foreground"
-                  >
-                    {option.text}
-                  </Label>
-                </div>
-              ))}
-            </div>
-          </RadioGroup>
         );
 
       case "slider":
@@ -141,6 +156,9 @@ export function DynamicQuestionnaireForm({
             </div>
           </div>
         );
+
+      default:
+        return null;
     }
   };
 
