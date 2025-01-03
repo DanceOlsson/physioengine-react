@@ -14,24 +14,32 @@ interface QuestionnaireSidebarProps {
 }
 
 const categories = [
+  // General Health
+  { id: "general", emoji: "🩺", text: "General Health", disabled: false },
+
+  // Head and Upper Body
+  { id: "concussion", emoji: "🧠", text: "Concussion", disabled: true },
+  { id: "neck-back", emoji: "🦴", text: "Neck and Back", disabled: true },
   {
     id: "upper-extremity",
     emoji: "🦾",
     text: "Upper Extremity",
     disabled: false,
   },
+
+  // Lower Body
   { id: "hip", emoji: "🦵", text: "Hip", disabled: false },
   { id: "knee", emoji: "🦵", text: "Knee", disabled: false },
   { id: "foot-ankle", emoji: "🦶", text: "Foot and Ankle", disabled: true },
-  { id: "neck-back", emoji: "🦴", text: "Neck and Back", disabled: true },
-  { id: "concussion", emoji: "🧠", text: "Concussion", disabled: true },
-  { id: "general", emoji: "🩺", text: "General Health", disabled: false },
   {
     id: "lower-extremity",
     emoji: "🦵",
     text: "Lower Extremity (General)",
     disabled: true,
   },
+
+  // Specialized Assessments
+  { id: "balance", emoji: "🤸", text: "Balance", disabled: false },
 ];
 
 export function QuestionnaireSidebar({
@@ -117,7 +125,7 @@ export function QuestionnaireSidebar({
                     )}
                   />
                   <span className="text-left break-words flex items-center gap-2">
-                    <span className="text-lg">{category.emoji}</span>
+                    <span className="text-2xl">{category.emoji}</span>
                     <span>{category.text}</span>
                   </span>
                 </Button>

@@ -16,7 +16,8 @@ export interface Questionnaire {
     | "neck-back"
     | "concussion"
     | "general"
-    | "lower-extremity";
+    | "lower-extremity"
+    | "balance";
 }
 
 interface QuestionnaireListProps {

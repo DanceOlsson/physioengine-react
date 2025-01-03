@@ -73,6 +73,11 @@ export function QuestionnaireHomePage() {
   const [panelState, setPanelState] = useState<PanelState>("empty");
   const [isQrEntry, setIsQrEntry] = useState(false);
 
+  // Filter questionnaires based on selected category
+  const filteredQuestionnaires = selectedCategory
+    ? questionnaires.filter((q) => q.category === selectedCategory)
+    : questionnaires;
+
   // Dialog states
   const [showWarningDialog, setShowWarningDialog] = useState(false);
 
@@ -192,7 +197,7 @@ export function QuestionnaireHomePage() {
           )}
         >
           <QuestionnaireList
-            questionnaires={questionnaires}
+            questionnaires={filteredQuestionnaires}
             selectedQuestionnaire={selectedQuestionnaire}
             onQuestionnaireSelect={handleQuestionnaireSelect}
             isPanelOpen={!!selectedQuestionnaire}
