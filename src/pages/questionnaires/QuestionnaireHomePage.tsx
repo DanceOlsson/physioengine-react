@@ -167,85 +167,78 @@ export function QuestionnaireHomePage() {
       </div>
 
       {/* Main content area */}
-      <ResizablePanelGroup
-        direction="horizontal"
+      <div
         className={cn(
-          // Height and margin for header
-          "h-[calc(100vh-64px)] 2xl:h-[calc(100vh-80px)] 3xl:h-[calc(100vh-96px)]",
-          "mt-[64px] 2xl:mt-[80px] 3xl:mt-[96px]",
-          "flex-1 overflow-hidden",
-          // Sidebar margin states - only on desktop
-          "ml-0",
-          // Collapsed state
-          isSidebarCollapsed && "md:ml-20",
-          // Normal state (when not collapsed)
-          !isSidebarCollapsed && "md:ml-64",
-          // Wide state (when not collapsed)
-          !isSidebarCollapsed && "2xl:ml-[350px]"
+          "fixed top-[64px] right-0 bottom-0 2xl:top-[80px] 3xl:top-[96px]",
+          "left-0 md:left-20",
+          !isSidebarCollapsed && "md:left-64 2xl:left-[350px]",
+          "overflow-hidden"
         )}
-        autoSaveId="questionnaire-layout"
       >
-        {/* On mobile: Hide list when questionnaire selected */}
-        <ResizablePanel
-          id="questionnaire-list"
-          order={1}
-          defaultSize={30}
-          minSize={MIN_PANEL_SIZE}
-          className={cn(
-            "flex flex-col gap-4 p-4 pt-6",
-            selectedQuestionnaire && "hidden md:flex"
-          )}
+        <ResizablePanelGroup
+          direction="horizontal"
+          className="h-full w-full"
+          autoSaveId="questionnaire-layout"
         >
-          <QuestionnaireList
-            questionnaires={filteredQuestionnaires}
-            selectedQuestionnaire={selectedQuestionnaire}
-            onQuestionnaireSelect={handleQuestionnaireSelect}
-            isPanelOpen={!!selectedQuestionnaire}
-          />
-        </ResizablePanel>
+          {/* On mobile: Hide list when questionnaire selected */}
+          <ResizablePanel
+            id="questionnaire-list"
+            order={1}
+            defaultSize={30}
+            minSize={MIN_PANEL_SIZE}
+            className={cn(selectedQuestionnaire && "hidden md:flex")}
+          >
+            <QuestionnaireList
+              questionnaires={filteredQuestionnaires}
+              selectedQuestionnaire={selectedQuestionnaire}
+              onQuestionnaireSelect={handleQuestionnaireSelect}
+              isPanelOpen={!!selectedQuestionnaire}
+            />
+          </ResizablePanel>
 
-        {/* On mobile: Show full screen with back button */}
-        {selectedQuestionnaire && (
-          <>
-            <ResizableHandle className="hidden md:flex" withHandle />
-            <ResizablePanel
-              id="dynamic-panel"
-              order={2}
-              defaultSize={
-                panelState === "form" || panelState === "qrCode" ? 70 : 50
-              }
-              minSize={MIN_PANEL_SIZE}
-              className={cn(
-                "flex flex-col",
-                "fixed inset-0 md:relative md:inset-auto", // Full screen on mobile
-                "z-30 md:z-auto"
-              )}
-            >
-              <div className="md:hidden p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setSelectedQuestionnaire(null);
-                    setPanelState("empty");
-                  }}
-                >
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to List
-                </Button>
-              </div>
-              <QuestionnaireDynamicPanel
-                questionnaire={selectedQuestionnaire}
-                state={panelState}
-                onStateChange={setPanelState}
-                isQrEntry={isQrEntry}
-                onBack={handleBack}
-                onActionSelect={handleActionSelect}
-              />
-            </ResizablePanel>
-          </>
-        )}
-      </ResizablePanelGroup>
+          {/* On mobile: Show full screen with back button */}
+          {selectedQuestionnaire && (
+            <>
+              <ResizableHandle className="hidden md:flex" withHandle />
+              <ResizablePanel
+                id="dynamic-panel"
+                order={2}
+                defaultSize={
+                  panelState === "form" || panelState === "qrCode" ? 70 : 50
+                }
+                minSize={MIN_PANEL_SIZE}
+                className={cn(
+                  "flex flex-col",
+                  "fixed inset-0 md:relative md:inset-auto", // Full screen on mobile
+                  "z-30 md:z-auto"
+                )}
+              >
+                <div className="md:hidden p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedQuestionnaire(null);
+                      setPanelState("empty");
+                    }}
+                  >
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Back to List
+                  </Button>
+                </div>
+                <QuestionnaireDynamicPanel
+                  questionnaire={selectedQuestionnaire}
+                  state={panelState}
+                  onStateChange={setPanelState}
+                  isQrEntry={isQrEntry}
+                  onBack={handleBack}
+                  onActionSelect={handleActionSelect}
+                />
+              </ResizablePanel>
+            </>
+          )}
+        </ResizablePanelGroup>
+      </div>
 
       <QuestionnaireWarningDialog
         open={showWarningDialog}
