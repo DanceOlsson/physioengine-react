@@ -39,7 +39,7 @@ const categories = [
   },
 
   // Specialized Assessments
-  { id: "balance", emoji: "🤸", text: "Balance", disabled: false },
+  { id: "balance", emoji: "🤸", text: "Balance", disabled: true },
 ];
 
 export function QuestionnaireSidebar({
