@@ -18,6 +18,8 @@ import { questions as koosQuestions } from "@/assets/questionnaires/koos_swedish
 import { questions as hoosQuestions } from "@/assets/questionnaires/hoos_swedish";
 import { questions as dashQuestions } from "@/assets/questionnaires/dash_swedish";
 import { questions as satisfactionQuestions } from "@/assets/questionnaires/satisfaction_swedish";
+import { questions as sefasQuestions } from "@/assets/questionnaires/sefas_swedish";
+import { questions as eq5dQuestions } from "@/assets/questionnaires/EQ-5D-5L_swedish";
 
 const getQuestionnaireData = (id: string) => {
   switch (id) {
@@ -29,6 +31,10 @@ const getQuestionnaireData = (id: string) => {
       return dashQuestions[0];
     case "satisfaction":
       return satisfactionQuestions[0];
+    case "sefas":
+      return sefasQuestions[0];
+    case "eq5d":
+      return eq5dQuestions[0];
     default:
       return null;
   }

@@ -4,30 +4,11 @@ import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
+import { Question, Questionnaire } from "@/lib/types/questionnaire.types";
 
 interface DynamicQuestionnaireFormProps {
-  questionnaire: {
-    title: string;
-    subtitle: string;
-    instructions: string;
-    sections: Array<{
-      title: string;
-      instructions: string;
-      questions: Array<{
-        id: string;
-        text: string;
-        type?: "text";
-        options?: Array<{
-          value: string | number;
-          text: string;
-        }>;
-        dependsOn?: {
-          questionId: string;
-          expectedValue: string | number;
-        };
-      }>;
-    }>;
-  };
+  questionnaire: Questionnaire;
   storageKey: string;
   onSubmit: () => void;
 }
@@ -85,9 +66,7 @@ export function DynamicQuestionnaireForm({
     return requiredQuestions.every((q) => q in responses);
   };
 
-  const shouldShowQuestion = (
-    question: DynamicQuestionnaireFormProps["questionnaire"]["sections"][0]["questions"][0]
-  ) => {
+  const shouldShowQuestion = (question: Question) => {
     if (!question.dependsOn) return true;
     return (
       responses[question.dependsOn.questionId] ===
@@ -95,53 +74,74 @@ export function DynamicQuestionnaireForm({
     );
   };
 
-  const renderQuestion = (
-    question: DynamicQuestionnaireFormProps["questionnaire"]["sections"][0]["questions"][0]
-  ) => {
+  const renderQuestion = (question: Question) => {
     if (!shouldShowQuestion(question)) return null;
 
-    if (question.type === "text") {
-      return (
-        <div className="mt-2">
-          <Input
-            type="text"
-            value={(responses[question.id] as string) || ""}
-            onChange={(e) => handleResponse(question.id, e.target.value)}
-            placeholder="Type your answer here..."
-            className="max-w-md"
-          />
-        </div>
-      );
-    }
+    switch (question.type) {
+      case "text":
+        return (
+          <div className="mt-2">
+            <Input
+              type="text"
+              value={(responses[question.id] as string) || ""}
+              onChange={(e) => handleResponse(question.id, e.target.value)}
+              placeholder="Type your answer here..."
+              className="max-w-md"
+            />
+          </div>
+        );
 
-    return (
-      <RadioGroup
-        value={responses[question.id]?.toString()}
-        onValueChange={(value: string) => {
-          // If the option value is a string (like "yes"/"no"), keep it as string
-          const numValue = Number(value);
-          const finalValue = isNaN(numValue) ? value : numValue;
-          handleResponse(question.id, finalValue);
-        }}
-      >
-        <div className="grid gap-4">
-          {question.options?.map((option, optionIndex) => (
-            <div key={optionIndex} className="flex items-center space-x-2">
-              <RadioGroupItem
-                value={option.value.toString()}
-                id={`${question.id}-${optionIndex}`}
-              />
-              <Label
-                htmlFor={`${question.id}-${optionIndex}`}
-                className="text-foreground"
-              >
-                {option.text}
-              </Label>
+      case "regular":
+        return (
+          <RadioGroup
+            value={responses[question.id]?.toString()}
+            onValueChange={(value: string) => {
+              // If the option value is a string (like "yes"/"no"), keep it as string
+              const numValue = Number(value);
+              const finalValue = isNaN(numValue) ? value : numValue;
+              handleResponse(question.id, finalValue);
+            }}
+          >
+            <div className="grid gap-4">
+              {question.options.map((option, optionIndex) => (
+                <div key={optionIndex} className="flex items-center space-x-2">
+                  <RadioGroupItem
+                    value={option.value.toString()}
+                    id={`${question.id}-${optionIndex}`}
+                  />
+                  <Label
+                    htmlFor={`${question.id}-${optionIndex}`}
+                    className="text-foreground"
+                  >
+                    {option.text}
+                  </Label>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </RadioGroup>
-    );
+          </RadioGroup>
+        );
+
+      case "slider":
+        return (
+          <div className="mt-6 space-y-8">
+            <div className="flex justify-between text-sm text-muted-foreground">
+              <span>{question.minLabel}</span>
+              <span>{question.maxLabel}</span>
+            </div>
+            <Slider
+              value={[(responses[question.id] as number) || question.min]}
+              min={question.min}
+              max={question.max}
+              step={1}
+              onValueChange={([value]) => handleResponse(question.id, value)}
+              className="w-full"
+            />
+            <div className="text-center font-medium">
+              {responses[question.id] || question.min}
+            </div>
+          </div>
+        );
+    }
   };
 
   return (

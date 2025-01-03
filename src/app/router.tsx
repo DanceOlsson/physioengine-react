@@ -9,6 +9,10 @@ import { HoosQuestionnairePage } from "@/pages/questionnaires/hoos/HoosQuestionn
 import { HoosResultsPage } from "@/pages/questionnaires/hoos/HoosResultsPage";
 import { DashQuestionnairePage } from "@/pages/questionnaires/dash/DashQuestionnairePage";
 import { DashResultsPage } from "@/pages/questionnaires/dash/DashResultsPage";
+import { SefasQuestionnairePage } from "@/pages/questionnaires/sefas/SefasQuestionnairePage";
+import { SefasResultsPage } from "@/pages/questionnaires/sefas/SefasResultsPage";
+import { Eq5dQuestionnairePage } from "@/pages/questionnaires/eq5d/Eq5dQuestionnairePage";
+import { Eq5dResultsPage } from "@/pages/questionnaires/eq5d/Eq5dResultsPage";
 import App from "@/App";
 import { HomePage } from "@/pages/home/HomePage";
 import { SatisfactionQuestionnairePage } from "@/pages/questionnaires/satisfaction/SatisfactionQuestionnairePage";
@@ -97,6 +101,32 @@ export const router = createBrowserRouter([
               {
                 path: "results",
                 element: <SatisfactionResultsPage />,
+              },
+            ],
+          },
+          {
+            path: "sefas",
+            children: [
+              {
+                index: true,
+                element: <SefasQuestionnairePage />,
+              },
+              {
+                path: "results",
+                element: <SefasResultsPage />,
+              },
+            ],
+          },
+          {
+            path: "eq5d",
+            children: [
+              {
+                index: true,
+                element: <Eq5dQuestionnairePage />,
+              },
+              {
+                path: "results",
+                element: <Eq5dResultsPage />,
               },
             ],
           },

@@ -25,12 +25,16 @@ import { questions as koosQuestions } from "@/assets/questionnaires/koos_swedish
 import { questions as hoosQuestions } from "@/assets/questionnaires/hoos_swedish";
 import { questions as dashQuestions } from "@/assets/questionnaires/dash_swedish";
 import { questions as satisfactionQuestions } from "@/assets/questionnaires/satisfaction_swedish";
+import { questions as sefasQuestions } from "@/assets/questionnaires/sefas_swedish";
+import { questions as eq5dQuestions } from "@/assets/questionnaires/EQ-5D-5L_swedish";
 
 // Import result pages
 import { KoosResultsPage } from "@/pages/questionnaires/koos/KoosResultsPage";
 import { HoosResultsPage } from "@/pages/questionnaires/hoos/HoosResultsPage";
 import { DashResultsPage } from "@/pages/questionnaires/dash/DashResultsPage";
 import { SatisfactionResultsPage } from "@/pages/questionnaires/satisfaction/SatisfactionResultsPage";
+import { SefasResultsPage } from "@/pages/questionnaires/sefas/SefasResultsPage";
+import { Eq5dResultsPage } from "@/pages/questionnaires/eq5d/Eq5dResultsPage";
 
 export type PanelState =
   | "empty"
@@ -75,6 +79,18 @@ const getQuestionnaireData = (id: string) => {
         data: satisfactionQuestions[0],
         storageKey: "satisfactionResponses",
         ResultsComponent: SatisfactionResultsPage,
+      };
+    case "sefas":
+      return {
+        data: sefasQuestions[0],
+        storageKey: "sefasResponses",
+        ResultsComponent: SefasResultsPage,
+      };
+    case "eq5d":
+      return {
+        data: eq5dQuestions[0],
+        storageKey: "eq5dResponses",
+        ResultsComponent: Eq5dResultsPage,
       };
     default:
       return null;

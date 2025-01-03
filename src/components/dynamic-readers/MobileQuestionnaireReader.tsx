@@ -3,30 +3,11 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { Slider } from "@/components/ui/slider";
+import { Question, Questionnaire } from "@/lib/types/questionnaire.types";
 
 interface MobileQuestionnaireReaderProps {
-  questionnaire: {
-    title: string;
-    subtitle: string;
-    instructions: string;
-    sections: Array<{
-      title: string;
-      instructions: string;
-      questions: Array<{
-        id: string;
-        text: string;
-        type?: "text";
-        options?: Array<{
-          value: string | number;
-          text: string;
-        }>;
-        dependsOn?: {
-          questionId: string;
-          expectedValue: string | number;
-        };
-      }>;
-    }>;
-  };
+  questionnaire: Questionnaire;
   onSubmit: (responses: Record<string, number | string>) => void;
 }
 
@@ -36,15 +17,7 @@ type QuestionOrSection = {
   text: string;
   sectionTitle?: string;
   sectionInstructions?: string;
-  questionOptions?: Array<{
-    value: string | number;
-    text: string;
-  }>;
-  questionType?: "text";
-  dependsOn?: {
-    questionId: string;
-    expectedValue: string | number;
-  };
+  question?: Question;
 };
 
 export function MobileQuestionnaireReader({
@@ -52,28 +25,43 @@ export function MobileQuestionnaireReader({
   onSubmit,
 }: MobileQuestionnaireReaderProps) {
   // Flatten sections and questions for single-item view
-  const allItems: QuestionOrSection[] = questionnaire.sections.flatMap(
-    (section) => {
-      const sectionItem: QuestionOrSection = {
-        type: "section",
-        id: `section-${section.title}`,
-        text: section.title,
-        sectionInstructions: section.instructions,
-      };
+  const allItems: QuestionOrSection[] = [
+    // Add questionnaire instructions as first item if they exist
+    ...(questionnaire.instructions
+      ? [
+          {
+            type: "section" as const,
+            id: "questionnaire-instructions",
+            text: questionnaire.title,
+            sectionInstructions: questionnaire.instructions,
+          },
+        ]
+      : []),
+    // Then add sections and questions
+    ...questionnaire.sections.flatMap((section) => {
+      // Only create section item if there's a title or instructions
+      const sectionItem: QuestionOrSection | null =
+        section.title || section.instructions
+          ? {
+              type: "section" as const,
+              id: `section-${section.title || "untitled"}`,
+              text: section.title || questionnaire.title,
+              sectionInstructions: section.instructions,
+            }
+          : null;
 
       const questions: QuestionOrSection[] = section.questions.map((q) => ({
-        type: "question",
+        type: "question" as const,
         id: q.id,
         text: q.text,
         sectionTitle: section.title,
-        questionType: q.type,
-        questionOptions: q.options,
-        dependsOn: q.dependsOn,
+        sectionInstructions: section.instructions,
+        question: q,
       }));
 
-      return section.instructions ? [sectionItem, ...questions] : questions;
-    }
-  );
+      return sectionItem ? [sectionItem, ...questions] : questions;
+    }),
+  ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [responses, setResponses] = useState<Record<string, number | string>>(
@@ -96,9 +84,9 @@ export function MobileQuestionnaireReader({
         allItems.forEach((item) => {
           if (
             item.type === "question" &&
-            item.dependsOn?.questionId === currentItem.id
+            item.question?.dependsOn?.questionId === currentItem.id
           ) {
-            if (value !== item.dependsOn.expectedValue) {
+            if (value !== item.question.dependsOn.expectedValue) {
               delete newResponses[item.id];
             }
           }
@@ -120,6 +108,15 @@ export function MobileQuestionnaireReader({
 
   const handleTextInput = (value: string) => {
     setResponses((prev) => ({ ...prev, [currentItem.id]: value }));
+  };
+
+  const handleSliderInput = (value: number) => {
+    setResponses((prev) => ({ ...prev, [currentItem.id]: value }));
+    if (currentIndex < totalItems - 1) {
+      setTimeout(() => {
+        setCurrentIndex((prev) => prev + 1);
+      }, 400);
+    }
   };
 
   const handlePrevious = () => {
@@ -148,10 +145,10 @@ export function MobileQuestionnaireReader({
     const requiredQuestions = allItems
       .filter((item) => {
         if (item.type !== "question") return false;
-        if (item.dependsOn) {
+        if (item.question?.dependsOn) {
           return (
-            responses[item.dependsOn.questionId] ===
-            item.dependsOn.expectedValue
+            responses[item.question.dependsOn.questionId] ===
+            item.question.dependsOn.expectedValue
           );
         }
         return true;
@@ -159,6 +156,92 @@ export function MobileQuestionnaireReader({
       .map((q) => q.id);
 
     return requiredQuestions.every((q) => q in responses);
+  };
+
+  const renderQuestion = (question: Question) => {
+    // If question has options, it's a regular question regardless of type
+    if ("options" in question) {
+      return (
+        <div className="space-y-3 motion-safe:motion-preset-fade motion-duration-200">
+          {question.options.map((option) => {
+            const isSelected = selectedOption === option.value;
+            const isConfirmed = responses[currentItem.id] === option.value;
+
+            return (
+              <button
+                key={option.value}
+                onClick={() => handleOptionSelect(option.value)}
+                type="button"
+                className={cn(
+                  "w-full flex items-center justify-between px-4 py-3 rounded-lg text-left",
+                  "transition-colors duration-200",
+                  "active:scale-[0.98]",
+                  isSelected &&
+                    !isConfirmed && [
+                      "bg-white/10 dark:bg-white/10",
+                      "text-foreground",
+                      "ring-1 ring-white/30",
+                      "motion-safe:animate-[shimmer_2s_ease-in-out_infinite]",
+                    ],
+                  isConfirmed && [
+                    "bg-white dark:bg-white/10",
+                    "text-foreground",
+                    "motion-safe:motion-preset-confetti",
+                  ],
+                  !isSelected &&
+                    !isConfirmed && [
+                      "bg-accent hover:bg-accent/80",
+                      "text-accent-foreground",
+                    ]
+                )}
+              >
+                <span className="flex-1">{option.text}</span>
+              </button>
+            );
+          })}
+        </div>
+      );
+    }
+
+    // Handle other question types
+    switch (question.type) {
+      case "text":
+        return (
+          <div className="motion-safe:motion-preset-fade motion-duration-200">
+            <Input
+              type="text"
+              value={(responses[currentItem.id] as string) || ""}
+              onChange={(e) => handleTextInput(e.target.value)}
+              placeholder="Type your answer here..."
+              className="w-full"
+            />
+          </div>
+        );
+
+      case "slider":
+        return (
+          <div className="mt-6 space-y-8 motion-safe:motion-preset-fade motion-duration-200">
+            <div className="flex justify-between text-sm text-muted-foreground">
+              <span>{question.minLabel}</span>
+              <span>{question.maxLabel}</span>
+            </div>
+            <Slider
+              value={[(responses[currentItem.id] as number) || question.min]}
+              min={question.min}
+              max={question.max}
+              step={1}
+              onValueChange={([value]) => handleSliderInput(value)}
+              className="w-full"
+            />
+            <div className="text-center font-medium">
+              {responses[currentItem.id] || question.min}
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
   };
 
   return (
@@ -176,6 +259,11 @@ export function MobileQuestionnaireReader({
         <h1 className="text-xl font-semibold text-foreground">
           {questionnaire.title}
         </h1>
+        {questionnaire.subtitle && (
+          <p className="text-sm text-muted-foreground mt-1">
+            {questionnaire.subtitle}
+          </p>
+        )}
         <p className="text-sm text-muted-foreground mt-1">
           {currentIndex + 1} of {totalItems}
         </p>
@@ -193,6 +281,12 @@ export function MobileQuestionnaireReader({
                 {currentItem.sectionInstructions}
               </p>
             )}
+            <div className="flex justify-center mt-8">
+              <Button onClick={handleNext} size="lg">
+                Start
+                <ChevronRight className="ml-2 h-5 w-5" />
+              </Button>
+            </div>
           </div>
         ) : (
           <div className="relative">
@@ -203,76 +297,17 @@ export function MobileQuestionnaireReader({
                     {currentItem.sectionTitle}
                   </div>
                 )}
+                {currentItem.sectionInstructions && (
+                  <div className="mb-4 text-sm text-muted-foreground motion-safe:motion-preset-fade motion-duration-200">
+                    {currentItem.sectionInstructions}
+                  </div>
+                )}
 
                 <p className="text-lg font-medium text-foreground mb-6 motion-safe:motion-preset-fade motion-duration-200">
                   {currentItem.text}
                 </p>
 
-                {currentItem.questionType === "text" ? (
-                  <div className="motion-safe:motion-preset-fade motion-duration-200">
-                    <Input
-                      type="text"
-                      value={(responses[currentItem.id] as string) || ""}
-                      onChange={(e) => handleTextInput(e.target.value)}
-                      placeholder="Type your answer here..."
-                      className="w-full"
-                    />
-                  </div>
-                ) : (
-                  <div className="space-y-3 motion-safe:motion-preset-fade motion-duration-200">
-                    {currentItem.questionOptions?.map((option) => {
-                      const isSelected = selectedOption === option.value;
-                      const isConfirmed =
-                        responses[currentItem.id] === option.value;
-
-                      return (
-                        <button
-                          key={option.value}
-                          onClick={() => handleOptionSelect(option.value)}
-                          type="button"
-                          className={cn(
-                            "w-full flex items-center justify-between px-4 py-3 rounded-lg text-left",
-                            "transition-colors duration-200",
-                            "active:scale-[0.98]",
-                            isSelected &&
-                              !isConfirmed && [
-                                "bg-white/10 dark:bg-white/10",
-                                "text-foreground",
-                                "ring-1 ring-white/30",
-                                "motion-safe:animate-[shimmer_2s_ease-in-out_infinite]",
-                              ],
-                            isConfirmed && [
-                              "bg-white dark:bg-white/10",
-                              "text-foreground",
-                              "motion-safe:motion-preset-confetti",
-                            ],
-                            !isSelected &&
-                              !isConfirmed && [
-                                "bg-muted/50 dark:bg-white/5",
-                                "hover:bg-white/10 dark:hover:bg-white/10",
-                              ]
-                          )}
-                        >
-                          <div className="flex-1">{option.text}</div>
-                          {(isSelected || isConfirmed) && (
-                            <div
-                              className={cn(
-                                "w-6 h-6 rounded-full flex items-center justify-center shrink-0 ml-2",
-                                isConfirmed
-                                  ? "bg-white/20"
-                                  : "bg-white/20 motion-safe:motion-preset-bounce"
-                              )}
-                            >
-                              <ChevronRight
-                                className={cn("h-4 w-4", "text-white")}
-                              />
-                            </div>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
+                {currentItem.question && renderQuestion(currentItem.question)}
               </div>
             </div>
           </div>
@@ -280,38 +315,36 @@ export function MobileQuestionnaireReader({
       </div>
 
       {/* Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t">
-        <div className="flex justify-between items-center">
-          <Button
-            variant="ghost"
-            onClick={handlePrevious}
-            disabled={currentIndex === 0}
-            className="motion-safe:motion-preset-slide"
-          >
-            <ChevronLeft className="h-4 w-4 mr-2" />
-            Previous
-          </Button>
-
-          {currentIndex === totalItems - 1 ? (
-            <Button
-              onClick={handleSubmit}
-              disabled={!isComplete()}
-              className="ml-auto motion-safe:motion-preset-slide"
-            >
-              Submit
-            </Button>
-          ) : (
+      {currentItem.type === "question" && (
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t">
+          <div className="flex justify-between items-center max-w-lg mx-auto">
             <Button
               variant="ghost"
-              onClick={handleNext}
-              className="ml-auto motion-safe:motion-preset-slide"
+              size="lg"
+              onClick={handlePrevious}
+              disabled={currentIndex === 0}
             >
-              Next
-              <ChevronRight className="h-4 w-4 ml-2" />
+              <ChevronLeft className="mr-2 h-5 w-5" />
+              Previous
             </Button>
-          )}
+            {currentIndex === totalItems - 1 ? (
+              <Button size="lg" onClick={handleSubmit} disabled={!isComplete()}>
+                Submit
+              </Button>
+            ) : (
+              <Button
+                variant="ghost"
+                size="lg"
+                onClick={handleNext}
+                disabled={currentIndex === totalItems - 1}
+              >
+                Next
+                <ChevronRight className="ml-2 h-5 w-5" />
+              </Button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

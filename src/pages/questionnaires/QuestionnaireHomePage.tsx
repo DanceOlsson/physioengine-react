@@ -45,6 +45,18 @@ const questionnaires: Questionnaire[] = [
     description: "Brief survey about your healthcare experience",
     category: "general",
   },
+  {
+    id: "sefas",
+    title: "SEFAS",
+    description: "Self-reported Foot and Ankle Score",
+    category: "foot-ankle",
+  },
+  {
+    id: "eq5d",
+    title: "EQ-5D-5L",
+    description: "Health-Related Quality of Life Questionnaire",
+    category: "general",
+  },
 ];
 
 const MIN_PANEL_SIZE = 20;

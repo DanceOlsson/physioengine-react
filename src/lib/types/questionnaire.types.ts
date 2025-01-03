@@ -12,13 +12,30 @@ export interface QuestionDependency {
   expectedValue: string | number;
 }
 
-export interface Question {
+export interface BaseQuestion {
   id: string;
   text: string;
-  type?: "text"; // Optional type field for text input questions
-  options?: QuestionOption[]; // Made optional to support text input questions
-  dependsOn?: QuestionDependency; // Optional dependency on another question's answer
+  dependsOn?: QuestionDependency;
 }
+
+export interface TextQuestion extends BaseQuestion {
+  type: "text";
+}
+
+export interface RegularQuestion extends BaseQuestion {
+  type?: "regular";
+  options: QuestionOption[];
+}
+
+export interface SliderQuestion extends BaseQuestion {
+  type: "slider";
+  min: number;
+  max: number;
+  minLabel: string;
+  maxLabel: string;
+}
+
+export type Question = TextQuestion | RegularQuestion | SliderQuestion;
 
 export interface QuestionnaireSection {
   title: string;
@@ -48,5 +65,5 @@ export interface QuestionnaireResult {
   sections: SectionScore[];
   total_score: number;
   interpretation: string;
-  text_responses?: { [questionId: string]: string }; // Optional field for text responses
+  text_responses?: { [questionId: string]: string };
 } 

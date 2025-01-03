@@ -8,6 +8,8 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import { KoosResultsPage } from "@/pages/questionnaires/koos/KoosResultsPage";
 import { HoosResultsPage } from "@/pages/questionnaires/hoos/HoosResultsPage";
 import { DashResultsPage } from "@/pages/questionnaires/dash/DashResultsPage";
+import { SefasResultsPage } from "@/pages/questionnaires/sefas/SefasResultsPage";
+import { Eq5dResultsPage } from "@/pages/questionnaires/eq5d/Eq5dResultsPage";
 
 interface QuestionnaireQrPanelProps {
   questionnaire: {
@@ -28,6 +30,10 @@ const getStorageKey = (questionnaireId: string) => {
       return "dashResponses";
     case "satisfaction":
       return "satisfactionResponses";
+    case "sefas":
+      return "sefasResponses";
+    case "eq5d":
+      return "eq5dResponses";
     default:
       return null;
   }
@@ -41,6 +47,10 @@ const ResultsComponent = ({ questionnaireId }: { questionnaireId: string }) => {
       return <HoosResultsPage />;
     case "dash":
       return <DashResultsPage />;
+    case "sefas":
+      return <SefasResultsPage />;
+    case "eq5d":
+      return <Eq5dResultsPage />;
     default:
       return null;
   }
