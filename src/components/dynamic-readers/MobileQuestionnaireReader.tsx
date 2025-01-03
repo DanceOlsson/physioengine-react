@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 import { Question, Questionnaire } from "@/lib/types/questionnaire.types";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface MobileQuestionnaireReaderProps {
   questionnaire: Questionnaire;
@@ -162,41 +163,71 @@ export function MobileQuestionnaireReader({
     // If question has options, it's a regular question regardless of type
     if ("options" in question) {
       return (
-        <div className="space-y-3 motion-safe:motion-preset-fade motion-duration-200">
+        <div className="space-y-3">
           {question.options.map((option) => {
             const isSelected = selectedOption === option.value;
             const isConfirmed = responses[currentItem.id] === option.value;
 
             return (
-              <button
+              <motion.button
                 key={option.value}
                 onClick={() => handleOptionSelect(option.value)}
                 type="button"
                 className={cn(
-                  "w-full flex items-center justify-between px-4 py-3 rounded-lg text-left",
+                  "w-full flex items-center justify-between px-4 py-3 rounded-lg text-left relative",
                   "transition-colors duration-200",
-                  "active:scale-[0.98]",
-                  isSelected &&
-                    !isConfirmed && [
-                      "bg-white/10 dark:bg-white/10",
-                      "text-foreground",
-                      "ring-1 ring-white/30",
-                      "motion-safe:animate-[shimmer_2s_ease-in-out_infinite]",
-                    ],
-                  isConfirmed && [
-                    "bg-white dark:bg-white/10",
-                    "text-foreground",
-                    "motion-safe:motion-preset-confetti",
-                  ],
+                  isSelected && !isConfirmed && "border-primary",
+                  isConfirmed && "bg-primary text-primary-foreground",
                   !isSelected &&
-                    !isConfirmed && [
-                      "bg-accent hover:bg-accent/80",
-                      "text-accent-foreground",
-                    ]
+                    !isConfirmed &&
+                    "bg-accent hover:bg-accent/80 text-accent-foreground"
                 )}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
                 <span className="flex-1">{option.text}</span>
-              </button>
+
+                <AnimatePresence>
+                  {isSelected && (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      exit={{ scale: 0 }}
+                      className={cn(
+                        "w-6 h-6 rounded-full flex items-center justify-center",
+                        isConfirmed ? "bg-primary-foreground" : "bg-primary"
+                      )}
+                    >
+                      <Check
+                        className={cn(
+                          "h-4 w-4",
+                          isConfirmed
+                            ? "text-primary"
+                            : "text-primary-foreground"
+                        )}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {isSelected && !isConfirmed && (
+                  <motion.div
+                    className="absolute inset-0 rounded-lg"
+                    animate={{
+                      boxShadow: [
+                        "0 0 0px rgba(0,0,0,0)",
+                        "0 0 15px rgba(var(--primary),0.3)",
+                        "0 0 0px rgba(0,0,0,0)",
+                      ],
+                    }}
+                    transition={{
+                      duration: 1.5,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  />
+                )}
+              </motion.button>
             );
           })}
         </div>
@@ -248,9 +279,11 @@ export function MobileQuestionnaireReader({
     <div className="min-h-screen bg-background">
       {/* Progress bar */}
       <div className="fixed top-0 left-0 right-0 h-1 bg-muted">
-        <div
-          className="h-full bg-primary transition-all duration-300"
-          style={{ width: `${progress}%` }}
+        <motion.div
+          className="h-full bg-primary"
+          initial={{ width: 0 }}
+          animate={{ width: `${progress}%` }}
+          transition={{ duration: 0.3 }}
         />
       </div>
 
@@ -290,7 +323,12 @@ export function MobileQuestionnaireReader({
           </div>
         ) : (
           <div className="relative">
-            <div className="motion-safe:motion-preset-slide motion-duration-200">
+            <motion.div
+              className="motion-safe:motion-preset-slide motion-duration-200"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+            >
               <div className="space-y-3">
                 {currentItem.sectionTitle && (
                   <div className="mb-2 text-sm font-medium text-muted-foreground motion-safe:motion-preset-fade motion-duration-200">
@@ -309,7 +347,7 @@ export function MobileQuestionnaireReader({
 
                 {currentItem.question && renderQuestion(currentItem.question)}
               </div>
-            </div>
+            </motion.div>
           </div>
         )}
       </div>
