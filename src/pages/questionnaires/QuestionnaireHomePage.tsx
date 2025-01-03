@@ -80,6 +80,9 @@ export function QuestionnaireHomePage() {
 
   // Dialog states
   const [showWarningDialog, setShowWarningDialog] = useState(false);
+  // Add state to store the pending questionnaire selection
+  const [pendingQuestionnaire, setPendingQuestionnaire] =
+    useState<Questionnaire | null>(null);
 
   // Handle navigation protection
   const shouldPreventNavigation =
@@ -96,6 +99,8 @@ export function QuestionnaireHomePage() {
     position: { top: number; right: number }
   ) => {
     if (shouldPreventNavigation) {
+      // Store the pending questionnaire selection
+      setPendingQuestionnaire(questionnaire);
       setShowWarningDialog(true);
       return;
     }
@@ -112,7 +117,12 @@ export function QuestionnaireHomePage() {
 
   const handleWarningConfirm = () => {
     setShowWarningDialog(false);
-    setPanelState("action");
+    // Use the pending questionnaire selection
+    if (pendingQuestionnaire) {
+      setSelectedQuestionnaire(pendingQuestionnaire);
+      setPendingQuestionnaire(null);
+      setPanelState("action");
+    }
   };
 
   const handleActionSelect = (action: "qrCode" | "form") => {

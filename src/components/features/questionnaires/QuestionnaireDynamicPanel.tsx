@@ -110,6 +110,15 @@ export function QuestionnaireDynamicPanel({
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [showExitWarning, setShowExitWarning] = useState(false);
 
+  // Reset state when questionnaire changes
+  useEffect(() => {
+    setShowResults(false);
+    // Force the panel to action state when questionnaire changes
+    if (questionnaire) {
+      onStateChange("action");
+    }
+  }, [questionnaire, onStateChange]);
+
   useEffect(() => {
     const handleStorageChange = () => {
       setShowResults(false);
