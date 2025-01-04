@@ -10,7 +10,6 @@ import { MobileLayout } from "@/components/layout/MobileLayout";
 import FaqPage from "@/pages/faq/FaqPage";
 import ContactPage from "@/pages/contact/ContactPage";
 import CranialPage from "@/pages/cranial/CranialPage";
-import { DynamicResultsPage } from "@/pages/questionnaires/DynamicResultsPage";
 
 // Create and export our router configuration
 export const router = createBrowserRouter([
@@ -54,11 +53,6 @@ export const router = createBrowserRouter([
             // The index route shows when we're at exactly "/questionnaires"
             index: true,
             element: <QuestionnaireHomePage />,
-          },
-          {
-            // Dynamic results route that will handle all questionnaires
-            path: ":questionnaireId/results",
-            element: <DynamicResultsPage />,
           },
         ],
       },

@@ -19,6 +19,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { QuestionnaireActionPanel } from "./QuestionnaireActionPanel";
+import { DynamicResultsReader } from "@/components/dynamic-readers/DynamicResultsReader";
 
 // Import questionnaire data
 import { questions as koosQuestions } from "@/assets/questionnaires/koos_swedish";
@@ -28,13 +29,13 @@ import { questions as satisfactionQuestions } from "@/assets/questionnaires/sati
 import { questions as sefasQuestions } from "@/assets/questionnaires/sefas_swedish";
 import { questions as eq5dQuestions } from "@/assets/questionnaires/EQ-5D-5L_swedish";
 
-// Import result pages
-import { KoosResultsPage } from "@/pages/questionnaires/koos/KoosResultsPage";
-import { HoosResultsPage } from "@/pages/questionnaires/hoos/HoosResultsPage";
-import { DashResultsPage } from "@/pages/questionnaires/dash/DashResultsPage";
-import { SatisfactionResultsPage } from "@/pages/questionnaires/satisfaction/SatisfactionResultsPage";
-import { SefasResultsPage } from "@/pages/questionnaires/sefas/SefasResultsPage";
-import { Eq5dResultsPage } from "@/pages/questionnaires/eq5d/Eq5dResultsPage";
+// Import calculators
+import { calculateKoosScores } from "@/lib/calculators/koos";
+import { calculateHoosScores } from "@/lib/calculators/hoos";
+import { calculateDashScores } from "@/lib/calculators/dash";
+import { calculateSatisfactionScore } from "@/lib/calculators/satisfaction";
+import { calculateSefasScore } from "@/lib/calculators/sefas";
+import { calculateEq5dScore } from "@/lib/calculators/eq5d";
 
 export type PanelState =
   | "empty"
@@ -60,37 +61,37 @@ const getQuestionnaireData = (id: string) => {
       return {
         data: koosQuestions[0],
         storageKey: "koosResponses",
-        ResultsComponent: KoosResultsPage,
+        calculator: calculateKoosScores,
       };
     case "hoos":
       return {
         data: hoosQuestions[0],
         storageKey: "hoosResponses",
-        ResultsComponent: HoosResultsPage,
+        calculator: calculateHoosScores,
       };
     case "dash":
       return {
         data: dashQuestions[0],
         storageKey: "dashResponses",
-        ResultsComponent: DashResultsPage,
+        calculator: calculateDashScores,
       };
     case "satisfaction":
       return {
         data: satisfactionQuestions[0],
         storageKey: "satisfactionResponses",
-        ResultsComponent: SatisfactionResultsPage,
+        calculator: calculateSatisfactionScore,
       };
     case "sefas":
       return {
         data: sefasQuestions[0],
         storageKey: "sefasResponses",
-        ResultsComponent: SefasResultsPage,
+        calculator: calculateSefasScore,
       };
     case "eq5d":
       return {
         data: eq5dQuestions[0],
         storageKey: "eq5dResponses",
-        ResultsComponent: Eq5dResultsPage,
+        calculator: calculateEq5dScore,
       };
     default:
       return null;
@@ -150,7 +151,10 @@ export function QuestionnaireDynamicPanel({
   const questionnaireData = getQuestionnaireData(questionnaire.id);
   if (!questionnaireData) return null;
 
-  const { data, storageKey, ResultsComponent } = questionnaireData;
+  const { data, storageKey, calculator } = questionnaireData;
+  const storedResponses = localStorage.getItem(storageKey);
+  const responses = storedResponses ? JSON.parse(storedResponses) : null;
+  const result = responses ? calculator(responses) : null;
 
   const handleFormSubmit = () => {
     setShowResults(true);
@@ -232,7 +236,12 @@ export function QuestionnaireDynamicPanel({
                 </Button>
               </div>
               <div className="p-6">
-                <ResultsComponent />
+                {result && (
+                  <DynamicResultsReader
+                    questionnaireId={questionnaire.id.toUpperCase()}
+                    result={result}
+                  />
+                )}
               </div>
             </div>
           ) : isMobile ? (
@@ -294,7 +303,12 @@ export function QuestionnaireDynamicPanel({
             </div>
           )}
           <div className="p-6">
-            <ResultsComponent />
+            {result && (
+              <DynamicResultsReader
+                questionnaireId={questionnaire.id.toUpperCase()}
+                result={result}
+              />
+            )}
           </div>
         </div>
       )}
@@ -315,7 +329,12 @@ export function QuestionnaireDynamicPanel({
             </div>
           )}
           <div className="p-6">
-            <ResultsComponent />
+            {result && (
+              <DynamicResultsReader
+                questionnaireId={questionnaire.id.toUpperCase()}
+                result={result}
+              />
+            )}
           </div>
         </div>
       )}

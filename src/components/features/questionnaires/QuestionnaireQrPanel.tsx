@@ -5,11 +5,13 @@ import { Button } from "@/components/ui/button";
 import { database } from "@/lib/firebase";
 import { ref, set, onValue } from "firebase/database";
 import { ArrowLeft, Loader2 } from "lucide-react";
-import { KoosResultsPage } from "@/pages/questionnaires/koos/KoosResultsPage";
-import { HoosResultsPage } from "@/pages/questionnaires/hoos/HoosResultsPage";
-import { DashResultsPage } from "@/pages/questionnaires/dash/DashResultsPage";
-import { SefasResultsPage } from "@/pages/questionnaires/sefas/SefasResultsPage";
-import { Eq5dResultsPage } from "@/pages/questionnaires/eq5d/Eq5dResultsPage";
+import { DynamicResultsReader } from "@/components/dynamic-readers/DynamicResultsReader";
+import { calculateKoosScores } from "@/lib/calculators/koos";
+import { calculateHoosScores } from "@/lib/calculators/hoos";
+import { calculateDashScores } from "@/lib/calculators/dash";
+import { calculateSatisfactionScore } from "@/lib/calculators/satisfaction";
+import { calculateSefasScore } from "@/lib/calculators/sefas";
+import { calculateEq5dScore } from "@/lib/calculators/eq5d";
 
 interface QuestionnaireQrPanelProps {
   questionnaire: {
@@ -39,21 +41,43 @@ const getStorageKey = (questionnaireId: string) => {
   }
 };
 
-const ResultsComponent = ({ questionnaireId }: { questionnaireId: string }) => {
+const getCalculator = (questionnaireId: string) => {
   switch (questionnaireId) {
     case "koos":
-      return <KoosResultsPage />;
+      return calculateKoosScores;
     case "hoos":
-      return <HoosResultsPage />;
+      return calculateHoosScores;
     case "dash":
-      return <DashResultsPage />;
+      return calculateDashScores;
+    case "satisfaction":
+      return calculateSatisfactionScore;
     case "sefas":
-      return <SefasResultsPage />;
+      return calculateSefasScore;
     case "eq5d":
-      return <Eq5dResultsPage />;
+      return calculateEq5dScore;
     default:
       return null;
   }
+};
+
+const ResultsComponent = ({ questionnaireId }: { questionnaireId: string }) => {
+  const storageKey = getStorageKey(questionnaireId);
+  const calculator = getCalculator(questionnaireId);
+
+  if (!storageKey || !calculator) return null;
+
+  const storedResponses = localStorage.getItem(storageKey);
+  const responses = storedResponses ? JSON.parse(storedResponses) : null;
+  const result = responses ? calculator(responses) : null;
+
+  if (!result) return null;
+
+  return (
+    <DynamicResultsReader
+      questionnaireId={questionnaireId.toUpperCase()}
+      result={result}
+    />
+  );
 };
 
 export function QuestionnaireQrPanel({
