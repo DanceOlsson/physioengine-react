@@ -19,6 +19,9 @@ import { SatisfactionQuestionnairePage } from "@/pages/questionnaires/satisfacti
 import { SatisfactionResultsPage } from "@/pages/questionnaires/satisfaction/SatisfactionResultsPage";
 import FillQuestionnairePage from "@/pages/fill/[sessionId]";
 import { MobileLayout } from "@/components/layout/MobileLayout";
+import FaqPage from "@/pages/faq/FaqPage";
+import ContactPage from "@/pages/contact/ContactPage";
+import CranialPage from "@/pages/cranial/CranialPage";
 
 // Create and export our router configuration
 export const router = createBrowserRouter([
@@ -41,6 +44,18 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <HomePage />,
+      },
+      {
+        path: "faq",
+        element: <FaqPage />,
+      },
+      {
+        path: "contact",
+        element: <ContactPage />,
+      },
+      {
+        path: "cranial",
+        element: <CranialPage />,
       },
       {
         // All questionnaire-related routes will be nested under "/questionnaires"
