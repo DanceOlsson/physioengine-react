@@ -118,7 +118,7 @@ export function Header() {
               className="text-sm 2xl:text-base 3xl:text-lg font-medium text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors p-0 h-auto"
               asChild
             >
-              <a href="#contact">Contact</a>
+              <Link to="/contact">Contact</Link>
             </Button>
 
             <Button
