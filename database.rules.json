@@ -1,0 +1,29 @@
+{
+  "rules": {
+    "sessions": {
+      "$sessionId": {
+        ".read": true,
+        ".write": true,
+        ".validate": "newData.hasChildren(['questionnaireId', 'storageKey', 'status'])",
+        "progress": {
+          ".read": true,
+          ".write": true,
+          ".validate": "newData.hasChildren(['current', 'total'])",
+          "current": {
+            ".validate": "newData.isNumber() && newData.val() >= 0"
+          },
+          "total": {
+            ".validate": "newData.isNumber() && newData.val() >= 0"
+          }
+        },
+        "responses": {
+          ".read": true,
+          ".write": true
+        },
+        "status": {
+          ".validate": "newData.isString() && (newData.val() === 'pending' || newData.val() === 'completed')"
+        }
+      }
+    }
+  }
+} 

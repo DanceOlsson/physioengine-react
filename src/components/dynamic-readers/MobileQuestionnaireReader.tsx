@@ -10,7 +10,7 @@
  * - Conditional questions
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +18,9 @@ import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 import { Question, Questionnaire } from "@/lib/types/questionnaire.types";
 import { motion, AnimatePresence } from "framer-motion";
+import { database } from "@/lib/firebase";
+import { ref, update, get, set } from "firebase/database";
+import { useParams } from "react-router-dom";
 
 // Props interface for the component
 interface MobileQuestionnaireReaderProps {
@@ -39,6 +42,9 @@ export function MobileQuestionnaireReader({
   questionnaire,
   onSubmit,
 }: MobileQuestionnaireReaderProps) {
+  // Get sessionId from the URL path
+  const sessionId = window.location.pathname.split("/").pop();
+
   // Flatten sections and questions into a single array for linear navigation
   const allItems: QuestionOrSection[] = [
     // Add questionnaire instructions as first item if they exist
@@ -91,24 +97,40 @@ export function MobileQuestionnaireReader({
   const totalItems = allItems.length;
   const progress = ((currentIndex + 1) / totalItems) * 100;
 
+  // Update progress in Firebase
+  useEffect(() => {
+    if (!sessionId) {
+      return;
+    }
+
+    if (Object.keys(responses).length > 0) {
+      const progressRef = ref(database, `sessions/${sessionId}/progress`);
+
+      // First verify we can read the session
+      get(ref(database, `sessions/${sessionId}`))
+        .then((snapshot) => {
+          if (!snapshot.exists()) {
+            console.error("Session not found in Firebase");
+            return;
+          }
+
+          // Then set the progress
+          return set(progressRef, {
+            current: currentIndex + 1,
+            total: totalItems,
+          });
+        })
+        .catch((error) => {
+          console.error("Firebase progress update failed:", error);
+        });
+    }
+  }, [currentIndex, totalItems, sessionId, responses]);
+
   // Handlers for different question types and navigation
   const handleOptionSelect = (value: string | number) => {
     if (selectedOption === value) {
       setResponses((prev) => {
         const newResponses = { ...prev, [currentItem.id]: value };
-
-        // Clear dependent responses when their condition is no longer met
-        allItems.forEach((item) => {
-          if (
-            item.type === "question" &&
-            item.question?.dependsOn?.questionId === currentItem.id
-          ) {
-            if (value !== item.question.dependsOn.expectedValue) {
-              delete newResponses[item.id];
-            }
-          }
-        });
-
         return newResponses;
       });
 

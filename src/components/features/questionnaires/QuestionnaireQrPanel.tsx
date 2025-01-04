@@ -66,6 +66,10 @@ export function QuestionnaireQrPanel({
   const [error, setError] = useState<string | null>(null);
   const [qrSize, setQrSize] = useState(0);
   const [showResults, setShowResults] = useState(false);
+  const [progress, setProgress] = useState<{
+    current: number;
+    total: number;
+  } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -117,28 +121,33 @@ export function QuestionnaireQrPanel({
           created: Date.now(),
           readerType: "mobile", // Specify that this is for mobile reader
           responses: null, // Will be populated when patient submits
+          progress: {
+            current: 0,
+            total: 0,
+          },
           metadata: {
             source: "qr_code",
             questionnaireTitle: questionnaire.title,
           },
         });
 
-        setSessionId(newSessionId);
-
-        // Listen for responses
+        // Listen for responses and progress
         onValue(sessionRef, (snapshot) => {
           const data = snapshot.val();
+          if (data?.progress) {
+            setProgress(data.progress);
+          }
           if (data?.status === "completed" && data?.responses) {
-            // Save responses to localStorage first
             localStorage.setItem(storageKey, JSON.stringify(data.responses));
-            // Show results in panel
             setShowResults(true);
             onResponseReceived();
           }
         });
+
+        setSessionId(newSessionId);
       } catch (err) {
+        console.error("Failed to generate QR code:", err);
         setError("Failed to generate QR code. Please try again.");
-        console.error("Error generating session:", err);
       } finally {
         setIsGenerating(false);
       }
@@ -218,6 +227,35 @@ export function QuestionnaireQrPanel({
                 </div>
               ) : sessionId ? (
                 <div className="flex flex-col items-center w-full max-w-2xl mx-auto">
+                  {/* Progress bar - only show if progress exists and patient has started (current > 0) */}
+                  {progress && progress.current > 0 && !showResults && (
+                    <div className="w-full mb-6">
+                      <div className="flex justify-between text-sm text-muted-foreground mb-2">
+                        <span>Patient's Progress</span>
+                        <span>
+                          {Math.round(
+                            (progress.current / progress.total) * 100
+                          )}
+                          %
+                        </span>
+                      </div>
+                      <div className="h-3 bg-muted rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-emerald-500 transition-all duration-300"
+                          style={{
+                            width: `${
+                              (progress.current / progress.total) * 100
+                            }%`,
+                          }}
+                        />
+                      </div>
+                      {progress.total > 0 && (
+                        <p className="text-sm text-muted-foreground mt-2 text-center">
+                          Question {progress.current} of {progress.total}
+                        </p>
+                      )}
+                    </div>
+                  )}
                   <div
                     className="flex items-center justify-center bg-white rounded-lg p-6"
                     style={{ width: qrSize, height: qrSize }}
