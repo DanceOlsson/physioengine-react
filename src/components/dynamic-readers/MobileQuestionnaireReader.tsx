@@ -19,8 +19,7 @@ import { Slider } from "@/components/ui/slider";
 import { Question, Questionnaire } from "@/lib/types/questionnaire.types";
 import { motion, AnimatePresence } from "framer-motion";
 import { database } from "@/lib/firebase";
-import { ref, update, get, set } from "firebase/database";
-import { useParams } from "react-router-dom";
+import { ref, get, set } from "firebase/database";
 
 // Props interface for the component
 interface MobileQuestionnaireReaderProps {
