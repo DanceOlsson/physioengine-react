@@ -58,6 +58,5 @@ data/*
 *.log
 firebase-debug.log*
 firebase-debug.*.log*
-database.rules.json
 .firebaserc
 firebase-export-*/
