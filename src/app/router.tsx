@@ -3,19 +3,13 @@
 
 import { createBrowserRouter } from "react-router-dom";
 import { QuestionnaireHomePage } from "@/pages/questionnaires/QuestionnaireHomePage";
-import { KoosQuestionnairePage } from "@/pages/questionnaires/koos/KoosQuestionnairePage";
 import { KoosResultsPage } from "@/pages/questionnaires/koos/KoosResultsPage";
-import { HoosQuestionnairePage } from "@/pages/questionnaires/hoos/HoosQuestionnairePage";
 import { HoosResultsPage } from "@/pages/questionnaires/hoos/HoosResultsPage";
-import { DashQuestionnairePage } from "@/pages/questionnaires/dash/DashQuestionnairePage";
 import { DashResultsPage } from "@/pages/questionnaires/dash/DashResultsPage";
-import { SefasQuestionnairePage } from "@/pages/questionnaires/sefas/SefasQuestionnairePage";
 import { SefasResultsPage } from "@/pages/questionnaires/sefas/SefasResultsPage";
-import { Eq5dQuestionnairePage } from "@/pages/questionnaires/eq5d/Eq5dQuestionnairePage";
 import { Eq5dResultsPage } from "@/pages/questionnaires/eq5d/Eq5dResultsPage";
 import App from "@/App";
 import { HomePage } from "@/pages/home/HomePage";
-import { SatisfactionQuestionnairePage } from "@/pages/questionnaires/satisfaction/SatisfactionQuestionnairePage";
 import { SatisfactionResultsPage } from "@/pages/questionnaires/satisfaction/SatisfactionResultsPage";
 import FillQuestionnairePage from "@/pages/fill/[sessionId]";
 import { MobileLayout } from "@/components/layout/MobileLayout";
@@ -68,82 +62,28 @@ export const router = createBrowserRouter([
           },
           {
             // Route for the KOOS questionnaire
-            path: "koos",
-            children: [
-              {
-                index: true,
-                element: <KoosQuestionnairePage />,
-              },
-              {
-                path: "results",
-                element: <KoosResultsPage />,
-              },
-            ],
+            path: "koos/results",
+            element: <KoosResultsPage />,
           },
           {
-            path: "hoos",
-            children: [
-              {
-                index: true,
-                element: <HoosQuestionnairePage />,
-              },
-              {
-                path: "results",
-                element: <HoosResultsPage />,
-              },
-            ],
+            path: "hoos/results",
+            element: <HoosResultsPage />,
           },
           {
-            path: "dash",
-            children: [
-              {
-                index: true,
-                element: <DashQuestionnairePage />,
-              },
-              {
-                path: "results",
-                element: <DashResultsPage />,
-              },
-            ],
+            path: "dash/results",
+            element: <DashResultsPage />,
           },
           {
-            path: "satisfaction",
-            children: [
-              {
-                index: true,
-                element: <SatisfactionQuestionnairePage />,
-              },
-              {
-                path: "results",
-                element: <SatisfactionResultsPage />,
-              },
-            ],
+            path: "satisfaction/results",
+            element: <SatisfactionResultsPage />,
           },
           {
-            path: "sefas",
-            children: [
-              {
-                index: true,
-                element: <SefasQuestionnairePage />,
-              },
-              {
-                path: "results",
-                element: <SefasResultsPage />,
-              },
-            ],
+            path: "sefas/results",
+            element: <SefasResultsPage />,
           },
           {
-            path: "eq5d",
-            children: [
-              {
-                index: true,
-                element: <Eq5dQuestionnairePage />,
-              },
-              {
-                path: "results",
-                element: <Eq5dResultsPage />,
-              },
-            ],
+            path: "eq5d/results",
+            element: <Eq5dResultsPage />,
           },
         ],
       },
