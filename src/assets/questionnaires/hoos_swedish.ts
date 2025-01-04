@@ -486,4 +486,14 @@ export const questions: Questionnaire[] = [
   }
 ];
 
+export const interpretations = {
+  ranges: {
+    "0-25": "Svåra problem",
+    "26-50": "Måttliga problem",
+    "51-75": "Milda problem",
+    "76-100": "Inga problem"
+  },
+  error: "Kan inte tolka"
+} as const;
+
 export default questions;

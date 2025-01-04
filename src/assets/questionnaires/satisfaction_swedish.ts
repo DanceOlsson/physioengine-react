@@ -27,4 +27,15 @@ export const questions: Questionnaire[] = [
   }
 ];
 
+export const interpretations = {
+  ranges: {
+    "1": "Mycket missnöjd med behandlingen",
+    "2": "Missnöjd med behandlingen",
+    "3": "Neutral till behandlingen",
+    "4": "Nöjd med behandlingen",
+    "5": "Mycket nöjd med behandlingen"
+  },
+  error: "Kan inte tolka"
+} as const;
+
 export default questions; 

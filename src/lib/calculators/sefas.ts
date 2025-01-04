@@ -1,26 +1,8 @@
 import { QuestionnaireResponse, QuestionnaireResult, SectionScore } from "../types/questionnaire.types";
 
-// Configuration for score interpretation
-const INTERPRETATION_RANGES = {
-  "0-12": "Excellent result",
-  "13-24": "Good result",
-  "25-36": "Fair result",
-  "37-48": "Poor result"
-} as const;
-
 // SEFAS has all questions in one section
 const SECTION_QUESTIONS = {
   "Foot/Ankle Function": ["Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "Q7", "Q8", "Q9", "Q10", "Q11", "Q12"]
-};
-
-const getInterpretation = (score: number): string => {
-  for (const [range, description] of Object.entries(INTERPRETATION_RANGES)) {
-    const [min, max] = range.split("-").map(Number);
-    if (score >= min && score <= max) {
-      return description;
-    }
-  }
-  return "Unable to interpret";
 };
 
 export function calculateSefasScore(responses: QuestionnaireResponse): QuestionnaireResult {
@@ -46,7 +28,7 @@ export function calculateSefasScore(responses: QuestionnaireResponse): Questionn
         questionnaire_name: "SEFAS",
         sections: [],
         total_score: 0,
-        interpretation: "No valid responses received"
+        interpretation: ""
       };
     }
 
@@ -54,18 +36,18 @@ export function calculateSefasScore(responses: QuestionnaireResponse): Questionn
     // since there's only one section
     const totalScore = Object.values(subscaleScores)[0];
 
-    // Create section scores with interpretations
+    // Create section scores without interpretations
     const sectionScores: SectionScore[] = Object.entries(subscaleScores).map(([name, score]) => ({
       name,
       score,
-      interpretation: getInterpretation(score)
+      interpretation: ""
     }));
 
     return {
       questionnaire_name: "SEFAS",
       sections: sectionScores,
       total_score: totalScore,
-      interpretation: getInterpretation(totalScore)
+      interpretation: ""
     };
 
   } catch (error) {

@@ -115,4 +115,27 @@ export const questions: Questionnaire[] = [
   }
 ];
 
+export const interpretations = {
+  dimensions: {
+    mobility: "Rörlighet",
+    selfCare: "Egenvård",
+    activities: "Vanliga aktiviteter",
+    pain: "Smärta/besvär",
+    anxiety: "Oro/nedstämdhet"
+  },
+  levels: {
+    "1": "Inga problem",
+    "2": "Lätta problem",
+    "3": "Måttliga problem",
+    "4": "Svåra problem",
+    "5": "Extrema problem"
+  },
+  labels: {
+    healthState: "Hälsotillstånd",
+    vasScore: "VAS-poäng",
+    notAnswered: "Ej besvarat"
+  },
+  error: "Kan inte tolka"
+} as const;
+
 export default questions;

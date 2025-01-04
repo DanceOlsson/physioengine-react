@@ -2,11 +2,11 @@ import { QuestionnaireResponse, QuestionnaireResult, SectionScore } from "../typ
 
 // EQ-5D-5L has 5 dimensions plus a VAS scale
 const DIMENSION_QUESTIONS = {
-  "Mobility": "mobility",
-  "Self-Care": "selfCare",
-  "Usual Activities": "activities",
-  "Pain/Discomfort": "pain",
-  "Anxiety/Depression": "anxiety"
+  "mobility": "mobility",
+  "selfCare": "selfCare",
+  "activities": "activities",
+  "pain": "pain",
+  "anxiety": "anxiety"
 };
 
 const getHealthState = (responses: QuestionnaireResponse): string => {
@@ -19,29 +19,6 @@ const getHealthState = (responses: QuestionnaireResponse): string => {
     .join('');
 };
 
-const formatHealthState = (healthState: string): string => {
-  const dimensions = [
-    "Mobility",
-    "Self-Care",
-    "Usual Activities",
-    "Pain/Discomfort",
-    "Anxiety/Depression"
-  ];
-  
-  const levels = [
-    "No problems",
-    "Slight problems",
-    "Moderate problems",
-    "Severe problems",
-    "Extreme problems"
-  ];
-
-  return healthState
-    .split('')
-    .map((level, index) => `${dimensions[index]}: ${levels[parseInt(level) - 1] || 'Not answered'}`)
-    .join('\n');
-};
-
 export function calculateEq5dScore(responses: QuestionnaireResponse): QuestionnaireResult {
   try {
     const healthState = getHealthState(responses);
@@ -51,33 +28,26 @@ export function calculateEq5dScore(responses: QuestionnaireResponse): Questionna
     // Create section scores
     const sectionScores: SectionScore[] = [
       {
-        name: "Health State",
+        name: "healthState",
         score: -1, // Not applicable for health state
-        interpretation: formatHealthState(healthState)
+        interpretation: healthState
       }
     ];
 
     // Add VAS score if available
     if (hasVasScore) {
       sectionScores.push({
-        name: "VAS Score",
+        name: "vasScore",
         score: vasScore,
-        interpretation: `${vasScore}/100`
+        interpretation: `${vasScore}`
       });
     }
-
-    // Create a concise summary for easy copying
-    const summary = [
-      `EQ-5D-5L Health State: ${healthState}`,
-      ...formatHealthState(healthState).split('\n').map(line => `• ${line}`),
-      hasVasScore ? `VAS Score: ${vasScore}/100` : null
-    ].filter(Boolean).join('\n');
 
     return {
       questionnaire_name: "EQ-5D-5L",
       sections: sectionScores,
       total_score: -1, // Not applicable for EQ-5D-5L
-      interpretation: summary
+      interpretation: ""
     };
 
   } catch (error) {

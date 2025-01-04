@@ -8,6 +8,7 @@ export const questions: Questionnaire[] = [
     sections: [
       {
         title: "",
+        instructions: "Vänligen besvara alla frågor om din fot/fotled.",
         questions: [
           {
             id: "Q1",
@@ -157,5 +158,15 @@ export const questions: Questionnaire[] = [
     ]
   }
 ];
+
+export const interpretations = {
+  ranges: {
+    "0-12": "Utmärkt resultat",
+    "13-24": "Bra resultat",
+    "25-36": "Acceptabelt resultat",
+    "37-48": "Dåligt resultat"
+  },
+  error: "Kan inte tolka"
+} as const;
 
 export default questions;

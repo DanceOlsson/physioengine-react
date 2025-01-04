@@ -45,9 +45,10 @@ export interface QuestionnaireSection {
 
 export interface Questionnaire {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   instructions: string;
   sections: QuestionnaireSection[];
+  metadata?: QuestionnaireMetadata;
 }
 
 export interface QuestionnaireResponse {
@@ -66,4 +67,23 @@ export interface QuestionnaireResult {
   total_score: number;
   interpretation: string;
   text_responses?: { [questionId: string]: string };
+}
+
+// Visualization types for results display
+export type VisualizationType = "spider" | "simple";
+
+export interface VisualizationConfig {
+  type: VisualizationType;
+  options?: {
+    showTotal?: boolean;
+    showSections?: boolean;
+  };
+}
+
+export interface QuestionnaireMetadata {
+  visualization: VisualizationConfig;
+  scoreRange?: {
+    min: number;
+    max: number;
+  };
 } 

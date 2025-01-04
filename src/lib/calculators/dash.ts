@@ -1,13 +1,5 @@
 import { QuestionnaireResponse, QuestionnaireResult, SectionScore } from "../types/questionnaire.types";
 
-// Configuration for score interpretation
-const INTERPRETATION_RANGES = {
-  "0-25": "No or minimal disability",
-  "26-50": "Mild disability",
-  "51-75": "Moderate disability",
-  "76-100": "Severe disability"
-} as const;
-
 // Configuration for question grouping by section
 const SECTION_QUESTIONS = {
   "Activities": Array.from({ length: 21 }, (_, i) => `Q${i + 1}`),
@@ -20,16 +12,6 @@ const SECTION_QUESTIONS = {
 
 // Configuration for text input questions (these won't be included in score calculations)
 const TEXT_INPUT_QUESTIONS = ["Q31", "Q32", "Q37", "Q38"];
-
-const getInterpretation = (score: number): string => {
-  for (const [range, description] of Object.entries(INTERPRETATION_RANGES)) {
-    const [min, max] = range.split("-").map(Number);
-    if (score >= min && score <= max) {
-      return description;
-    }
-  }
-  return "Unable to interpret";
-};
 
 export const calculateDashScores = (responses: QuestionnaireResponse): QuestionnaireResult => {
   try {
@@ -65,7 +47,8 @@ export const calculateDashScores = (responses: QuestionnaireResponse): Questionn
         questionnaire_name: "DASH",
         sections: [],
         total_score: 0,
-        interpretation: "No valid responses received"
+        interpretation: "",
+        text_responses: textResponses
       };
     }
 
@@ -73,19 +56,19 @@ export const calculateDashScores = (responses: QuestionnaireResponse): Questionn
     const totalScore = Object.values(subscaleScores).reduce((a, b) => a + b, 0) / 
                       Object.values(subscaleScores).length;
 
-    // Create section scores with interpretations
+    // Create section scores without interpretations
     const sectionScores: SectionScore[] = Object.entries(subscaleScores).map(([name, score]) => ({
       name,
       score,
-      interpretation: getInterpretation(score)
+      interpretation: ""
     }));
 
     return {
       questionnaire_name: "DASH",
       sections: sectionScores,
       total_score: totalScore,
-      interpretation: getInterpretation(totalScore),
-      text_responses: textResponses // Add text responses to the result
+      interpretation: "",
+      text_responses: textResponses
     };
 
   } catch (error) {

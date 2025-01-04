@@ -530,4 +530,14 @@ export const questions: Questionnaire[] = [
   }
 ];
 
+export const interpretations = {
+  ranges: {
+    "0-25": "Ingen eller minimal funktionsnedsättning",
+    "26-50": "Mild funktionsnedsättning",
+    "51-75": "Måttlig funktionsnedsättning",
+    "76-100": "Svår funktionsnedsättning"
+  },
+  error: "Kan inte tolka"
+} as const;
+
 export default questions;
