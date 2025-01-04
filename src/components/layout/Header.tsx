@@ -1,7 +1,29 @@
 import { Button } from "@/components/ui/button";
-import { Menu, Moon, Sun } from "lucide-react";
+import {
+  Menu,
+  Moon,
+  Sun,
+  Stethoscope,
+  Brain,
+  Baby,
+  Dumbbell,
+  Calculator,
+  Activity,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTheme } from "@/components/theme-provider";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function Header() {
   const { theme, setTheme } = useTheme();
@@ -19,24 +41,91 @@ export function Header() {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex md:items-center md:space-x-8 2xl:space-x-12 3xl:space-x-16">
-            <Link
-              to="/questionnaires"
-              className="text-sm 2xl:text-base 3xl:text-lg font-medium text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors"
+          <div className="hidden md:flex md:items-center md:gap-8 2xl:gap-12 3xl:gap-16">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="text-sm 2xl:text-base 3xl:text-lg font-medium text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors"
+                >
+                  Tools
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56">
+                <DropdownMenuLabel>Assessment Tools</DropdownMenuLabel>
+                <DropdownMenuGroup>
+                  <DropdownMenuItem>
+                    <Link to="/questionnaires" className="flex items-center">
+                      <Stethoscope className="mr-2 h-4 w-4" />
+                      Patient Questionnaires
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem disabled>
+                    <Activity className="mr-2 h-4 w-4" />
+                    Functional Tests
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+
+                <DropdownMenuLabel>Performance Metrics</DropdownMenuLabel>
+                <DropdownMenuGroup>
+                  <DropdownMenuItem disabled>
+                    <Activity className="mr-2 h-4 w-4" />
+                    Cardiopulmonary Evaluations
+                  </DropdownMenuItem>
+                  <DropdownMenuItem disabled>
+                    <Dumbbell className="mr-2 h-4 w-4" />
+                    Strength Measurements
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+
+                <DropdownMenuLabel>Pediatric Instruments</DropdownMenuLabel>
+                <DropdownMenuGroup>
+                  <DropdownMenuItem disabled>
+                    <Baby className="mr-2 h-4 w-4" />
+                    Growth Trackers
+                  </DropdownMenuItem>
+                  <Link to="/cranial">
+                    <DropdownMenuItem>
+                      <Brain className="mr-2 h-4 w-4" />
+                      Cranial Measurements
+                    </DropdownMenuItem>
+                  </Link>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+
+                <DropdownMenuLabel>Clinical Calculators</DropdownMenuLabel>
+                <DropdownMenuGroup>
+                  <DropdownMenuItem disabled>
+                    <Calculator className="mr-2 h-4 w-4" />
+                    Body Metrics
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Button
+              variant="ghost"
+              className="text-sm 2xl:text-base 3xl:text-lg font-medium text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors p-0 h-auto"
+              asChild
             >
-              Questionnaires
-            </Link>
-            <a
-              href="#contact"
-              className="text-sm 2xl:text-base 3xl:text-lg font-medium text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors"
+              <Link to="/faq">FAQ</Link>
+            </Button>
+
+            <Button
+              variant="ghost"
+              className="text-sm 2xl:text-base 3xl:text-lg font-medium text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors p-0 h-auto"
+              asChild
             >
-              Contact
-            </a>
+              <a href="#contact">Contact</a>
+            </Button>
+
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-              className="mr-2 2xl:scale-125 3xl:scale-150"
+              className="ml-2 2xl:scale-125 3xl:scale-150"
             >
               <Sun className="h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
               <Moon
