@@ -114,17 +114,28 @@ physioengine-react/
 - `components/layout/` - Layout components (Header)
 - `components/marketing/` - Marketing components (Hero, Features, ValueProposition)
 - `components/dynamic-readers/` - Dynamic form components
-  - `QuestionnaireForm` - Generic dynamic form handling for questionnaires
-- `components/questionnaires/` - Questionnaire-specific components
-  - `QuestionnaireResults` - Results display with charts
+  - `DynamicQuestionnaireForm` - Generic dynamic form handling
+  - `DynamicResultsReader` - Dynamic results display
+  - `MobileQuestionnaireReader` - Mobile-optimized questionnaire view
 - `components/features/` - Feature-specific components
   - `charts/` - Reusable chart components
     - `QuestionnaireBarChart` - Theme-aware bar chart for questionnaire results
   - `questionnaires/` - Questionnaire feature components
     - `QuestionnaireList` - Displays available questionnaires in grid/list view
-    - `QuestionnaireSidebar` - Navigation and filtering sidebar
     - `QuestionnaireDynamicPanel` - Dynamic content panel for questionnaire details
+    - `QuestionnaireQrPanel` - QR code generation and management
+    - `QuestionnaireSidebar` - Navigation and filtering sidebar with category management
 - `theme-provider.tsx` - Theme management and dark mode support
+
+### Dynamic Component System
+
+The application now uses a dynamic component system that:
+
+- Renders questionnaires based on type parameter
+- Handles results display through dynamic readers
+- Supports mobile-first responsive design
+- Integrates QR functionality seamlessly
+- Uses shared components for consistent UI/UX
 
 ### Layout System
 
@@ -190,23 +201,24 @@ Each questionnaire has a dedicated calculator that:
 
 ```typescript
 /                           # Home page
-└── /questionnaires         # Questionnaire section
-    ├── /koos              # KOOS questionnaire
-    │   ├── /             # Form
-    │   ├── /results      # Results
-    │   └── /qr-generation
-    ├── /hoos             # HOOS questionnaire
-    │   ├── /             # Form
-    │   ├── /results      # Results
-    │   └── /qr-generation
-    ├── /dash             # DASH questionnaire
-    │   ├── /             # Form
-    │   ├── /results      # Results
-    │   └── /qr-generation
-    └── /satisfaction     # Satisfaction questionnaire
-        ├── /             # Form
-        └── /results      # Results
+├── /questionnaires         # Questionnaire section
+│   ├── /                  # Questionnaire home/list page
+│   ├── /:type            # Dynamic questionnaire form
+│   └── /:type/results    # Dynamic results view
+├── /cranial              # Cranial section
+├── /contact             # Contact page
+├── /faq                # FAQ page
+├── /fill               # Dynamic QR fill page
+└── /home              # Marketing home page
 ```
+
+### Dynamic Routing
+
+The new routing structure implements a dynamic approach where:
+
+- `/:type` parameter handles all questionnaire types (KOOS, HOOS, DASH, etc.)
+- Results are handled through dynamic components rather than static routes
+- QR code functionality is integrated into the dynamic system
 
 ### Data Flow
 
