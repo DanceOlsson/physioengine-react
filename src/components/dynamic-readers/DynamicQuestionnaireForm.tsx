@@ -1,3 +1,15 @@
+/**
+ * DynamicQuestionnaireForm Component
+ *
+ * A form component that dynamically renders different types of questions from a questionnaire.
+ * Features include:
+ * - Multiple question types (radio options, text input, slider)
+ * - Conditional questions based on previous answers
+ * - Local storage persistence
+ * - Form validation
+ * - Responsive layout
+ */
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -9,6 +21,7 @@ import { Question, Questionnaire } from "@/lib/types/questionnaire.types";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
 
+// Props interface for the component
 interface DynamicQuestionnaireFormProps {
   questionnaire: Questionnaire;
   storageKey: string;
@@ -20,10 +33,12 @@ export function DynamicQuestionnaireForm({
   storageKey,
   onSubmit,
 }: DynamicQuestionnaireFormProps) {
+  // Store responses as key-value pairs where key is question ID
   const [responses, setResponses] = useState<Record<string, number | string>>(
     {}
   );
 
+  // Handle response updates and clear dependent questions if conditions not met
   const handleResponse = (questionId: string, value: number | string) => {
     setResponses((prev) => {
       const newResponses = { ...prev, [questionId]: value };
@@ -43,11 +58,13 @@ export function DynamicQuestionnaireForm({
     });
   };
 
+  // Save responses to localStorage and trigger onSubmit callback
   const handleSubmit = () => {
     localStorage.setItem(storageKey, JSON.stringify(responses));
     onSubmit();
   };
 
+  // Check if all required questions are answered
   const isComplete = () => {
     const requiredQuestions = questionnaire.sections.flatMap((section) =>
       section.questions
@@ -68,6 +85,7 @@ export function DynamicQuestionnaireForm({
     return requiredQuestions.every((q) => q in responses);
   };
 
+  // Check if a conditional question should be displayed
   const shouldShowQuestion = (question: Question) => {
     if (!question.dependsOn) return true;
     return (
@@ -76,6 +94,7 @@ export function DynamicQuestionnaireForm({
     );
   };
 
+  // Render different question types (radio, text, slider)
   const renderQuestion = (question: Question) => {
     if (!shouldShowQuestion(question)) return null;
 
@@ -171,6 +190,7 @@ export function DynamicQuestionnaireForm({
     }
   };
 
+  // Main component render with layout sections
   return (
     <div className="h-full overflow-auto">
       <div className="p-6">

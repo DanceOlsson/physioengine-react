@@ -1,3 +1,15 @@
+/**
+ * QuestionnaireBarChart Component
+ *
+ * A bar chart component that visualizes questionnaire section scores.
+ * Features include:
+ * - Responsive design
+ * - Dark/light mode support
+ * - Score visualization from 0-100
+ * - Custom tooltips
+ * - Automatic cleanup on unmount
+ */
+
 import { useTheme } from "@/components/theme-provider";
 import { Bar } from "react-chartjs-2";
 import {
@@ -14,7 +26,7 @@ import {
 import { SectionScore } from "@/lib/types/questionnaire.types";
 import { useRef, useEffect } from "react";
 
-// Register ChartJS components
+// Register required ChartJS components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -40,7 +52,7 @@ export function QuestionnaireBarChart({
     (theme === "system" &&
       window.matchMedia("(prefers-color-scheme: dark)").matches);
 
-  // Cleanup chart on unmount
+  // Cleanup chart instance when component unmounts
   useEffect(() => {
     return () => {
       if (chartRef.current) {
@@ -50,6 +62,7 @@ export function QuestionnaireBarChart({
     };
   }, []);
 
+  // Configure chart data with theme-aware colors
   const chartData: ChartData<"bar"> = {
     labels: sections.map((section) => section.name),
     datasets: [
@@ -65,6 +78,7 @@ export function QuestionnaireBarChart({
     ],
   };
 
+  // Configure chart options with theme-aware styling
   const chartOptions: ChartOptions<"bar"> = {
     responsive: true,
     maintainAspectRatio: false,

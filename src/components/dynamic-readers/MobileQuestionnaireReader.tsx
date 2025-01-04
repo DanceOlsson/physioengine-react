@@ -1,3 +1,15 @@
+/**
+ * MobileQuestionnaireReader Component
+ *
+ * A mobile-optimized questionnaire interface that displays questions one at a time.
+ * Features include:
+ * - Progress tracking
+ * - Multiple question types (options, text, slider)
+ * - Section instructions
+ * - Animated transitions
+ * - Conditional questions
+ */
+
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,11 +19,13 @@ import { Slider } from "@/components/ui/slider";
 import { Question, Questionnaire } from "@/lib/types/questionnaire.types";
 import { motion, AnimatePresence } from "framer-motion";
 
+// Props interface for the component
 interface MobileQuestionnaireReaderProps {
   questionnaire: Questionnaire;
   onSubmit: (responses: Record<string, number | string>) => void;
 }
 
+// Type to represent either a question or a section instruction
 type QuestionOrSection = {
   type: "question" | "section";
   id: string;
@@ -25,7 +39,7 @@ export function MobileQuestionnaireReader({
   questionnaire,
   onSubmit,
 }: MobileQuestionnaireReaderProps) {
-  // Flatten sections and questions for single-item view
+  // Flatten sections and questions into a single array for linear navigation
   const allItems: QuestionOrSection[] = [
     // Add questionnaire instructions as first item if they exist
     ...(questionnaire.instructions
@@ -64,6 +78,7 @@ export function MobileQuestionnaireReader({
     }),
   ];
 
+  // State management
   const [currentIndex, setCurrentIndex] = useState(0);
   const [responses, setResponses] = useState<Record<string, number | string>>(
     {}
@@ -76,6 +91,7 @@ export function MobileQuestionnaireReader({
   const totalItems = allItems.length;
   const progress = ((currentIndex + 1) / totalItems) * 100;
 
+  // Handlers for different question types and navigation
   const handleOptionSelect = (value: string | number) => {
     if (selectedOption === value) {
       setResponses((prev) => {
@@ -142,6 +158,7 @@ export function MobileQuestionnaireReader({
     onSubmit(questionResponses);
   };
 
+  // Check if all required questions are answered
   const isComplete = () => {
     const requiredQuestions = allItems
       .filter((item) => {
@@ -159,6 +176,7 @@ export function MobileQuestionnaireReader({
     return requiredQuestions.every((q) => q in responses);
   };
 
+  // Render different question types (options, text, slider)
   const renderQuestion = (question: Question) => {
     // If question has options, it's a regular question regardless of type
     if ("options" in question) {
@@ -275,6 +293,7 @@ export function MobileQuestionnaireReader({
     }
   };
 
+  // Main component render with layout sections
   return (
     <div className="min-h-screen bg-background">
       {/* Progress bar */}

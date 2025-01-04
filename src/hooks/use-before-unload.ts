@@ -1,3 +1,7 @@
+/**
+ * A React hook that shows a browser confirmation dialog when the user tries to leave/reload the page.
+ * This is useful for preventing accidental navigation away from forms or unsaved work.
+*/
 import { useEffect } from "react";
 
 export function useBeforeUnload(shouldPrevent: boolean, message?: string) {
