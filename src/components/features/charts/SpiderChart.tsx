@@ -34,9 +34,26 @@ export function SpiderChart({ result, showTotal = true }: SpiderChartProps) {
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-color-scheme: dark)").matches);
 
+  // Filter out VAS score for EQ-5D-5L
+  const sections =
+    result.questionnaire_name === "EQ-5D-5L"
+      ? result.sections.filter((section) => section.name !== "VAS")
+      : result.sections;
+
   // Extract section scores
-  const labels = result.sections.map((section) => section.name);
-  const scores = result.sections.map((section) => section.score);
+  const labels = sections.map((section) => section.name);
+  const scores = sections.map((section) => section.score);
+
+  // Calculate min and max values from the scores
+  const validScores = scores.filter((score) => score >= 0);
+  const minScore = Math.min(...validScores);
+  const maxScore = Math.max(...validScores);
+
+  // For EQ-5D-5L, force scale from 1 to 5
+  const isEQ5D = result.questionnaire_name === "EQ-5D-5L";
+  const finalMinScore = isEQ5D ? 1 : minScore;
+  const finalMaxScore = isEQ5D ? 5 : maxScore;
+  const stepSize = isEQ5D ? 1 : Math.ceil((finalMaxScore - finalMinScore) / 5);
 
   const data = {
     labels,
@@ -64,10 +81,10 @@ export function SpiderChart({ result, showTotal = true }: SpiderChartProps) {
   const options = {
     scales: {
       r: {
-        min: 0,
-        max: 100,
+        min: finalMinScore,
+        max: finalMaxScore,
         ticks: {
-          stepSize: 20,
+          stepSize,
           color: isDark ? "rgba(255, 255, 255, 0.5)" : "rgba(0, 0, 0, 0.5)",
         },
         grid: {
@@ -78,6 +95,9 @@ export function SpiderChart({ result, showTotal = true }: SpiderChartProps) {
         },
         pointLabels: {
           color: isDark ? "rgba(255, 255, 255, 0.9)" : "rgba(0, 0, 0, 0.9)",
+          font: {
+            size: 12,
+          },
         },
       },
     },
@@ -85,7 +105,17 @@ export function SpiderChart({ result, showTotal = true }: SpiderChartProps) {
       legend: {
         display: false,
       },
+      tooltip: {
+        callbacks: {
+          label: function (context: any) {
+            const score = context.raw;
+            return `Score: ${score}`;
+          },
+        },
+      },
     },
+    maintainAspectRatio: true,
+    aspectRatio: 1,
   };
 
   return (

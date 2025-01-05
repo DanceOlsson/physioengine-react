@@ -12,6 +12,12 @@ import { calculateDashScores } from "@/lib/calculators/dash";
 import { calculateSatisfactionScore } from "@/lib/calculators/satisfaction";
 import { calculateSefasScore } from "@/lib/calculators/sefas";
 import { calculateEq5dScore } from "@/lib/calculators/eq5d";
+import { questions as koosQuestions } from "@/assets/questionnaires/koos_swedish";
+import { questions as hoosQuestions } from "@/assets/questionnaires/hoos_swedish";
+import { questions as dashQuestions } from "@/assets/questionnaires/dash_swedish";
+import { questions as satisfactionQuestions } from "@/assets/questionnaires/satisfaction_swedish";
+import { questions as sefasQuestions } from "@/assets/questionnaires/sefas_swedish";
+import { questions as eq5dQuestions } from "@/assets/questionnaires/EQ-5D-5L_swedish";
 
 interface QuestionnaireQrPanelProps {
   questionnaire: {
@@ -60,11 +66,31 @@ const getCalculator = (questionnaireId: string) => {
   }
 };
 
+const getQuestionnaireData = (id: string) => {
+  switch (id) {
+    case "koos":
+      return koosQuestions[0];
+    case "hoos":
+      return hoosQuestions[0];
+    case "dash":
+      return dashQuestions[0];
+    case "satisfaction":
+      return satisfactionQuestions[0];
+    case "sefas":
+      return sefasQuestions[0];
+    case "eq5d":
+      return eq5dQuestions[0];
+    default:
+      return null;
+  }
+};
+
 const ResultsComponent = ({ questionnaireId }: { questionnaireId: string }) => {
   const storageKey = getStorageKey(questionnaireId);
   const calculator = getCalculator(questionnaireId);
+  const questionnaireData = getQuestionnaireData(questionnaireId);
 
-  if (!storageKey || !calculator) return null;
+  if (!storageKey || !calculator || !questionnaireData) return null;
 
   const storedResponses = localStorage.getItem(storageKey);
   const responses = storedResponses ? JSON.parse(storedResponses) : null;
@@ -76,6 +102,7 @@ const ResultsComponent = ({ questionnaireId }: { questionnaireId: string }) => {
     <DynamicResultsReader
       questionnaireId={questionnaireId.toUpperCase()}
       result={result}
+      questionnaire={questionnaireData}
     />
   );
 };

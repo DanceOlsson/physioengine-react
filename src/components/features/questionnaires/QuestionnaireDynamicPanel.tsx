@@ -238,8 +238,13 @@ export function QuestionnaireDynamicPanel({
               <div className="p-6">
                 {result && (
                   <DynamicResultsReader
-                    questionnaireId={questionnaire.id.toUpperCase()}
+                    questionnaireId={
+                      questionnaire.id === "eq5d"
+                        ? "EQ-5D-5L"
+                        : questionnaire.id.toUpperCase()
+                    }
                     result={result}
+                    questionnaire={data}
                   />
                 )}
               </div>
@@ -305,8 +310,13 @@ export function QuestionnaireDynamicPanel({
           <div className="p-6">
             {result && (
               <DynamicResultsReader
-                questionnaireId={questionnaire.id.toUpperCase()}
+                questionnaireId={
+                  questionnaire.id === "eq5d"
+                    ? "EQ-5D-5L"
+                    : questionnaire.id.toUpperCase()
+                }
                 result={result}
+                questionnaire={data}
               />
             )}
           </div>
@@ -331,8 +341,13 @@ export function QuestionnaireDynamicPanel({
           <div className="p-6">
             {result && (
               <DynamicResultsReader
-                questionnaireId={questionnaire.id.toUpperCase()}
+                questionnaireId={
+                  questionnaire.id === "eq5d"
+                    ? "EQ-5D-5L"
+                    : questionnaire.id.toUpperCase()
+                }
                 result={result}
+                questionnaire={data}
               />
             )}
           </div>

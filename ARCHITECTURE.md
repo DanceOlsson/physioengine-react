@@ -92,6 +92,46 @@ physioengine-react/
 4. Processed by calculator functions
 5. Results displayed in dedicated results pages
 
+### Data Flow & Language Handling
+
+The application follows a strict separation between calculations and language-specific content:
+
+#### Calculator Rules
+
+- Calculators are pure numerical processors
+- They handle ONLY mathematical operations and data mapping
+- NO text, labels, or interpretations in calculators
+- Use IDs exclusively, never display text
+- Must work identically regardless of language
+
+#### Language-Specific Content
+
+- ALL text content comes from questionnaire data files
+- Data files (e.g., `[name]_swedish.ts`, `[name]_english.ts`) contain:
+  - Question text and instructions
+  - Section titles and descriptions
+  - Score interpretations
+  - Result labels and explanations
+  - Error messages and hints
+
+#### Data Flow for Multi-Language Support
+
+1. Language-specific questionnaire file loaded
+2. User responses collected (language-neutral)
+3. Calculator processes numerical data only
+4. Results reader combines:
+   - Numerical results from calculator
+   - Labels and interpretations from language file
+   - Visualization configuration
+5. Final presentation in user's language
+
+This separation ensures:
+
+- Easy addition of new languages
+- Consistent calculations across all languages
+- Clear separation of concerns
+- Maintainable and testable code
+
 ### Firebase Integration
 
 - Configuration in `src/lib/firebase.ts`

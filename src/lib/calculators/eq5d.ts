@@ -1,57 +1,36 @@
-import { QuestionnaireResponse, QuestionnaireResult, SectionScore } from "../types/questionnaire.types";
+/**
+ * CALCULATOR RULES:
+ * 1. ONLY handle numerical calculations
+ * 2. NO text or labels
+ * 3. NO interpretations
+ * 4. NO language-specific content
+ * 5. Use IDs only, never display text
+ * 
+ * All display text MUST come from questionnaire data files
+ */
 
-// EQ-5D-5L has 5 dimensions plus a VAS scale
-const DIMENSION_QUESTIONS = {
-  "mobility": "mobility",
-  "selfCare": "selfCare",
-  "activities": "activities",
-  "pain": "pain",
-  "anxiety": "anxiety"
-};
-
-const getHealthState = (responses: QuestionnaireResponse): string => {
-  // Add 1 to each response because our storage uses 0-4 but EQ-5D uses 1-5
-  return Object.values(DIMENSION_QUESTIONS)
-    .map(questionId => {
-      const response = responses[questionId];
-      return typeof response === 'number' ? (response + 1).toString() : '0';
-    })
-    .join('');
-};
+import { QuestionnaireResponse, QuestionnaireResult } from "../types/questionnaire.types";
 
 export function calculateEq5dScore(responses: QuestionnaireResponse): QuestionnaireResult {
-  try {
-    const healthState = getHealthState(responses);
-    const vasScore = responses["vas"] as number;
-    const hasVasScore = typeof vasScore === 'number';
+  // Get the 5 dimension scores (adding 1 to convert from 0-4 to 1-5)
+  const dimensionScores = [
+    { name: "mobility", score: (responses["mobility"] as number) + 1, interpretation: "" },
+    { name: "selfCare", score: (responses["selfCare"] as number) + 1, interpretation: "" },
+    { name: "activities", score: (responses["activities"] as number) + 1, interpretation: "" },
+    { name: "pain", score: (responses["pain"] as number) + 1, interpretation: "" },
+    { name: "anxiety", score: (responses["anxiety"] as number) + 1, interpretation: "" }
+  ];
 
-    // Create section scores
-    const sectionScores: SectionScore[] = [
-      {
-        name: "healthState",
-        score: -1, // Not applicable for health state
-        interpretation: healthState
-      }
-    ];
+  // Get VAS score (already in correct range 0-100)
+  const vasScore = responses["vas"] as number;
 
-    // Add VAS score if available
-    if (hasVasScore) {
-      sectionScores.push({
-        name: "vasScore",
-        score: vasScore,
-        interpretation: `${vasScore}`
-      });
-    }
-
-    return {
-      questionnaire_name: "EQ-5D-5L",
-      sections: sectionScores,
-      total_score: -1, // Not applicable for EQ-5D-5L
-      interpretation: ""
-    };
-
-  } catch (error) {
-    console.error("Error calculating EQ-5D-5L scores:", error);
-    throw new Error("Failed to calculate EQ-5D-5L scores");
-  }
+  return {
+    questionnaire_name: "EQ-5D-5L",
+    sections: [
+      ...dimensionScores,
+      { name: "vas", score: vasScore, interpretation: "" }
+    ],
+    total_score: -1,  // Not applicable
+    interpretation: dimensionScores.map(d => d.score).join("")  // Health state as string
+  };
 } 

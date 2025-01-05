@@ -49,6 +49,10 @@ export interface Questionnaire {
   instructions: string;
   sections: QuestionnaireSection[];
   metadata?: QuestionnaireMetadata;
+  interpretations?: {
+    ranges: Record<string, string>;
+    labels?: Record<string, string>;
+  };
 }
 
 export interface QuestionnaireResponse {

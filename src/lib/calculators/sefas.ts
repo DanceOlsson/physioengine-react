@@ -1,3 +1,14 @@
+/**
+ * CALCULATOR RULES:
+ * 1. ONLY handle numerical calculations
+ * 2. NO text or labels
+ * 3. NO interpretations
+ * 4. NO language-specific content
+ * 5. Use IDs only, never display text
+ * 
+ * All display text MUST come from questionnaire data files
+ */
+
 import { QuestionnaireResponse, QuestionnaireResult, SectionScore } from "../types/questionnaire.types";
 
 // SEFAS has all questions in one section
