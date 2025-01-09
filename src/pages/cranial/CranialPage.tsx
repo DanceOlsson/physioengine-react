@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import PlagiocephalyChart from "@/components/features/charts/PlagiocephalyChart";
+import { cn } from "@/lib/utils";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 // Define the shape of our measurements data with TypeScript
 interface CranialMeasurements {
@@ -25,6 +27,7 @@ interface CranialMeasurements {
 }
 
 export default function CranialPage() {
+  const isMobile = useMediaQuery("(max-width: 768px)");
   // Initialize state to store all measurements, starting with null values
   const [measurements, setMeasurements] = useState<CranialMeasurements>({
     age: null,
@@ -130,19 +133,48 @@ export default function CranialPage() {
   // 2. Results display showing calculations
   // 3. Information section explaining the measurements
   return (
-    <div className="container mx-auto px-4 py-8 mt-16 2xl:mt-20 3xl:mt-24">
-      <div className="max-w-4xl mx-auto space-y-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">Cranial Measurements</h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400">
+    <div
+      className={cn(
+        // Base container
+        "px-4 w-full",
+        // Fixed positioning
+        "fixed top-[64px] bottom-0 left-0 right-0",
+        // Header offset for different screen sizes
+        "2xl:top-[80px] 3xl:top-[96px]",
+        // Overflow handling
+        "overflow-y-auto"
+      )}
+    >
+      <div
+        className={cn(
+          // Base layout
+          "mx-auto w-full space-y-6",
+          // Responsive padding
+          "py-6 2xl:py-8 3xl:py-10",
+          // Responsive max-width
+          "max-w-[90%] lg:max-w-[85%] xl:max-w-[80%] 2xl:max-w-[75%]"
+        )}
+      >
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold mb-2">Cranial Measurements</h1>
+          <p className="text-lg text-muted-foreground">
             Calculate and analyze cranial measurements including the cephalic
             index and asymmetry indicators.
           </p>
         </div>
 
-        {/* Input Section - Collect measurements from user */}
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card>
+        <div
+          className={cn(
+            // Base grid
+            "grid gap-6",
+            // Single column on mobile, 30/70 split on desktop
+            "grid-cols-1 lg:grid-cols-[30%_70%]",
+            // Responsive width
+            "w-full"
+          )}
+        >
+          {/* Input Card */}
+          <Card className="lg:sticky lg:top-[80px] w-full h-fit">
             <CardHeader>
               <CardTitle>Input Measurements</CardTitle>
               <CardDescription>
@@ -269,8 +301,8 @@ export default function CranialPage() {
             </CardContent>
           </Card>
 
-          {/* Results Section - Display calculated measurements and interpretations */}
-          <Card>
+          {/* Results Card */}
+          <Card className="w-full">
             <CardHeader>
               <CardTitle>Results</CardTitle>
               <CardDescription>
@@ -324,7 +356,13 @@ export default function CranialPage() {
                       {measurements.cvai.toFixed(2)} %
                     </p>
                   </div>
-                  <div>
+                  <div className="mt-4">
+                    <PlagiocephalyChart
+                      cvai={measurements.cvai}
+                      age={measurements.age ?? 0}
+                    />
+                  </div>
+                  <div className="mt-4">
                     <Label className="text-muted-foreground">
                       Plagiocephaly Classification
                     </Label>
@@ -344,7 +382,7 @@ export default function CranialPage() {
           </Card>
         </div>
 
-        {/* Information Section - Explain measurements and classifications */}
+        {/* Information Card */}
         <Card>
           <CardHeader>
             <CardTitle>About Cranial Measurements</CardTitle>
@@ -393,22 +431,6 @@ export default function CranialPage() {
                 <br />• &gt; 8.75%: Severe
               </p>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Plagiocephaly Protocol Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Plagiocephaly Protocol</CardTitle>
-            <CardDescription>
-              Treatment protocol based on age and severity of plagiocephaly
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <PlagiocephalyChart
-              cvai={measurements.cvai}
-              age={measurements.age ?? 0}
-            />
           </CardContent>
         </Card>
       </div>
