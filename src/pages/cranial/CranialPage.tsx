@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 import { useState } from "react";
 import PlagiocephalyChart from "@/components/features/charts/PlagiocephalyChart";
 import { cn } from "@/lib/utils";
@@ -128,6 +129,14 @@ export default function CranialPage() {
     });
   };
 
+  // Helper function to handle slider changes
+  const handleSliderChange = (
+    name: keyof CranialMeasurements,
+    value: number[]
+  ) => {
+    handleInputChange(name, value[0].toString());
+  };
+
   // Main component render with three sections:
   // 1. Input form for measurements
   // 2. Results display showing calculations
@@ -183,20 +192,87 @@ export default function CranialPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Age Input */}
-              <div className="space-y-2">
-                <Label htmlFor="age">Age (months)</Label>
-                <div className="flex items-center space-x-2">
-                  <Input
-                    id="age"
-                    type="number"
-                    step="1"
-                    min="0"
-                    max="18"
-                    placeholder="Enter age in months"
-                    value={measurements.age ?? ""}
-                    onChange={(e) => handleInputChange("age", e.target.value)}
+              <div className="space-y-4">
+                <Label htmlFor="age">Age</Label>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Input
+                      id="age-months"
+                      type="number"
+                      min="0"
+                      max="18"
+                      value={
+                        measurements.age !== null
+                          ? Math.floor(measurements.age)
+                          : ""
+                      }
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (value === "") {
+                          handleInputChange("age", "");
+                          return;
+                        }
+                        const months = parseInt(value);
+                        if (isNaN(months)) return;
+                        const currentDays =
+                          measurements.age !== null
+                            ? Math.round((measurements.age % 1) * 31)
+                            : 0;
+                        handleInputChange(
+                          "age",
+                          (months + currentDays / 31).toString()
+                        );
+                      }}
+                      className="w-20"
+                    />
+                    <span className="text-sm text-muted-foreground whitespace-nowrap">
+                      months
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      id="age-days"
+                      type="number"
+                      min="0"
+                      max="31"
+                      value={
+                        measurements.age !== null
+                          ? Math.round((measurements.age % 1) * 31)
+                          : ""
+                      }
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (value === "") {
+                          handleInputChange("age", "");
+                          return;
+                        }
+                        const days = parseInt(value);
+                        if (isNaN(days)) return;
+                        const currentMonths =
+                          measurements.age !== null
+                            ? Math.floor(measurements.age)
+                            : 0;
+                        handleInputChange(
+                          "age",
+                          (currentMonths + days / 31).toString()
+                        );
+                      }}
+                      className="w-20"
+                    />
+                    <span className="text-sm text-muted-foreground whitespace-nowrap">
+                      days
+                    </span>
+                  </div>
+                </div>
+                <div className="pt-2">
+                  <Slider
+                    id="age-slider"
+                    min={0}
+                    max={18}
+                    step={0.0323} // 1/31 of a month
+                    value={[measurements.age ?? 0]}
+                    onValueChange={(value) => handleSliderChange("age", value)}
                   />
-                  <span className="text-sm text-gray-500">months</span>
                 </div>
                 {measurements.age !== null &&
                   (measurements.age < 0 || measurements.age > 18) && (
@@ -209,93 +285,88 @@ export default function CranialPage() {
               {/* Head Circumference */}
               <div className="space-y-2">
                 <Label htmlFor="circumference">Head Circumference</Label>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-4">
                   <Input
                     id="circumference"
                     type="number"
                     step="0.1"
                     min="0"
-                    placeholder="Enter measurement"
                     value={measurements.circumference ?? ""}
                     onChange={(e) =>
                       handleInputChange("circumference", e.target.value)
                     }
                   />
-                  <span className="text-sm text-gray-500">cm</span>
+                  <span className="text-sm text-muted-foreground w-14">cm</span>
                 </div>
               </div>
 
               {/* Head Length */}
               <div className="space-y-2">
                 <Label htmlFor="length">Head Length (OFD)</Label>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-4">
                   <Input
                     id="length"
                     type="number"
                     step="0.1"
                     min="0"
-                    placeholder="Enter measurement"
                     value={measurements.length ?? ""}
                     onChange={(e) =>
                       handleInputChange("length", e.target.value)
                     }
                   />
-                  <span className="text-sm text-gray-500">cm</span>
+                  <span className="text-sm text-muted-foreground w-14">cm</span>
                 </div>
               </div>
 
               {/* Head Width */}
               <div className="space-y-2">
                 <Label htmlFor="width">Head Width (BPD)</Label>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-4">
                   <Input
                     id="width"
                     type="number"
                     step="0.1"
                     min="0"
-                    placeholder="Enter measurement"
                     value={measurements.width ?? ""}
                     onChange={(e) => handleInputChange("width", e.target.value)}
                   />
-                  <span className="text-sm text-gray-500">cm</span>
+                  <span className="text-sm text-muted-foreground w-14">cm</span>
                 </div>
               </div>
 
               {/* Diagonal 1 (D1) */}
               <div className="space-y-2">
                 <Label htmlFor="diagonal1">Diagonal 1 (D1)</Label>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-4">
                   <Input
                     id="diagonal1"
                     type="number"
                     step="0.1"
                     min="0"
-                    placeholder="Forehead Right → Occiput Left"
                     value={measurements.diagonal1 ?? ""}
                     onChange={(e) =>
                       handleInputChange("diagonal1", e.target.value)
                     }
                   />
-                  <span className="text-sm text-gray-500">cm</span>
+                  <span className="text-sm text-muted-foreground w-14">cm</span>
                 </div>
               </div>
 
               {/* Diagonal 2 (D2) */}
               <div className="space-y-2">
                 <Label htmlFor="diagonal2">Diagonal 2 (D2)</Label>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-4">
                   <Input
                     id="diagonal2"
                     type="number"
                     step="0.1"
                     min="0"
-                    placeholder="Forehead Left → Occiput Right"
                     value={measurements.diagonal2 ?? ""}
                     onChange={(e) =>
                       handleInputChange("diagonal2", e.target.value)
                     }
                   />
-                  <span className="text-sm text-gray-500">cm</span>
+                  <span className="text-sm text-muted-foreground w-14">cm</span>
                 </div>
               </div>
             </CardContent>

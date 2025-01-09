@@ -114,7 +114,16 @@ export default function PlagiocephalyChart({
           },
           {
             label: "Current CVAI",
-            data: currentData,
+            data:
+              cvai !== null
+                ? [
+                    {
+                      x: age,
+                      y: cvai,
+                    },
+                  ]
+                : [],
+            xAxisID: "xHidden",
             borderColor: isDark ? "hsl(142, 76%, 76%)" : "hsl(142, 76%, 36%)",
             backgroundColor: isDark
               ? "hsl(142, 76%, 76%)"
@@ -131,7 +140,15 @@ export default function PlagiocephalyChart({
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        animation: false,
         scales: {
+          xHidden: {
+            type: "linear",
+            min: 0,
+            max: 18,
+            display: false,
+            position: "top",
+          },
           x: {
             title: {
               display: true,
