@@ -1,3 +1,4 @@
+// Import necessary UI components from shadcn/ui library and React hooks
 import {
   Card,
   CardContent,
@@ -9,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 
+// Define the shape of our measurements data with TypeScript
 interface CranialMeasurements {
   circumference: number | null;
   length: number | null;
@@ -21,6 +23,7 @@ interface CranialMeasurements {
 }
 
 export default function CranialPage() {
+  // Initialize state to store all measurements, starting with null values
   const [measurements, setMeasurements] = useState<CranialMeasurements>({
     circumference: null,
     length: null,
@@ -34,6 +37,7 @@ export default function CranialPage() {
 
   // ---------------------------
   // Cephalic Index Calculations
+  // Calculate and interpret the ratio between head width and length
   // ---------------------------
   const calculateCephalicIndex = (length: number, width: number): number => {
     return (width / length) * 100;
@@ -47,6 +51,7 @@ export default function CranialPage() {
 
   // -----------------------------------
   // Plagiocephaly (CVA & CVAI) Helpers
+  // Calculate and interpret skull asymmetry measurements
   // -----------------------------------
   const calculateCVA = (d1: number, d2: number): number => {
     return Math.abs(d1 - d2);
@@ -72,6 +77,8 @@ export default function CranialPage() {
 
   // -----------------------------------
   // Handle Input Changes
+  // Process user input and update measurements state
+  // Automatically calculate derived values when relevant inputs change
   // -----------------------------------
   const handleInputChange = (
     name: keyof CranialMeasurements,
@@ -115,6 +122,10 @@ export default function CranialPage() {
     });
   };
 
+  // Main component render with three sections:
+  // 1. Input form for measurements
+  // 2. Results display showing calculations
+  // 3. Information section explaining the measurements
   return (
     <div className="container mx-auto px-4 py-8 mt-16 2xl:mt-20 3xl:mt-24">
       <div className="max-w-4xl mx-auto space-y-8">
@@ -126,7 +137,7 @@ export default function CranialPage() {
           </p>
         </div>
 
-        {/* Input Section */}
+        {/* Input Section - Collect measurements from user */}
         <div className="grid gap-6 md:grid-cols-2">
           <Card>
             <CardHeader>
@@ -231,7 +242,7 @@ export default function CranialPage() {
             </CardContent>
           </Card>
 
-          {/* Results Section */}
+          {/* Results Section - Display calculated measurements and interpretations */}
           <Card>
             <CardHeader>
               <CardTitle>Results</CardTitle>
@@ -240,7 +251,7 @@ export default function CranialPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Cephalic Index */}
+              {/* Cephalic Index Results */}
               {measurements.cephalicIndex && (
                 <>
                   <div>
@@ -267,7 +278,7 @@ export default function CranialPage() {
                 </p>
               )}
 
-              {/* CVA & CVAI */}
+              {/* CVA & CVAI Results */}
               {measurements.cva !== null && measurements.cvai !== null && (
                 <>
                   <div>
@@ -306,7 +317,7 @@ export default function CranialPage() {
           </Card>
         </div>
 
-        {/* Info / Explanations Section */}
+        {/* Information Section - Explain measurements and classifications */}
         <Card>
           <CardHeader>
             <CardTitle>About Cranial Measurements</CardTitle>
