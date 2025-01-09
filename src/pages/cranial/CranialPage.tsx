@@ -9,9 +9,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
+import PlagiocephalyChart from "@/components/features/charts/PlagiocephalyChart";
 
 // Define the shape of our measurements data with TypeScript
 interface CranialMeasurements {
+  age: number | null;
   circumference: number | null;
   length: number | null;
   width: number | null;
@@ -25,6 +27,7 @@ interface CranialMeasurements {
 export default function CranialPage() {
   // Initialize state to store all measurements, starting with null values
   const [measurements, setMeasurements] = useState<CranialMeasurements>({
+    age: null,
     circumference: null,
     length: null,
     width: null,
@@ -147,6 +150,30 @@ export default function CranialPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+              {/* Age Input */}
+              <div className="space-y-2">
+                <Label htmlFor="age">Age (months)</Label>
+                <div className="flex items-center space-x-2">
+                  <Input
+                    id="age"
+                    type="number"
+                    step="1"
+                    min="0"
+                    max="18"
+                    placeholder="Enter age in months"
+                    value={measurements.age ?? ""}
+                    onChange={(e) => handleInputChange("age", e.target.value)}
+                  />
+                  <span className="text-sm text-gray-500">months</span>
+                </div>
+                {measurements.age !== null &&
+                  (measurements.age < 0 || measurements.age > 18) && (
+                    <p className="text-sm text-red-500">
+                      Age must be between 0 and 18 months
+                    </p>
+                  )}
+              </div>
+
               {/* Head Circumference */}
               <div className="space-y-2">
                 <Label htmlFor="circumference">Head Circumference</Label>
@@ -366,6 +393,22 @@ export default function CranialPage() {
                 <br />• &gt; 8.75%: Severe
               </p>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Plagiocephaly Protocol Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Plagiocephaly Protocol</CardTitle>
+            <CardDescription>
+              Treatment protocol based on age and severity of plagiocephaly
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <PlagiocephalyChart
+              cvai={measurements.cvai}
+              age={measurements.age ?? 0}
+            />
           </CardContent>
         </Card>
       </div>
