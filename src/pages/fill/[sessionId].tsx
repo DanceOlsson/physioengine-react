@@ -12,6 +12,7 @@ import { database } from "@/lib/firebase";
 import { MobileQuestionnaireReader } from "@/components/dynamic-readers/MobileQuestionnaireReader";
 import { Loader2, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 
 // Import questionnaire data
 import { questions as koosQuestions } from "@/assets/questionnaires/koos_swedish";
@@ -39,6 +40,19 @@ const getQuestionnaireData = (id: string) => {
       return null;
   }
 };
+
+function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="text-center max-w-md">
+        <ShieldAlert className="h-8 w-8 text-destructive mx-auto mb-2" />
+        <h1 className="text-xl font-semibold text-destructive mb-2">Error</h1>
+        <p className="text-muted-foreground mb-4">{error.message}</p>
+        <Button onClick={resetErrorBoundary}>Try Again</Button>
+      </div>
+    </div>
+  );
+}
 
 export default function FillQuestionnairePage() {
   const { sessionId } = useParams();
@@ -177,9 +191,17 @@ export default function FillQuestionnairePage() {
   }
 
   return (
-    <MobileQuestionnaireReader
-      questionnaire={questionnaireData}
-      onSubmit={handleSubmit}
-    />
+    <ErrorBoundary
+      FallbackComponent={ErrorFallback}
+      onReset={() => {
+        // Reset the error boundary state
+        window.location.reload();
+      }}
+    >
+      <MobileQuestionnaireReader
+        questionnaire={questionnaireData}
+        onSubmit={handleSubmit}
+      />
+    </ErrorBoundary>
   );
 }

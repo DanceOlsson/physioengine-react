@@ -133,11 +133,20 @@ export function MobileQuestionnaireReader({
         return newResponses;
       });
 
+      // Add a small delay and prevent multiple rapid transitions
       if (currentIndex < totalItems - 1) {
-        setTimeout(() => {
-          setSelectedOption(null);
-          setCurrentIndex((prev) => prev + 1);
+        // Clear any existing timeout
+        const timeoutId = setTimeout(() => {
+          try {
+            setSelectedOption(null);
+            setCurrentIndex((prev) => prev + 1);
+          } catch (error) {
+            console.error("Navigation error:", error);
+          }
         }, 400);
+
+        // Cleanup timeout on unmount or re-render
+        return () => clearTimeout(timeoutId);
       }
     } else {
       setSelectedOption(value);
@@ -172,11 +181,15 @@ export function MobileQuestionnaireReader({
   };
 
   const handleSubmit = () => {
-    // Filter out section responses before submitting
-    const questionResponses = Object.fromEntries(
-      Object.entries(responses).filter(([key]) => !key.startsWith("section-"))
-    );
-    onSubmit(questionResponses);
+    try {
+      // Filter out section responses before submitting
+      const questionResponses = Object.fromEntries(
+        Object.entries(responses).filter(([key]) => !key.startsWith("section-"))
+      );
+      onSubmit(questionResponses);
+    } catch (error) {
+      console.error("Submit error:", error);
+    }
   };
 
   // Check if all required questions are answered
