@@ -65,9 +65,12 @@ export default function CranialPage() {
   };
 
   const calculateCVAI = (d1: number, d2: number): number => {
-    const cvaValue = calculateCVA(d1, d2);
-    const larger = Math.max(d1, d2);
-    return (cvaValue / larger) * 100;
+    // Find which diagonal is shorter (A) and longer (B)
+    const diagonalA = Math.min(d1, d2);
+    const diagonalB = Math.max(d1, d2);
+
+    // Apply the formula: ((B-A)*100)/A
+    return ((diagonalB - diagonalA) * 100) / diagonalA;
   };
 
   const interpretCVAI = (cvai: number): string => {
